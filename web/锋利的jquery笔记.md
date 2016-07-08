@@ -40,7 +40,7 @@ $("input:checked")是input中所有被选中的元素（包括单选框和复选
 
 ``` $("select option:selected"）```
 选取所有选中的元素（下拉列表）
-### 表单选择器
+### （三）表单选择器
 :input 是选取所有的<input>,<textarea>,<select>和<button>元素  
 :text 选取所有的单行文本框  
 :password选取所有的密码框  
@@ -53,7 +53,7 @@ $("input:checked")是input中所有被选中的元素（包括单选框和复选
 :file选取所有的上传域  
 :hidden 选取所有的不可见元素  
 
-==选择器注意事项==
+#### 选择器注意事项  
 
 1.如果表达式中含有特殊字符# .  (  [,等  
 
