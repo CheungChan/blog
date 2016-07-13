@@ -23,30 +23,47 @@ $("div:visible")是可见的div元素
 $("div:hidden").show(3000)是样式display为none的和input   type="hidden"的和visibility:hidden"的元素 show是展示元素单位是毫秒  
 #### ④属性过滤选择器
 $("div[title]")是div中有title属性的元素  
-$("div[title=test]")是div中title属性为test的元素,不为test的元素用!=,以test开头的元素，结尾用$=,包含用*=，等于或者以test为前缀字符串以-连接用|=，用空格分隔的值中含有的用~=，复合元素写多个[]  
+$("div[title=test]")是div中title属性为test的元素,不为test的元素用!=,以test开头的元素，结尾用$=,包含用*=，
+等于或者以test为前缀字符串以-连接用|=，用空格分隔的值中含有的用~=，复合元素写多个[]  
 #### ⑤子元素过滤选择器
 $("div:nth-child(even)")是每个div的索引值是偶数的元素  
 nth-child(odd)奇数 :nth-child(2)索引值为2的，:nth_child(3n)索引值是3的倍数的:nth-child(3n+1)索引值是3n+1的。 
 
-==:nth-child和eq()的区别::nth-child为每一个父元素匹配子元素。eq只匹配当前集合的一个元素。并且eq()索引从0开始，:nth-child索引从1开始==
+==:nth-child和eq()的区别::nth-child为每一个父元素匹配子元素。eq只匹配当前集合的一个元素。并且eq()索引从0开始，
+:nth-child索引从1开始==
 
 $("div:first-child")匹配div中的第一个子元素  
 $("div:last-child")匹配div中的最后一个子元素
-``` $("div:only-child") ```
+``` 
+$("div:only-child") 
+```
 匹配div中唯一的子元素。如果div只有一个子元素才会被匹配
 #### ⑥表单对象属性过滤选择器
 $("form1 :enabled")是form1中所有可用元素,:disabled是所有不可用元素  
 $("input:checked")是input中所有被选中的元素（包括单选框和复选框）
 
-``` $("select option:selected"）```
+``` 
+$("select option:selected"）
+```
 选取所有选中的元素（下拉列表）
 ### （三）表单选择器
-:input 是选取所有的<input>,<textarea>,<select>和<button>元素  
+:input 是选取所有的
+``` 
+<input>,<textarea>,<select>
+```
+和
+```
+<button>
+```
+元素  
 :text 选取所有的单行文本框  
 :password选取所有的密码框  
 :radio选取所有的单选框  
 :checkbox选取所有的多选框  
-``` :submit ```选取所有的提交按钮  
+``` 
+:submit
+```
+选取所有的提交按钮  
 :image选取所有的图像按钮  
 :reset选取所有的重置按钮  
 :button选取所有的按钮  
@@ -56,14 +73,24 @@ $("input:checked")是input中所有被选中的元素（包括单选框和复选
 #### 选择器注意事项  
 
 1.如果表达式中含有特殊字符# .  (  [,等  
-如id="id#b" 获取这样的元素采用$("#id\\\\#b")  
-如id="id[1]" 获取这样的元素采用$("#id\\\\[1\\\\]")  
+如id="id#b" 获取这样的元素采用
+```
+$("#id\\#b")  
+```
+如id="id[1]" 获取这样的元素采用
+```
+$("#id\\[1\\]")
+```
 2.要注意空格
-如$(".test :hidden")表示.test的hidden的后代元素，而$(".test:hidden")表示.test中hidden的元素，加空格是层次选择器中的后代选择器 不加空格是过滤选择器中的可见性过滤选择器。
+如$(".test :hidden")表示.test的hidden的后代元素，而$(".test:hidden")表示.test中hidden的元素，加空格是层次选择器中的
+后代选择器 不加空格是过滤选择器中的可见性过滤选择器。
 ## 3.jQuery中的DOM操作
 #### 节点操作
 ①：创建节点  
-使用jQuery工厂函数即可$("<p>你好</p>")  
+使用jQuery工厂函数即可
+```
+$("<p>你好</p>")  
+```
 ②：插入节点  
 append() 向每个匹配的元素内部追加内容  
 appendTo()将所有匹配的内容追加到指定元素中，与append()相反  
@@ -74,11 +101,13 @@ insertAfter()将所有匹配的内容插入到指定元素后面，与after()相
 before()在每个匹配的内容之前插入内容  
 insertBefore()将所有匹配的内容插入到指定元素前面，与before()相反  
 ③：删除节点  
-remove()将匹配的元素删除（包括它的所有后代节点），并且会删除这些元素绑定的事件，可以加参数过滤节点，返回值是此节点的引用，后面可以用appendTo()再添加进去。  
+remove()将匹配的元素删除（包括它的所有后代节点），并且会删除这些元素绑定的事件，可以加参数过滤节点，
+返回值是此节点的引用，后面可以用appendTo()再添加进去。  
 detach()方法，将匹配的元素删除（包括它的所有后代节点），不会删除这些元素绑定的事件。
 empty()清空节点里的东西。如果没有后代节点则清空节点的内容。 
 ④：复制节点  
-clone()方法复制节点不会复制绑定的事件，但可以传入参数true来使副本具有绑定的事件。如复制的节点不具有再复制的功能，传入true可以再复制。  
+clone()方法复制节点不会复制绑定的事件，但可以传入参数true来使副本具有绑定的事件。
+如复制的节点不具有再复制的功能，传入true可以再复制。  
 ⑤：替换节点
 a.replaceWith(b);
 将所有符合条件的a替换为b
@@ -90,7 +119,8 @@ a.wrapAll(b)；将所有符合条件的a被一个b包裹
 a.wrapInner(b);将a的每一个子元素被b包裹
 #### 属性操作
 获取设置属性attr(),删除removeAttr()
-样式操作：追加样式addClass(),删除样式removeClass(),切换样式toggleClass("another")如果有则增加没有则去掉。判断是否有样式hasClass()就相当于is(".anthor")  
+样式操作：追加样式addClass(),删除样式removeClass(),切换样式toggleClass("another")如果有则增加没有则去掉。
+判断是否有样式hasClass()就相当于is(".anthor")  
 jQuery 1.6 中prop()用来获取匹配元素集中第一个元素的属性值，removeProp()用来删除
 #### 设置和获取值
 单选框多选框的val()返回值为一个数组，也可以用数组设置值
@@ -141,5 +171,183 @@ $(function(){
 });
 
 ```
+## 4.jQuery中的动画和事件
+#### jQuery中的事件
+①：加载DOM  
+传统的window.onload方法会当页面所有元素都加载完成才会执行，jQuery中的$(document).ready()方法是当DOM就绪时就执行，
+不需要等待图片下载完成。如果需要所有元素都加载完在进行可以用$(window).load()方法。  
+传统的window.onload方法只能有一个生效，如果写多个只有最后一个生效，而jQuery的$(document).ready()方法可以写多个，效果是自动追加到上一个上面。
+``` 
+$(document).ready(function(){//编写代码  }); 
+``` 
+也可以写成
+``` 
+$(function(){}); 
+``` 
+而$(document)也可以简写为$(),当$()不带参数时默认参数是ducument.所有也可以写成
+``` 
+$().ready(function(){}); 
+```
+②：事件绑定
+bind(type,[,data],fn);第二个参数是作为event.data传递给事件对象的数据对象
+$().hover(function(){},funtion(){});相当于$().mouseenter(function(){}).mouseleave(function(){});  
+toggle(fn1,fn2,fn3....)用来模拟连续点击事件，第一次点击时触发fn1,第二次触发第二个函数，第三次触发第三个函数。。。。
+不加参数toggle()为切换show()和hide().
+③：事件冒泡
+如果body div span都绑定了click事件，则点击span会先触发span的再触发div的再触发body的，逐层向上触发成为事件冒泡。停止事件冒泡方法
+``` 
+$("span").bind("click",function(event){ // dosomething
+event.stopPropagation();//阻止事件冒泡
+}); 
+```  
+比如提交按钮会有点击之后提交的默认行为，可以通过event.preventDefault()来阻止默认行为。也可以直接写return false;  
+从body到div再到span成为事件捕获，jQuery不支持，要用只能用js，但并非所有浏览器都支持事件捕获  
+event.target是事件出发的元素。event.relatedTarget相关元素。jQuery中的这个属性封装了IE的不标准。
+event.pageX event.pageY获取页面的x，y坐标，封装了不同浏览器实现。  
+event.which可以获得鼠标的左中右键或者键盘的按键。  
+event.metaKey可以获取键盘中的ctrl键，封装了不同浏览器的实现。  
+④：移除事件绑定  
+ubind([type],[data]);如果没有参数会移除元素上的所有事件，如果提供了事件类型，会移除该类型的所有绑定事件。如果有提供了绑定时的处理函数，则
+只移除这个特定时间的特定函数。  
+可以
+``` 
+$().bind("click",myFun1=function(){})
+.bind("click",myFun2=function(){});
+```
 
-
+移除时
+``` 
+$().unbind("click",myFun1); 
+``` 
+来移除。  
+如果只想绑定触发一次立即移除，可以直接用one("click",fn)来写。  
+delegate() 方法为指定的元素（属于被选元素的子元素）添加一个或多个事件处理程序，并规定当这些事件发生时运行的函数。
+使用 delegate() 方法的事件处理程序适用于当前或未来的元素（比如由脚本创建的新元素）。
+语法
+``` 
+$(selector).delegate(childSelector,event,data,function)  
+```
+自jQuery1.7开始on()替换了之前的bind(),delegate()和live(),off()替代了之前的unbind(),undelegate()和die().
+⑤：模拟操作  
+$().trigger("click")模拟click()事件，简写为click().  
+触发自定义事件 $().bind("myClick",function(){})，使用$().trigger("myClick")  
+传递数据使用数组传递，
+``` 
+$("#bn").bind("myClick",function(event,message1,message2){//获取数据
+    $("#test").append("<p>"+message1 + message2+"</p>");
+})
+```
+模拟执行
+``` 
+$("#bn").trigger("myClick",["我的自定义","事件"]);
+```
+如果只想触发事件，不想要事件的默认行为，可以用triggerHandler();
+```
+$("#bn").triggerHandler("focus");
+```
+会触发focus事件，而不会获得焦点  
+⑥：其他用法  
+一。 一次绑定多个事件：
+``` 
+$(function(){
+    $("#bn").bind("mouseover mouseout",function(){
+        $(this).toggleClass("over");
+    });   
+});
+```
+就相当于
+``` 
+$(function(){
+    $("#bn").bind("mouseover",function(){
+        $(this).toggleClass("over");
+    }).bind("mouseout",function(){
+        $(this).toggleClass("over");
+    });
+});
+```
+但上面的代码更简洁。符合jQuery的"write less,do more"的理念。  
+二。 添加事件的命名空间，便于管理
+``` 
+$(function(){
+    $("div").bind("click.plugin",function(){
+        $("body").append("<p>click事件</p>");
+    });
+    $("div").bind("mouseover.plugin",function(){
+        $("body").append("<p>mouseover事件</p>");
+    });
+    $("div").bind("dblclick",function(){
+        $("body").append("<p>dblclick事件</p>");
+    });
+    $("button").click(function(){
+        $("div").unbind(".plugin");
+    });
+});
+```
+最后的接触plugin命名空间的事件就相当于
+``` 
+$("div").unbind("click").unbind("mouseover");
+```
+如果在不同命名空间上绑定了相同的事件，比如绑定了click和click.plugin只想解除没有命名空间上的click，可以用unbind("click!");
+如果想触发所有的click，则unbind("click");  
+#### jQuery中的动画
+一。show()和hide()  
+调用hide()会有两个行为，首先记住display的值("block"，"inline"或除了none之外的其他值)，
+然后再把display设为none，调用show()时会重新设置为hide记住的值。  
+show()和hide()可加入参数"slow"(600),"fast"(200),"normal"(400),或者传入数字，单位是ms。  
+如果不传入参数会立即显示或隐藏，如果传入速度，会把高度、宽度、不透明度同时过渡。  
+二。fadeIn()和fadeOut()淡入和淡出  
+同show和hide，但只改变透明度。  
+三。slideUp()和slideDown()  
+同上，但只改变高度。
+四。animate()自定义动画  
+animate(params,speed,callback);  
+简单动画：$(this).animate({left:"500px"},300);  
+累加累减动画：$(this).animate({left,"+=500px"},300);  
+多重动画：$(this).animate({left:"500px",height,"200px},300);  
+按顺序执行动画：$(this).animate({left:"500px",300},300).animate({height:"200px"},300);  
+如改变css样式，如果在动画下面写由于动画是事件驱动的，会css先执行，确保动画完成之后执行方法是写在回调函数里面。
+五。stop([clearQueue],[gotoEnd])停止元素的动画。  
+两个参数都是boolean值，如果不设置参数。则停止当前动画。第一个参数表示清空未执行完的动画队列，第二个参数表示直接将正在执行的动画跳转到末状态。
+比如
+```
+$("#panel").hover(function(){
+    $(this).stop().animate({height:"150"},200);
+},function(){
+    $(this).stop().animate({height:"22",width:"60"},300);
+});
+```
+就可以解决问题，但是如果遇到组合动画
+```
+$("#panel").hover(function(){
+    $(this).stop().animate({height:"150"},200)  //如果此时光标触发了光标移出事件将执行下面的动画，而非光标移除中的动画
+    .animate({width:"300"},300);
+},function(){
+    $(this).stop().animate({height:"22",width:"60"},300)
+    .animate({width:"60"},300);
+});
+```
+此时只用stop()只会停止执行正在执行的动画而继续执行下一个动画。使用stop(true)可以清除当前元素尚未执行的动画。
+stop(false,true)会让当前动画停止执行直达末状态。如果使用stop(ture,true)会停止执行清空动画队列，直达**正在执行的动画**的末状态。
+遗憾的是jQuery中没有直达未执行的动画队列末状态的方法。  
+判断是否处于动画状态：$().is(":animated")  
+六。延迟动画：在animate()方法后面加上delay(1000)  
+七。其他动画方法  
+toggle()方法切换显示和隐藏；slideToggle()方法用高度效果切换显示和隐藏。fadeTo()方法用透明度调整至指定的值如fadeTo(600,0.2)。
+fadeToggle()方法用透明度调整可见性。
+用animate()方法可以代替所有动画方法。  
+如代替$("p").show(400)  
+``` 
+$("p").animate({height:"show",width:"show",opacity:"show"},400);
+```
+如代替$("p").fadeIn(400);
+```
+$("p").animate({opacity:"show"},400);
+```
+如代替$("p").slideDown(400);
+```
+$("p").animate({height:"show"},400);
+```
+如代替$("p").fadeTo(400,0.6);
+```
+$("p").animate({opacity:"0.6"},400);
+```
