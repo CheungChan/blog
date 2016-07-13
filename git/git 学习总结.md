@@ -11,17 +11,18 @@ ssh-keygen -p -f id_rsa
 新密码
 确认新密码
 ## git压缩多次提交为一次提交
+**切记已经推送到远程版本不可再使用。**
 比如压缩最后4次提交为一次提交   
 ```
 git rebase -i HEAD~4
 ```
 该命令执行后，会弹出vim的编辑窗口，4次提交的信息会倒序排列，
 最上面的是第四次提交，最下面的是最近一次提交。  
-![image](image/1.png)
+![image](image/1.png)  
 我们需要修改第2-4行的第一个单词pick为squash，
 这个意义为将最后三次的提交压缩到倒数第四次的提交，
 效果就是我们在pick所在的提交就已经做了4次动作，但是看起来就是一次而已：  
-![image](image/2.png)
+![image](image/2.png)  
 然后我们保存退出，git会一个一个压缩提交历史，如果有冲突，需要修改，修改的时候要注意，
 保留最新的历史，不然我们的修改就丢弃了。修改以后要记得敲下面的命令：
 ```
@@ -33,11 +34,52 @@ git rebase --continue
 git rebase --abort
 ```
 如果所有冲突都已经解决了，会出现如下的编辑窗口：  
-![image](image/3.png)
+![image](image/3.png)  
 这个时候我们需要修改一下合并后的commit的描述信息，我们将其描述为helloworld吧：  
-![image](image/4.png)
+![image](image/4.png)  
 如果想压缩第一三四次的提交，不压缩第二次的提交，可以移动一下提交顺序。
+## 改变两次提交先后顺序
+**切记已经推送到远程版本不可再使用。**
+方法同上，使用交互式衍合操作，只需要改动图片中的顺序
+![image](image/1.png)  
+## 拆分提交
+**切记已经推送到远程版本不可再使用。**
+拆分一个提交会撤消这个提交，然后多次地部分地暂存与提交直到完成你所需次数的提交。 
+例如，假设想要拆分三次提交的中间那次提交。 想要将它拆分为两次提交：
+第一个 “updated README formatting”，第二个 “added blame” 来代替原来的 
+“updated README formatting and added blame”。 可以通过修改 rebase -i 
+的脚本来做到这点，将要拆分的提交的指令修改为 “edit”：
+```
+pick f7f3f6d changed my name a bit
+edit 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+```
+然后，当脚本将你进入到命令行时，重置那个提交，拿到被重置的修改，从中创建几次提交。 
+当保存并退出编辑器时，Git 带你到列表中第一个提交的父提交，
+应用第一个提交（f7f3f6d），应用第二个提交（310154e），
+然后让你进入命令行。 那里，可以通过 git reset HEAD^ 做一次针对那个提交的混合重置，
+实际上将会撤消那次提交并将修改的文件未暂存。 现在可以暂存并提交文件直到有几个提交，
+然后当完成时运行 git rebase --continue：
+```
+$ git reset HEAD^
+$ git add README
+$ git commit -m 'updated README formatting'
+$ git add lib/simplegit.rb
+$ git commit -m 'added blame'
+$ git rebase --continue
+```
+Git 在脚本中应用最后一次提交（a5f4a0d），历史记录看起来像这样：
+```
+$ git log -4 --pretty=format:"%h %s"
+1c002dd added cat-file
+9b29157 added blame
+35cfb2b updated README formatting
+f3cc40e changed my name a bit
+```
+再一次，这些改动了所有在列表中的提交的 SHA-1 校验和，
+所以要确保列表中的提交还没有推送到共享仓库中。
 ## 修改最后一次提交
+**切记已经推送到远程版本不可再使用。**
 如果你已经完成提交，又因为之前提交时忘记添加一个新创建的文件，想通过添加或修改文件来更改提交的快照，
 也可以通过类似的操作来完成。 通过修改文件然后运行 git add 或 git rm 一个已追踪的文件，
 随后运行 git commit --amend 拿走当前的暂存区域并使其做为新提交的快照。
@@ -53,7 +95,7 @@ git stash
 ```
 git stash list
 ```
-![image](image/5.png)
+![image](image/5.png)  
 如果你想要解除stash并且恢复未提交的变更，你可以进行apply stash:  
 ```
 git stash apply
@@ -72,6 +114,38 @@ git stash drop
 git stash pop
 ```
 就相当于先执行git stash apply 再执行 git stash drop  
+##  暂存文件的部分改动
+一般情况下，创建一个基于特性的提交是比较好的做法
+，意思是每次提交都必须代表一个新特性的产生或者是一个bug的修复。
+如果你修复了两个bug，或是添加了多个新特性但是却没有提交这些变化会怎样呢？
+在这种情况下，你可以把这些变化放在一次提交中。但更好的方法是把文件暂存(Stage)然后分别提交。
+例如你对一个文件进行了多次修改并且想把他们分别提交。这种情况下，你可以在 add 命令中加上 -p 参数
+```
+git add -p [file_name]
+```
+我们来演示一下在 file_name 文件中添加了3行文字，但只想提交第一行和第三行。先看一下 git diff 显示的结果：    
+![image](image/8.png)  
+然后再看看在 add 命令中添加 -p 参数是怎样的？  
+![image](image/9.png)  
+看上去，Git 假定所有的改变都是针对同一件事情的，因此它把这些都放在了一个块里。你有如下几个选项：
+
+- 输入 y 来暂存该块
+
+- 输入 n 不暂存
+
+- 输入 e 手工编辑该块
+
+- 输入 d 退出或者转到下一个文件
+
+- 输入 s 来分割该块  
+
+
+在我们这个例子中，最终是希望分割成更小的部分，然后有选择的添加或者忽略其中一部分。  
+
+![image](image/10.png)  
+正如你所看到的，我们添加了第一行和第三行而忽略了第二行。之后你可以查看仓库状态之后并进行提交。  
+![image](image/11.png)  
+
 ## Cherry Pick
 我把最优雅的Git命令留到了最后。cherry-pick命令是我目前为止最喜欢的git命令，
 既是因为它的字面意思，也因为它的功能。
@@ -83,7 +157,7 @@ git stash pop
 
 让我们来设想一个用得着它的场景。我现在有两个分支，并且我想cherry-pick b20fd14:
 Cleaned junk 这个commit到另一个上面去。  
-![image](image/6.png)
+![image](image/6.png)  
 我切换到想被cherry-pick应用到的这个分支上去，然后运行了如下命令：
 ```
 git cherry-pick [commit_hash]
