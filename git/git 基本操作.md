@@ -147,7 +147,7 @@ git pull origin feature-D
 ```
 #git diff
 ```
-git diff <$id1> <$id2>   # 比较两次提交之间的差异
+git diff <$id1> <$id2>   # 比较两次提交之间的差异  是<$id2>相对于<$id1>改变了什么
 git diff <branch1>..<branch2> # 在两个分支之间比较 
 git diff --staged   # 比较暂存区和版本库差异
 ```
