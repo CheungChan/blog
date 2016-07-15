@@ -163,3 +163,82 @@ Cleaned junk 这个commit到另一个上面去。
 git cherry-pick [commit_hash]
 ```
 ![image](image/7.png)
+## git操作远程分支
+### 查看远程分支
+```
+$git branch -r
+```
+### 查看所有远程和本地分支
+```
+$git branch -a
+```
+### 删除远程分支和tag
+在Git v1.7.0 之后，可以使用这种语法删除远程分支：
+```
+$ git push origin --delete <branchName>
+```
+删除tag这么用：
+```
+git push origin --delete tag <tagname>
+```
+否则，可以使用这种语法，推送一个空分支到远程分支，其实就相当于删除远程分支：
+```
+git push origin :<branchName>
+```
+这是删除tag的方法，推送一个空tag到远程tag：
+```
+git tag -d <tagname>
+git push origin :refs/tags/<tagname>
+```
+两种语法作用完全相同。
+### 删除不存在对应远程分支的本地分支
+
+假设这样一种情况：  
+
+我创建了本地分支b1并pull到远程分支 origin/b1；  
+其他人在本地使用fetch或pull创建了本地的b1分支；  
+我删除了 origin/b1 远程分支；  
+其他人再次执行fetch或者pull并不会删除这个他们本地的 b1 分支，运行 git branch -a 也不能看出这个branch被删除了，如何处理？  
+使用下面的代码查看b1的状态：  
+```
+$ git remote show origin
+* remote origin
+  Fetch URL: git@github.com:xxx/xxx.git
+  Push  URL: git@github.com:xxx/xxx.git
+  HEAD branch: master
+  Remote branches:
+    master                 tracked
+    refs/remotes/origin/b1 stale (use 'git remote prune' to remove)
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
+```
+这时候能够看到b1是stale的，使用 git remote prune origin 可以将其从本地版本库中去除。  
+更简单的方法是使用这个命令，它在fetch之后删除掉没有与远程分支对应的本地分支：  
+```
+git fetch -p
+```
+重命名本地分支：
+```
+git branch -m devel develop
+```
+推送本地分支：
+```
+$ git push origin develop
+Counting objects: 92, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (48/48), done.
+Writing objects: 100% (58/58), 1.38 MiB, done.
+Total 58 (delta 34), reused 12 (delta 5)
+To git@github.com:zrong/quick-cocos2d-x.git
+ * [new branch]      develop -> develop
+ ```
+ 把本地tag推送到远程
+```
+git push --tags
+```
+获取远程tag
+```
+git fetch origin tag <tagname>
+```
