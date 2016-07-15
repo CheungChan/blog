@@ -543,3 +543,22 @@ function switchSkin(skinName){
 }
 ```
 ## jQuery与Ajax的应用
+#### js中的ajax方法
+```
+if(window.ActiveObject){
+    xmlHttpReg = new Active XObject("Microsoft.XMLHTTP");
+}else if(window.XMLHttpRequest){
+    xmlHttpReg = new XMLHttpRequest();
+}
+xmlHttpReg.open("GET","test.php",true);
+xmlHttpReg.onreadystatuschange = RequestCallBack;//设置回调函数
+xmlHttpReg.send(null);//因为使用get提交，所有可以使用null作为参数调用
+function RequestCallBack(){
+    if(xmllHttpReg.readyState == 4){
+        if(xmlHttpReg.status == 200){
+            document.getElementById("resText").innerHTML = xmlHttpReg.responseText;
+        }
+    }
+}
+```
+#### jQuery中的Ajax
