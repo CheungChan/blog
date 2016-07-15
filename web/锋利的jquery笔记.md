@@ -489,4 +489,56 @@ $("tbody>tr").click(function(){
     .find(":checkbox").attr("checked",!hasSelected);
 }
 ```
-表格筛选
+#### 其他应用
+点击按钮改变字体大小  
+```
+$("span").click(function(){
+    var thisEle = $("#para").css("font-size");
+    var textFontSize = parseInt(thisEle,10);
+    var unit = thisEle.slice(-2);
+    var cName = $(this).attr("class");
+    if(cNmae == "bigger"){
+        textFontSize += 2;
+    }else{
+        textFontSize -=2;
+    };
+    $("#para").css("font-size";textFontSize + unit);
+});
+```
+选项卡
+```
+var $div_li = $("div.tab_menu ul li");
+$div_li.click(function(){
+    $(this).addClass("selected")
+        .siblings().removeClass("selected");
+    var index = $div_li.index(this);
+
+    $(div.tab_box > div")
+        .eq(index).show()
+        .siblings().hide();
+}).hover(function(){
+    $(this).addClass("hover");
+},function(){
+    $(this).removeClass("hover");
+});
+网页换肤
+```
+//要引入jQuery.cookie.js"
+$(function(){
+    var $li = $("#skin li");
+    $li.click(function(){
+        switchSkin(this.id);
+    });
+    var cookie_skin = $.cookie("myCssSkin");
+    if(cookie_skin){
+        switchSkin(this.id);
+    }
+});
+function switchSkin(skinName){
+    $("#" + skinName).addClass("selected")
+        .siblings().removeClass("selected");
+    $("#cssfile").attr("href","css/" + skinName + ".css");
+    $.cookie("myCssSkin",skinName,{path:"/",expires:10});
+}
+```
+## jQuery与Ajax的应用
