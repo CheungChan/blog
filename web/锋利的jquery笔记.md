@@ -351,3 +351,142 @@ $("p").animate({height:"show"},400);
 ```
 $("p").animate({opacity:"0.6"},400);
 ```
+## jQuery对表单、表格的操作及更多应用
+#### 表单应用
+单行文本框  
+比如想为文本框focus时和blur时添加不同的css，可以用css伪类解决。
+```
+input:focus , textarea:focus{
+    border:1px solid #f00;
+    background:#fcc;
+}
+```
+但是IE６不支持除了超链接元素的:hover之外的伪类，可以用jQuery来弥补不足
+```
+.focus{
+    border:1px solid #f00;
+    background:#fcc;
+}
+```
+然后用jQuery添加事件
+```
+$(function(){
+    $(":input").focus(function(){
+        $(this).addClass("focus");
+    }).blur(function(){
+        $(this).removeClass("focus");
+    });
+});
+```
+多行文本框使用  
+点击放大按钮时增加多行文本框高度，省略部分代码
+```
+$comment.animate({height : "+=50"},400);
+```
+滚动条应用  
+```
+if(!$comment.is(":animated")){
+    $comment.animate({scrollTop : "+=50"},400);
+}
+```
+下拉框的应用  
+![](image/1.png)
+将左边的选项移动到右边  
+```
+$("#add").click(function(){
+    $("#select1 option:selected").appendTo("#select2");
+});
+```
+点击左边的全部移动到右边
+```
+$("#add").click(function(){
+    $("#select1 option").appendTo("#select2");
+});
+```
+双击被选中的选项移动
+```
+$("#select1".dblclick(function(){
+    $("option:selected",this).appendTo($("#select2");
+});
+```
+表单验证  
+html代码省略
+```
+$("form:input").blur(function(){
+    var $parent = $(this).parent();
+    $parent.find(".formtips").remove();//删除以前的提醒元素
+    //验证用户名
+    var minUserNameLen = 6;
+    if($(this).is("#username")){
+        if(this.value=="" || this.value.length < minUserNameLen){
+            var errorMsg = "请输入至少" + minUserNameLen + "位的用户名";
+            $parent.append("<span class='formtips onError'>" + errorMsg+"</span>");
+        }else{
+            var okMsg = "输入正确";
+            $parent.append("<span class='formtips onSuccess'>" + okMsg + "</span>");
+        }
+    }
+    //验证邮箱
+    var regex = /.+@.+\.[a-zA-Z]{2,4}$/
+    if($(this).is("#email")){
+        if(this.value="" || (this.value != "" && !regex.test(this.value))){
+            var errorMsg = "请输入正确的Email地址";
+            $parent.append("<span class='formtips onError'>" + errorMsg + "</span>");
+        }else{
+            var okMsg = "输入正确";
+            $parent.append("<span class='formtips onSuccess'>" + okMsg + "</span>");
+        }
+    }
+}).keyup(function(){
+    $(this).triggerHandler("blur");
+}).focus(function(){
+    $(this).triggerHandler("blur");
+});
+$("#send").click(function(){
+    $("form .required:input").trigger("blur");
+    if($("form .onError").length){
+        return false;
+    }
+    alert("注册成功，密码已发送到你的邮箱，请查收。");
+});
+```
+#### 表格应用
+普通隔行变色：
+```
+.even{background:#FFF38F;}
+.odd{background:#FFFFEE;}
+```
+某一行变色:
+```
+$("tr:contains('王五')").addClass("selected");
+```
+单选行变色
+```
+$("tbody>tr").click(function(){
+    $(this).addClass("selected")
+    .siblings().removeClass("selected")
+    .end()  //如果不用end，当前元素会是其他元素
+    .find(":radio").attr("checked",true);
+});
+```
+复选框控制表格行变色
+```
+$("tbody>tr").click(function(){
+    if($(this).hasClass(".selected")){
+        $(this).removeClass("selected")
+        .find(":checkbox").attr("checked",false);
+    }else{
+        $(this).addClass(".selected")
+        .find(":checkbox").attr("checked",true);
+    }
+});
+```
+理论上也可以用**三元运算符**，但是我感觉酱不清晰。
+```
+$("tbody>tr").click(function(){
+    var hasSelected = $(this).hasClass("selected");
+    $(this)[hasSelected?"removeClass":"addClass"]("selected")
+    .find(":checkbox").attr("checked",!hasSelected);
+}
+```
+表格筛选
