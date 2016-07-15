@@ -521,6 +521,7 @@ $div_li.click(function(){
 },function(){
     $(this).removeClass("hover");
 });
+```
 网页换肤
 ```
 //要引入jQuery.cookie.js"
