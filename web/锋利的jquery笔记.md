@@ -593,3 +593,203 @@ function(data,textStatus){
     //textStatus :　请求状态：success error  notmodified timeout4种
 }
 ```
+几种不同的返回数据的格式  
+HTML格式：优点工作量小，缺点可重用性小
+``` 
+$(function(){
+    $("#send").click(function(){
+        $.get("get1.php",{
+            username:$("#username").val(),
+            content:$("#content").val(),
+        },function(data,dataStatus){
+            $("resTest").html(data);//将返回的数据添加到页面上
+        });
+    });
+});
+```
+XML格式：优点可重用性高，各种开放平台兼容性高，缺点费流量，解析操作速度慢
+```
+$(function(){
+    $("#send").click(function(){
+        $.get("get2.php",{
+            username:$("#username").val(),
+            content:$("#content").val(),
+        },function(data,dataStatus){
+            var username = $(data).find("comment").attr("username");
+            var content = $(data).find("comment content").text();
+            var txtHtml = "<div class='comment'><h6>" +
+            username + ":</h6><p class='para'>" +
+            content + "</p></div>";
+            $("#resText").html(txtHtml);//将返回的数据添加到页面上
+        });
+    });
+});
+```
+Json格式：优点可重用性高，兼容性强，简洁，省流量。
+```
+$(function(){
+    $("#send").click(function(){
+        $.get("get2.php",{
+            username:$("#username").val(),
+            content:$("#content").val(),
+        },function(data,dataStatus){
+            var username = data.username;
+            var content = data.content;
+            var txtHtml = "<div class='comment'><h6>" +
+            username + ":</h6><p class='para'>" +
+            content + "</p></div>";
+            $("#resText").html(txtHtml);//将返回的数据添加到页面上
+        },"json"); //第四个参数json代表期望返回的数据格式为json
+    });
+});
+```
+json格式要求返回的数据格式特别严格，比如{"username":"张三"}而不能是{username:张三}  
+##### load()方法。  
+``` 
+$(function(){
+    $("#send").click(function(){
+        $.load("get1.php",{
+            username:$("#username").val(),
+            content:$("#content").val(),
+        },function(data,dataStatus){
+            $("resTest").append(data);//将返回的数据添加到页面上
+        });
+    });
+});
+```
+与get方法用法一样。
+##### $.getScript()方法和$.getJson()方法。
+$.getScript()方法
+```
+$(function(){
+    $("#send").click(function(){
+        $.getScript("test.js");
+    });
+});
+```
+就相当于
+```
+$(document.createElement("script)).attr("src","test.js").appendTo("head");
+```
+或者
+```
+$("<script type='text/javascript' src='test.js' />").appendTo("head");
+```
+也可以使用回调函数，例如点击后载入jquery.color.js,成功后给元素绑定颜色变化动画。
+```
+$(function(){
+    $.getScript("jquery.color.js",function(){
+        $("#go").click(function(){
+            $(;".block").animate({backgroundColor:"pink"},1000)
+            .animate({"backgroundColor:"blue"},1000)
+        });
+    });
+});
+```
+$.getJson()方法，大体与getScript方法相同
+```
+$(function(){
+    $("#send").click(function(){
+        $.getJson("test.json",function(data){
+            $("resText").empty();
+            var html = "";
+            $.each(data,function(commentIndex,comment){
+                html +="<div class='comment'><h6>"
+                + comment['username'] + "</h6><p class='para'>"
+                + comment["content"] + "</p></div";
+            });
+            $("#resText").html(html);
+        });
+    });
+})
+```
+$.each()函数是jQuery的全局函数，不操作jQuery对象。而是以数组或者对象作为第一个参数，以一个回调函数作为
+第二个参数。回调函数拥有两个参数：一个为队形的成员或者数组的索引，第二个为对应变量或者内容。  
+我们还可以使用jsonp形式的回调函数来加载其他网站的数据。例如
+```
+$(function(){
+    $("#send").click(function(){
+        $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?tags=car&
+        tagname=any&format=json&jsoncallback=?",
+        function(data){
+            $.each(data.items,function(i,item){
+                $("<img class='para' />").attr("src",item.media.m)
+                .appendTo("#resText");
+                if(i == 3){
+                    return false;  // 只遍历前四张图片
+                }
+            });
+        });
+    });
+});
+```
+##### $.ajax()方法
+$.ajax(options)方法只有一个参数。以key/value形式存在，所有参数都是可选的。
+参数名|类型|描述
+---|---|---
+url|String|	(默认: 当前页地址) 发送请求的地址。
+type|	String|	(默认: "GET") 请求方式 ("POST" 或 "GET")， 默认为 "GET"。注意：其它 HTTP 请求方法，如 PUT 和 DELETE 也可以使用，但仅部分浏览器支持。
+timeout|	Number	|设置请求超时时间（毫秒）。此设置将覆盖全局设置。
+async|	Boolean|	(默认: true) 默认设置下，所有请求均为异步请求。如果需要发送同步请求，请将此选项设置为 false。注意，同步请求将锁住浏览器，用户其它操作必须等待请求完成才可以执行。
+beforeSend|	Function|	发送请求前可修改 XMLHttpRequest 对象的函数，如添加自定义 HTTP 头。XMLHttpRequest 对象是唯一的参数.function (XMLHttpRequest) {this; // the options for this ajax request}
+cache|	Boolean|	(默认: true) jQuery 1.2 新功能，设置为 false 将不会从浏览器缓存中加载请求信息。
+complete|	Function|	请求完成后回调函数 (请求成功或失败时均调用)。参数： XMLHttpRequest 对象，成功信息字符串。function (XMLHttpRequest, textStatus) {this; // the options for this ajax request}
+contentType|String|	(默认: "application/x-www-form-urlencoded") 发送信息至服务器时内容编码类型。默认值适合大多数应用场合。
+data|	Object,String|	发送到服务器的数据。将自动转换为请求字符串格式。GET 请求中将附加在 URL 后。查看 processData 选项说明以禁止此自动转换。必须为 Key/Value 格式。如果为数组，jQuery 将自动为不同值对应同一个名称。如 {foo:["bar1", "bar2"]} 转换为 '&foo=bar1&foo=bar2'。
+dataType|	String|	预期服务器返回的数据类型。如果不指定，jQuery 将自动根据 HTTP 包 MIME 信息返回 responseXML 或 responseText，并作为回调函数参数传递，可用值:"xml": 返回 XML 文档，可用 jQuery 处理。"html": 返回纯文本 HTML 信息；包含 script 元素。"script": 返回纯文本 JavaScript 代码。不会自动缓存结果。"json": 返回 JSON 数据 。"jsonp": JSONP 格式。使用 JSONP 形式调用函数时，如 "myurl?callback=?" jQuery 将自动替换 ? 为正确的函数名，以执行回调函数。
+error|	Function|	(默认: 自动判断 (xml 或 html)) 请求失败时将调用此方法。这个方法有三个参数：XMLHttpRequest 对象，错误信息，（可能）捕获的错误对象。function (XMLHttpRequest, textStatus, errorThrown) {// 通常情况下textStatus和errorThown只有其中一个有值 this; // the options for this ajax request}
+global|	Boolean	(默认: true) |是否触发全局 AJAX 事件。设置为 false 将不会触发全局 AJAX 事件，如 ajaxStart 或 ajaxStop 。可用于控制不同的Ajax事件
+ifModified|	Boolean	(默认: false) |仅在服务器数据改变时获取新数据。使用 HTTP 包 Last-Modified 头信息判断。
+processData	|Boolean	(默认: true)|默认情况下，发送的数据将被转换为对象(技术上讲并非字符串) 以配合默认内容类型 "application/x-www-form-urlencoded"。如果要发送 DOM 树信息或其它不希望转换的信息，请设置为 false。
+success	|Function	|请求成功后回调函数。这个方法有两个参数：服务器返回数据，返回状态function (data, textStatus) {// data could be xmlDoc, jsonObj, html, text, etc...this; // the options for this ajax request}
+#### 序列化元素
+##### serialize()方法
+会将DOM元素序列为字符串
+$("#form").serialize()相当于
+```
+{
+    username:$("#username").val(),
+    content:$("#content").val(),
+}
+```
+就相当于字符串格式
+```
+"username="+encodeURIComponent($("#username").val())
++"&content" + encodeURIComponent($("#content").val())
+```
+不但可以表单选取，选择器也可以
+$(":checkbox,:radio").serialize()会将选中的单选框和复选框序列化。
+##### serializeArray()方法。
+不返回字符串，而是返回json数据。
+##### $.param()方法，将数组或者对象按照key/value就行序列化。
+```
+var obj = {a:1,b:2,c:3};
+var k = $.param(obj);
+alert(k); // 输出a=1&b=2&c=3;
+```
+#### jQuery中的ajax全局事件
+这些方法用于注册事件处理器，用来处理页面上的任何 Ajax 请求，当某些事件触发后，这些事件处理器被调用。如何 jQuery.ajaxSetup() 中的 global 属性被设置为 true （这也是默认设置），那么，每个 Ajax 请求都会触发全局事件。注意：全局事件绝对不会被跨域（cross-domain）脚本或 JSONP 请求触发，和 global 属性的设置毫无关系。
+```
+.ajaxComplete()
+```
+当Ajax请求完成后注册一个回调函数。这是一个 AjaxEvent。
+```
+.ajaxError()
+```
+Ajax请求出错时注册一个回调处理函数，这是一个 Ajax Event。
+```
+.ajaxSend()
+```
+在Ajax请求发送之前绑定一个要执行的函数，这是一个 Ajax Event.
+```
+.ajaxStart()
+```
+在AJAX 请求刚开始时执行一个处理函数。 这是一个 Ajax Event.
+```
+.ajaxStop()
+```
+在AJAX 请求完成时执行一个处理函数。 这是一个 Ajax Event。
+```
+.ajaxSuccess()
+```
+绑定一个函数当 Ajax 请求成功完成时执行。 这是一个Ajax Event.
