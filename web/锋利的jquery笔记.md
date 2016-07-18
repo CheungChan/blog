@@ -562,3 +562,34 @@ function RequestCallBack(){
 }
 ```
 #### jQuery中的Ajax
+jQuery中的ajax方法有三层，最底层是$.ajax()方法，第二层是load();get();post()方法，第三层是$.getScript();和$.getJSON()方法。
+##### load方法  
+```
+load(url,[,data][,callback])
+```
+url为请求的地址，data为传送至服务器的数据，callback无论成功还是失败都会被调用。相当于$.ajax()的complete回掉函数。  
+url的格式为url selector，如
+```
+$("#resText").load("test.html .para"); //只加载test.html中class为para的元素
+```
+回掉参数,load()方法的回掉函数有三个参数，分别是请求返回的内容，请求状态和XmlHttpRequest对象。
+```
+$("#resText").load("test.html",function(responseText,textStatus,XMLHttpRequest){
+    //responseText:请求返回的内容
+    //textStatus; 请求状态：success  error  notmodified  timeout 4种
+    //XMLHttpRequest; XML对象
+});
+```
+##### get方法
+$.get()和$.post()方法都是全局函数  
+```
+$.get(url,[,data][,callback][,type]);
+```
+get方法的返回值止呕返回状态是success时才会被调用,type是服务端返回内容的格式，包括xml,html,script,json,text和_default  
+回掉函数有两个参数
+```
+function(data,textStatus){
+    //data : 返回的内容，可以是xml文档，json文件，html片段等
+    //textStatus :　请求状态：success error  notmodified timeout4种
+}
+```
