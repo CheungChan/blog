@@ -179,11 +179,11 @@ $(function(){
 传统的window.onload方法只能有一个生效，如果写多个只有最后一个生效，而jQuery的$(document).ready()方法可以写多个，效果是自动追加到上一个上面。
 ``` 
 $(document).ready(function(){//编写代码  }); 
-``` 
+```
 也可以写成
 ``` 
 $(function(){}); 
-``` 
+```
 而$(document)也可以简写为$(),当$()不带参数时默认参数是ducument.所有也可以写成
 ``` 
 $().ready(function(){}); 
@@ -199,7 +199,7 @@ toggle(fn1,fn2,fn3....)用来模拟连续点击事件，第一次点击时触发
 $("span").bind("click",function(event){ // dosomething
 event.stopPropagation();//阻止事件冒泡
 }); 
-```  
+```
 比如提交按钮会有点击之后提交的默认行为，可以通过event.preventDefault()来阻止默认行为。也可以直接写return false;  
 从body到div再到span成为事件捕获，jQuery不支持，要用只能用js，但并非所有浏览器都支持事件捕获  
 event.target是事件出发的元素。event.relatedTarget相关元素。jQuery中的这个属性封装了IE的不标准。
@@ -218,7 +218,7 @@ $().bind("click",myFun1=function(){})
 移除时
 ``` 
 $().unbind("click",myFun1); 
-``` 
+```
 来移除。  
 如果只想绑定触发一次立即移除，可以直接用one("click",fn)来写。  
 delegate() 方法为指定的元素（属于被选元素的子元素）添加一个或多个事件处理程序，并规定当这些事件发生时运行的函数。
@@ -724,24 +724,122 @@ $(function(){
 });
 ```
 ##### $.ajax()方法
-$.ajax(options)方法只有一个参数。以key/value形式存在，所有参数都是可选的。
-参数名|类型|描述
----|---|---
-url|String|	(默认: 当前页地址) 发送请求的地址。
-type|	String|	(默认: "GET") 请求方式 ("POST" 或 "GET")， 默认为 "GET"。注意：其它 HTTP 请求方法，如 PUT 和 DELETE 也可以使用，但仅部分浏览器支持。
-timeout|	Number	|设置请求超时时间（毫秒）。此设置将覆盖全局设置。
-async|	Boolean|	(默认: true) 默认设置下，所有请求均为异步请求。如果需要发送同步请求，请将此选项设置为 false。注意，同步请求将锁住浏览器，用户其它操作必须等待请求完成才可以执行。
-beforeSend|	Function|	发送请求前可修改 XMLHttpRequest 对象的函数，如添加自定义 HTTP 头。XMLHttpRequest 对象是唯一的参数.function (XMLHttpRequest) {this; // the options for this ajax request}
-cache|	Boolean|	(默认: true) jQuery 1.2 新功能，设置为 false 将不会从浏览器缓存中加载请求信息。
-complete|	Function|	请求完成后回调函数 (请求成功或失败时均调用)。参数： XMLHttpRequest 对象，成功信息字符串。function (XMLHttpRequest, textStatus) {this; // the options for this ajax request}
-contentType|String|	(默认: "application/x-www-form-urlencoded") 发送信息至服务器时内容编码类型。默认值适合大多数应用场合。
-data|	Object,String|	发送到服务器的数据。将自动转换为请求字符串格式。GET 请求中将附加在 URL 后。查看 processData 选项说明以禁止此自动转换。必须为 Key/Value 格式。如果为数组，jQuery 将自动为不同值对应同一个名称。如 {foo:["bar1", "bar2"]} 转换为 '&foo=bar1&foo=bar2'。
-dataType|	String|	预期服务器返回的数据类型。如果不指定，jQuery 将自动根据 HTTP 包 MIME 信息返回 responseXML 或 responseText，并作为回调函数参数传递，可用值:"xml": 返回 XML 文档，可用 jQuery 处理。"html": 返回纯文本 HTML 信息；包含 script 元素。"script": 返回纯文本 JavaScript 代码。不会自动缓存结果。"json": 返回 JSON 数据 。"jsonp": JSONP 格式。使用 JSONP 形式调用函数时，如 "myurl?callback=?" jQuery 将自动替换 ? 为正确的函数名，以执行回调函数。
-error|	Function|	(默认: 自动判断 (xml 或 html)) 请求失败时将调用此方法。这个方法有三个参数：XMLHttpRequest 对象，错误信息，（可能）捕获的错误对象。function (XMLHttpRequest, textStatus, errorThrown) {// 通常情况下textStatus和errorThown只有其中一个有值 this; // the options for this ajax request}
-global|	Boolean	(默认: true) |是否触发全局 AJAX 事件。设置为 false 将不会触发全局 AJAX 事件，如 ajaxStart 或 ajaxStop 。可用于控制不同的Ajax事件
-ifModified|	Boolean	(默认: false) |仅在服务器数据改变时获取新数据。使用 HTTP 包 Last-Modified 头信息判断。
-processData	|Boolean	(默认: true)|默认情况下，发送的数据将被转换为对象(技术上讲并非字符串) 以配合默认内容类型 "application/x-www-form-urlencoded"。如果要发送 DOM 树信息或其它不希望转换的信息，请设置为 false。
-success	|Function	|请求成功后回调函数。这个方法有两个参数：服务器返回数据，返回状态function (data, textStatus) {// data could be xmlDoc, jsonObj, html, text, etc...this; // the options for this ajax request}
+$.ajax(options)方法只有一个参数。以key/value形式存在，所有参数都是可选的。    
+<table>
+<tbody>
+<tr>
+<td width="90" valign="top">参数名</td>
+<td width="83" valign="top">类型</td>
+<td width="419" valign="top">描述</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>url </strong></td>
+<td width="83" valign="top">String</td>
+<td width="419" valign="top">(默认: 当前页地址) 发送请求的地址。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>type</strong></td>
+<td width="83" valign="top">String</td>
+<td width="419" valign="top">(默认: "GET") 请求方式 ("POST" 或 "GET")， 默认为 "GET"。注意：其它 HTTP 请求方法，如 PUT 和 DELETE 也可以使用，但仅部分浏览器支持。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>timeout</strong></td>
+<td width="83" valign="top">Number</td>
+<td width="419" valign="top">设置请求超时时间（毫秒）。此设置将覆盖全局设置。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>async </strong></td>
+<td width="83" valign="top">Boolean</td>
+<td width="419" valign="top">(默认: true) 默认设置下，所有请求均为异步请求。如果需要发送同步请求，请将此选项设置为 false。注意，同步请求将锁住浏览器，用户其它操作必须等待请求完成才可以执行。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>beforeSend </strong></td>
+<td width="83" valign="top">Function</td>
+<td width="419" valign="top">发送请求前可修改 XMLHttpRequest 对象的函数，如添加自定义 HTTP 头。XMLHttpRequest 对象是唯一的参数。<br />
+<pre><span style="color: #0000ff;">function</span> (XMLHttpRequest) {
+  <span style="color: #0000ff;">this</span>; <span style="color: #008000;">// the options for this ajax request</span>
+}</pre>
+</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>cache </strong></td>
+<td width="83" valign="top">Boolean</td>
+<td width="419" valign="top">(默认: true) jQuery 1.2 新功能，设置为 false 将不会从浏览器缓存中加载请求信息。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>complete </strong></td>
+<td width="83" valign="top">Function</td>
+<td width="419" valign="top">请求完成后回调函数 (请求成功或失败时均调用)。参数： XMLHttpRequest 对象，成功信息字符串。<br />
+<pre><span style="color: #0000ff;">function</span> (XMLHttpRequest, textStatus) {
+  <span style="color: #0000ff;">this</span>; <span style="color: #008000;">// the options for this ajax request</span>
+}</pre>
+</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>contentType </strong></td>
+<td width="83" valign="top">String</td>
+<td width="419" valign="top">(默认: "application/x-www-form-urlencoded") 发送信息至服务器时内容编码类型。默认值适合大多数应用场合。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>data </strong></td>
+<td width="83" valign="top">Object,<br />String</td>
+<td width="419" valign="top">发送到服务器的数据。将自动转换为请求字符串格式。GET 请求中将附加在 URL 后。查看 processData 选项说明以禁止此自动转换。必须为 Key/Value 格式。如果为数组，jQuery 将自动为不同值对应同一个名称。如 {foo:["bar1", "bar2"]} 转换为 '&amp;foo=bar1&amp;foo=bar2'。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>dataType </strong></td>
+<td width="83" valign="top">String</td>
+<td width="419" valign="top">
+<p>预期服务器返回的数据类型。如果不指定，jQuery 将自动根据 HTTP 包 MIME 信息返回 responseXML 或 responseText，并作为回调函数参数传递，可用值:
+<p>"xml": 返回 XML 文档，可用 jQuery 处理。
+<p>"html": 返回纯文本 HTML 信息；包含 script 元素。
+<p>"script": 返回纯文本 JavaScript 代码。不会自动缓存结果。
+<p>"json": 返回 JSON 数据 。
+<p>"jsonp": <a href="http://bob.pythonmac.org/archives/2005/12/05/remote-json-jsonp/">JSONP</a> 格式。使用 <a href="http://bob.pythonmac.org/archives/2005/12/05/remote-json-jsonp/">JSONP</a> 形式调用函数时，如 "myurl?callback=?" jQuery 将自动替换 ? 为正确的函数名，以执行回调函数。</p>
+</p>
+</p>
+</p>
+</p>
+</p>
+</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>error </strong></td>
+<td width="83" valign="top">Function</td>
+<td width="419" valign="top">(默认: 自动判断 (xml 或 html)) 请求失败时将调用此方法。这个方法有三个参数：XMLHttpRequest 对象，错误信息，（可能）捕获的错误对象。<br />
+<pre><span style="color: #0000ff;">function</span> (XMLHttpRequest, textStatus, errorThrown) {
+  <span style="color: #008000;">// 通常情况下textStatus和errorThown只有其中一个有值 </span>
+  <span style="color: #0000ff;">this</span>; <span style="color: #008000;">// the options for this ajax request</span>
+}</pre>
+</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>global </strong></td>
+<td width="83" valign="top">Boolean</td>
+<td width="419" valign="top">(默认: true) 是否触发全局 AJAX 事件。设置为 false 将不会触发全局 AJAX 事件，如 ajaxStart 或 ajaxStop 。可用于控制不同的Ajax事件</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>ifModified </strong></td>
+<td width="83" valign="top">Boolean</td>
+<td width="419" valign="top">(默认: false) 仅在服务器数据改变时获取新数据。使用 HTTP 包 Last-Modified 头信息判断。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>processData </strong></td>
+<td width="83" valign="top">Boolean</td>
+<td width="419" valign="top">(默认: true) 默认情况下，发送的数据将被转换为对象(技术上讲并非字符串) 以配合默认内容类型 "application/x-www-form-urlencoded"。如果要发送 DOM 树信息或其它不希望转换的信息，请设置为 false。</td>
+</tr>
+<tr>
+<td width="90" valign="top"><strong>success </strong></td>
+<td width="83" valign="top">Function</td>
+<td width="419" valign="top">请求成功后回调函数。这个方法有两个参数：服务器返回数据，返回状态<br />
+<pre><span style="color: #0000ff;">function</span> (data, textStatus) {
+  <span style="color: #008000;">// data could be xmlDoc, jsonObj, html, text, etc...</span>
+  <span style="color: #0000ff;">this</span>; <span style="color: #008000;">// the options for this ajax request</span>
+}</pre>
+</td>
+</tr>
+</tbody>
+</table>
+
 #### 序列化元素
 ##### serialize()方法
 会将DOM元素序列为字符串
