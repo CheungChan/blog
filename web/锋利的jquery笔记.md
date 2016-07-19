@@ -390,7 +390,7 @@ if(!$comment.is(":animated")){
 }
 ```
 下拉框的应用  
-![](image/1.png)
+<img src="image/1.png" width="400px"/>  
 将左边的选项移动到右边  
 ```
 $("#add").click(function(){
