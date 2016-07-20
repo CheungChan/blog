@@ -890,4 +890,29 @@ Ajax请求出错时注册一个回调处理函数，这是一个 Ajax Event。
 ```
 .ajaxSuccess()
 ```
-绑定一个函数当 Ajax 请求成功完成时执行。 这是一个Ajax Event.
+绑定一个函数当 Ajax 请求成功完成时执行。 这是一个Ajax Event.  
+举例：
+```
+<div id="loading">加载中...</div>
+$("#loading").ajaxStart(function(){
+    $(this).show();
+});
+$("#loading").ajaxStop(function(){
+    $(this).hide();
+});//也可以使用链式写法
+```
+如果想使某个ajax请求不受全局方法的影响，那么可以使用$.ajax(options)方法时，将参数global
+设置为false,
+```
+$.ajax({
+    url:"test.html",
+    global:false    //不触发ajax事件
+});
+```
+在jQuery1.5版本后，如果ajax请求不触及全局方法，那么可以设置：
+```
+$.ajaxPrefilter(function(){
+    options.global = true;
+});
+```
+#jQuery插件的使用和写法。
