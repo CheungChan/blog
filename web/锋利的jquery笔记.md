@@ -915,4 +915,101 @@ $.ajaxPrefilter(function(){
     options.global = true;
 });
 ```
-#jQuery插件的使用和写法。
+# jQuery插件的使用和写法。
+## Validation表单验证插件。
+### 快速上手
+1.引入jQuery库和Validation插件
+```
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="lib/jquery.validate.js" type="text/javascript"></script>
+```
+2.确定为哪个表单进行验证
+```
+$("#commentForm").validate();
+```
+3.针对不同的字段，进行验证规则编写，设置字段相应的属性。
+class="required"为必须填写，minlength="2"为最小长度为2.  
+class="required email"为必须填写的内容需要符合E-mail格式  
+class="url"为url格式验证
+### 不同的验证写法
+#### 方法一
+虽然设置class="required" minlength="2"符合w3c规范，但是一会儿写在class里，一会儿写在minlength上太乱，
+可以结合jquery.metadata.js使得设置都在class里。
+1.引入jquery.metadata.js
+```
+<script src="lib/jquery.metadata.js" type="text/javascript"></script>
+```
+2.改变调用的验证方法。
+将
+```
+$("#commentForm").validate();
+```
+改为
+```
+$("#commentForm").validate(meta:"validate");
+```
+3.将所有规则都写在class里。
+```
+<input name="username" class="{validate:{required:true,minlength:2}}"/>
+<input name="email" class="{validate:{required:true,email:true}}"/>
+<input name="url" class="{validate:{url:true}}"/>
+<input name="comment" class="{validate:{required:true}}"/>
+```
+#### 方法二
+虽然方法一把校验规则都写在了class里但是这些class与html本身无关。
+可以将html中的class完全移除。加入如下jQuery代码：
+```
+$(function(){
+    $("#commentForm").validate({
+        rules:{
+            username:{
+                required:true,
+                minlength:2
+            },
+            email:{
+                required:true,
+                email:true
+            },
+            url:"url",
+            comment:"required"
+        }
+    });
+});
+```
+步骤如下：
+1.在$("#commentForm").validate()方法中增加rules属性。  
+2.通过每个字段的name属性值来匹配验证规则。  
+3.定义验证规则，例如required:true,email:true,minlength:2等。
+### 验证信息
+#### 国际化
+validation插件默认是英文，如果改成中文，只需要引入validation提供的中文验证信息库即可。
+```
+<script src="lib/jquery.validate.messages_cn.js" type="text/javascript">
+```
+### 自定义验证信息
+#### 使用方法一
+```
+<input name="username" class="{validate:{required:true,minlength:2,
+messages:{required:'请输入电子邮件',minlength:'请至少输入两个字符'}}}"/>
+```
+#### 使用方法二
+```
+<input name="username"/>
+$(function(){
+    $("#commentForm").validate({
+        rules:{
+            username:{
+                required:true,
+                minlength:2
+            }
+        },
+        messages:{
+            username:{
+                required:"请输入电子邮件",
+                minlength:"请至少输入两个字符"
+            }
+        }
+    });
+});
+```
+### 自定义验证信息并美化
