@@ -29,8 +29,8 @@ $("div[title=test]")是div中title属性为test的元素,不为test的元素用!
 $("div:nth-child(even)")是每个div的索引值是偶数的元素  
 nth-child(odd)奇数 :nth-child(2)索引值为2的，:nth_child(3n)索引值是3的倍数的:nth-child(3n+1)索引值是3n+1的。 
 
-==:nth-child和eq()的区别::nth-child为每一个父元素匹配子元素。eq只匹配当前集合的一个元素。并且eq()索引从0开始，
-:nth-child索引从1开始==
+**nth-child和eq()的区别**:nth-child为每一个父元素匹配子元素。eq只匹配当前集合的一个元素。并且eq()索引从0开始，
+:nth-child索引从1开始
 
 $("div:first-child")匹配div中的第一个子元素  
 $("div:last-child")匹配div中的最后一个子元素
@@ -104,7 +104,7 @@ insertBefore()将所有匹配的内容插入到指定元素前面，与before()�
 remove()将匹配的元素删除（包括它的所有后代节点），并且会删除这些元素绑定的事件，可以加参数过滤节点，
 返回值是此节点的引用，后面可以用appendTo()再添加进去。  
 detach()方法，将匹配的元素删除（包括它的所有后代节点），不会删除这些元素绑定的事件。
-empty()清空节点里的东西。如果没有后代节点则清空节点的内容。 
+empty()清空节点里的东西。如果没有后代节点则清空节点的内容。  
 ④：复制节点  
 clone()方法复制节点不会复制绑定的事件，但可以传入参数true来使副本具有绑定的事件。
 如复制的节点不具有再复制的功能，传入true可以再复制。  
@@ -128,7 +128,7 @@ jQuery 1.6 中prop()用来获取匹配元素集中第一个元素的属性值，
 children()方法返回所有子元素不包括孙元素。
 ###### parent();parents("ul");closet("ul")的区别：
 parent()返回匹配元素的父元素（一个）  
-parents("ul")返回匹配元素的祖先元素，即父元素父元素的父元素。。。。。. 
+parents("ul")返回匹配元素的祖先元素，即父元素父元素的父元素。。。。。.   
 closet("ul")是逐层向上查找父元素，再查找父元素的父元素，返回第一个匹配的祖先元素。
 #### CSS-DOM操作
 $("p").css("color");获取值  
@@ -192,7 +192,7 @@ $().ready(function(){});
 bind(type,[,data],fn);第二个参数是作为event.data传递给事件对象的数据对象
 $().hover(function(){},funtion(){});相当于$().mouseenter(function(){}).mouseleave(function(){});  
 toggle(fn1,fn2,fn3....)用来模拟连续点击事件，第一次点击时触发fn1,第二次触发第二个函数，第三次触发第三个函数。。。。
-不加参数toggle()为切换show()和hide().
+不加参数toggle()为切换show()和hide().  
 ③：事件冒泡
 如果body div span都绑定了click事件，则点击span会先触发span的再触发div的再触发body的，逐层向上触发成为事件冒泡。停止事件冒泡方法
 ``` 
@@ -247,7 +247,7 @@ $("#bn").triggerHandler("focus");
 ```
 会触发focus事件，而不会获得焦点  
 ⑥：其他用法  
-一。 一次绑定多个事件：
+一. 一次绑定多个事件：
 ``` 
 $(function(){
     $("#bn").bind("mouseover mouseout",function(){
@@ -266,7 +266,7 @@ $(function(){
 });
 ```
 但上面的代码更简洁。符合jQuery的"write less,do more"的理念。  
-二。 添加事件的命名空间，便于管理
+二. 添加事件的命名空间，便于管理
 ``` 
 $(function(){
     $("div").bind("click.plugin",function(){
@@ -290,23 +290,23 @@ $("div").unbind("click").unbind("mouseover");
 如果在不同命名空间上绑定了相同的事件，比如绑定了click和click.plugin只想解除没有命名空间上的click，可以用unbind("click!");
 如果想触发所有的click，则unbind("click");  
 #### jQuery中的动画
-一。show()和hide()  
+一.show()和hide()  
 调用hide()会有两个行为，首先记住display的值("block"，"inline"或除了none之外的其他值)，
 然后再把display设为none，调用show()时会重新设置为hide记住的值。  
 show()和hide()可加入参数"slow"(600),"fast"(200),"normal"(400),或者传入数字，单位是ms。  
 如果不传入参数会立即显示或隐藏，如果传入速度，会把高度、宽度、不透明度同时过渡。  
-二。fadeIn()和fadeOut()淡入和淡出  
+二.fadeIn()和fadeOut()淡入和淡出  
 同show和hide，但只改变透明度。  
-三。slideUp()和slideDown()  
-同上，但只改变高度。
-四。animate()自定义动画  
+三.slideUp()和slideDown()  
+同上，但只改变高度。  
+四.animate()自定义动画  
 animate(params,speed,callback);  
 简单动画：$(this).animate({left:"500px"},300);  
 累加累减动画：$(this).animate({left,"+=500px"},300);  
 多重动画：$(this).animate({left:"500px",height,"200px},300);  
 按顺序执行动画：$(this).animate({left:"500px",300},300).animate({height:"200px"},300);  
 如改变css样式，如果在动画下面写由于动画是事件驱动的，会css先执行，确保动画完成之后执行方法是写在回调函数里面。
-五。stop([clearQueue],[gotoEnd])停止元素的动画。  
+五.stop([clearQueue],[gotoEnd])停止元素的动画。  
 两个参数都是boolean值，如果不设置参数。则停止当前动画。第一个参数表示清空未执行完的动画队列，第二个参数表示直接将正在执行的动画跳转到末状态。
 比如
 ```
@@ -330,7 +330,8 @@ $("#panel").hover(function(){
 stop(false,true)会让当前动画停止执行直达末状态。如果使用stop(ture,true)会停止执行清空动画队列，直达**正在执行的动画**的末状态。
 遗憾的是jQuery中没有直达未执行的动画队列末状态的方法。  
 判断是否处于动画状态：$().is(":animated")  
-六。延迟动画：在animate()方法后面加上delay(1000)  
+六。延迟动画：  
+在animate()方法后面加上delay(1000)  
 七。其他动画方法  
 toggle()方法切换显示和隐藏；slideToggle()方法用高度效果切换显示和隐藏。fadeTo()方法用透明度调整至指定的值如fadeTo(600,0.2)。
 fadeToggle()方法用透明度调整可见性。
