@@ -11,7 +11,7 @@ language messages zh_CN.utf-8
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 "设置字体"
-set guifont=Courier_new:h14:b:cDEFAULT
+set guifont=Consolas:h14:cDEFAULT
 "设置折行"
 set wrap
 "设置自动缩进"
