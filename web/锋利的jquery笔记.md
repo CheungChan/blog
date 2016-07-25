@@ -470,6 +470,7 @@ $("tbody>tr").click(function(){
     .find(":radio").attr("checked",true);
 });
 ```
+**end()表示最顶层的包装集从栈中弹出，前一个包装集公开以便应用后续的方法。endSelf()可以合并方法链中的两个包装集。**
 复选框控制表格行变色
 ```
 $("tbody>tr").click(function(){
