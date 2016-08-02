@@ -1,5 +1,5 @@
 #配置git
- ###配置Name和Email
+配置Name和Email
  命令格式：
  ```
 git config --global user.name "your name"
