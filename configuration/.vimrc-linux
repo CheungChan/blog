@@ -1,0 +1,16 @@
+"设置相对行号"
+set relativenumber
+"设置标尺"
+set ruler
+"设置编码"
+set encoding=utf-8
+set fileencodings=utf-8,chinese,latin1
+"自动检测文件类型"
+filetype on
+"自动缩进"
+filetype indent on
+"共享剪贴板"
+set clipboard+=unnamed
+"设置搜索结果语法高亮"
+set hlsearch
+
