@@ -10,7 +10,7 @@ yum install zlib-devel bzip2-devel  openssl-devel ncurses-devel
 ```
 wget  https://www.python.org/ftp/python/3.5.0/Python-3.5.0.tar.xz
 ```
-### 3.下载的编译版本的python缺少一些东西，必须先安装这些东西在重新编译pyhton在安装，这些东西采用yum install xx进行安装。
+### 3.下载的编译版本的python缺少一些东西，必须先安装这些东西在重新编译python再安装，否则以后启动django时报错找不到这些包，这些东西采用yum install xx进行安装。
 **安装必须的软件包**
 - readline-devel                                   //如果不安装该包，安装的python在交互式模式下就不能使用向上翻和向下翻
 - tk-devel 和tcl-devel                          //如果不安装这两个包，安装的python就没有tkinter和ttk这两个模块
@@ -34,6 +34,7 @@ export PATH=$PATH:/usr/local/python3/lib/python3.5/site-packages
 ```
 rm   /usr/bin/python
 ln -sv  /usr/local/python3/bin/python3.5 /usr/bin/python
+rm  /usr/bin/python2
 ln -sv /usr/bin/python2.6 /usr/bin/python2
 ```
 这样做的目的是在系统任意目录敲入python调用的是python3的命令，而非系统默认2.6.6的
@@ -49,13 +50,15 @@ vim /usr/bin/yum
 #!/usr/bin/python改为#!/usr/bin/python2.6，保存退出。
 ```
 ## 完成了python3的安装。安装pip
+方法一：
 ```
 rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 yum install -y python-pip
 ```
+方法二：
 如果输入pip报错,可以采用编译安装
 首先我们先下载下载python-pip的tar包：
-下载PIP
+下载pip
 ```
 wget https://pypi.python.org/packages/source/p/pip/pip-7.1.0.tar.gz --no-check-certificate
  ```
@@ -79,7 +82,7 @@ pip
 ```
 安装成功
 ## 安装git：
-执行并根据提示一路next，安装完成后执行git --help测试是否安装成功。需要说明git的安装不是必须的（最终我也没用，因为在国内呵呵），除非你希望始终保持最新发布的django代码，否则可以忽略。
+执行并根据提示一路next，安装完成后执行git --help测试是否安装成功。需要说明git的安装不是必须的，除非你希望始终保持最新发布的django代码，否则可以忽略。
  ```
  yum install git
  ```
