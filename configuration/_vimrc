@@ -1,4 +1,4 @@
-"ÉèÖÃ±àÂë"
+"è®¾ç½®ç¼–ç "
 set encoding=utf-8
 set fileencodings=utf-8,chinese,latin-1
 if has("win32")
@@ -7,50 +7,50 @@ else
     set fileencoding=utf-8
 endif
 language messages zh_CN.utf-8
-"ÉèÖÃ²Ëµ¥²»ÂÒÂë"
+"è®¾ç½®èœå•ä¸ä¹±ç "
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
-"ÉèÖÃ×ÖÌå"
+"è®¾ç½®å­—ä½“"
 set guifont=Consolas:h14:cDEFAULT
-"ÉèÖÃÕÛĞĞ"
+"è®¾ç½®æŠ˜è¡Œ"
 set wrap
-"ÉèÖÃ×Ô¶¯Ëõ½ø"
+"è®¾ç½®è‡ªåŠ¨ç¼©è¿›"
 set autoindent
-"ÉèÖÃÖ÷Ìâ"
+"è®¾ç½®ä¸»é¢˜"
 colorscheme murphy
-"ÉèÖÃtabÎª4¸ö¿Õ¸ñ"
+"è®¾ç½®tabä¸º4ä¸ªç©ºæ ¼"
 set ts=4
 set expandtab
 set shiftwidth=4
-"ÉèÖÃÓï·¨¸ßÁÁ"
+"è®¾ç½®è¯­æ³•é«˜äº®"
 syntax on
-"ÉèÖÃ»»ĞĞ·ûÎªwindowsµÄ"
+"è®¾ç½®æ¢è¡Œç¬¦ä¸ºwindowsçš„"
 set ffs=dos
-"ÉèÖÃ×Ô¶¯¼ÓÔØ±»ÆäËû³ÌĞòĞŞ¸ÄµÄÎÄ¼ş£¬Ïàµ±ÓÚÖ´ĞĞÁË:e!"
+"è®¾ç½®è‡ªåŠ¨åŠ è½½è¢«å…¶ä»–ç¨‹åºä¿®æ”¹çš„æ–‡ä»¶ï¼Œç›¸å½“äºæ‰§è¡Œäº†:e!"
 set autoread
-""ÉèÖÃctrl+AÎªÈ«Ñ¡"
+""è®¾ç½®ctrl+Aä¸ºå…¨é€‰"
 "map <C-A> ggVG
 "map! <C-A> <Esc>ggVG
-""ÉèÖÃ¼üÅÌctrl+CÎª¸´ÖÆ"
+""è®¾ç½®é”®ç›˜ctrl+Cä¸ºå¤åˆ¶"
 "vmap <C-c> "+y
-"ÉèÖÃ±ê³ß"
+"è®¾ç½®æ ‡å°º"
 set ruler
-"ÉèÖÃ¹â±êµ±Ç°ĞĞÇ³É«¸ßÁÁ"
+"è®¾ç½®å…‰æ ‡å½“å‰è¡Œæµ…è‰²é«˜äº®"
 set cursorline
-"ÉèÖÃÒş²ØÍ¼±êÀ¸"
+"è®¾ç½®éšè—å›¾æ ‡æ "
 set guioptions-=T
-"ÉèÖÃ×Ô¶¯Õì²âÎÄ¼şÀàĞÍ"
+"è®¾ç½®è‡ªåŠ¨ä¾¦æµ‹æ–‡ä»¶ç±»å‹"
 filetype on
-"ÉèÖÃ×Ô¶¯Ëõ½ø"
+"è®¾ç½®è‡ªåŠ¨ç¼©è¿›"
 filetype indent on
 set lines=40 columns=155
-"Ê¹»Ø¸ñ¼ü£¨backspace£©Õı³£´¦Àíindent, eol, startµÈ"
+"ä½¿å›æ ¼é”®ï¼ˆbackspaceï¼‰æ­£å¸¸å¤„ç†indent, eol, startç­‰"
 set backspace=2
-" ÔÊĞíbackspaceºÍ¹â±ê¼ü¿çÔ½ĞĞ±ß½ç"
+" å…è®¸backspaceå’Œå…‰æ ‡é”®è·¨è¶Šè¡Œè¾¹ç•Œ"
 set whichwrap+=<,>,h,l
-"¹²Ïí¼ôÌù°å
+"å…±äº«å‰ªè´´æ¿
 set clipboard+=unnamed
-"ÉèÖÃÆô¶¯Ê±×î´ó»¯"
+"è®¾ç½®å¯åŠ¨æ—¶æœ€å¤§åŒ–"
 if has('win32')
 	au GUIEnter * simalt ~x
 else
@@ -60,10 +60,10 @@ endif
 function! MaximizeWindow()
 	silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
 endfunction
-"ÉèÖÃÏà¶ÔĞĞºÅ"
+"è®¾ç½®ç›¸å¯¹è¡Œå·"
 set number
 set relativenumber
-"ËÑË÷½á¹ûÓï·¨¸ßÁÁ"
+"æœç´¢ç»“æœè¯­æ³•é«˜äº®"
 set hlsearch
 
 
@@ -78,30 +78,30 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
-"´úÂëÕÛµş
+"ä»£ç æŠ˜å 
 set foldmethod=indent
 set foldlevel=99
-"Ê¹ÓÃ¿Õ¸ñ´úÌæzaÀ´ÕÛµş
+"ä½¿ç”¨ç©ºæ ¼ä»£æ›¿zaæ¥æŠ˜å 
 nnoremap <space> za
-"Ï£Íû¿´µ½ÕÛµş´úÂëµÄÎÄµµ×Ö·û´®£¿
+"å¸Œæœ›çœ‹åˆ°æŠ˜å ä»£ç çš„æ–‡æ¡£å­—ç¬¦ä¸²ï¼Ÿ
 let g:SimpylFold_docstring_preview=1
-"Èç¹ûÄãÏëÒªÒ»¸ö²»´íµÄÎÄ¼şÊ÷ĞÎ½á¹¹£¬ÄÇÃ´NERDTreeÊÇ²»¶şÖ®Ñ¡¡£
+"å¦‚æœä½ æƒ³è¦ä¸€ä¸ªä¸é”™çš„æ–‡ä»¶æ ‘å½¢ç»“æ„ï¼Œé‚£ä¹ˆNERDTreeæ˜¯ä¸äºŒä¹‹é€‰ã€‚
 Plugin 'scrooloose/nerdtree'
-"Èç¹ûÄãÏëÓÃtab¼ü£¬¿ÉÒÔÀûÓÃvim-nerdtree-tabs²å¼şÊµÏÖ£º
+"å¦‚æœä½ æƒ³ç”¨tabé”®ï¼Œå¯ä»¥åˆ©ç”¨vim-nerdtree-tabsæ’ä»¶å®ç°ï¼š
 Plugin 'jistr/vim-nerdtree-tabs'
-"»¹ÏëÒş²Ø.pycÎÄ¼ş£¿ÄÇÃ´ÔÙÌí¼ÓÏÂÃæÕâĞĞ´úÂë°É£º
+"è¿˜æƒ³éšè—.pycæ–‡ä»¶ï¼Ÿé‚£ä¹ˆå†æ·»åŠ ä¸‹é¢è¿™è¡Œä»£ç å§ï¼š
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
-"³¬¼¶ËÑË÷
+"è¶…çº§æœç´¢
 Plugin 'kien/ctrlp.vim'
 "Markdown
 Plugin 'suan/vim-instant-markdown'
-"Git¼¯³É
+"Gité›†æˆ
 Plugin 'tpope/vim-fugitive'
-"Powerline×´Ì¬À¸
+"PowerlineçŠ¶æ€æ 
 Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-"×îºÃµÄpython²¹È«²å¼ş
+"æœ€å¥½çš„pythonè¡¥å…¨æ’ä»¶
 "Bundle 'Valloric/YouCompleteMe'
-"´úÂë¼ì²é"
+"ä»£ç æ£€æŸ¥"
 Plugin 'scrooloose/syntastic'
 let python_highlight_all=1
 syntax on
@@ -109,15 +109,15 @@ syntax on
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-" ÈÃÅäÖÃ±ä¸üÁ¢¼´ÉúĞ§
+" è®©é…ç½®å˜æ›´ç«‹å³ç”Ÿæ•ˆ
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
-" vim ×ÔÉíÃüÁîĞĞÄ£Ê½ÖÇÄÜ²¹È«
+" vim è‡ªèº«å‘½ä»¤è¡Œæ¨¡å¼æ™ºèƒ½è¡¥å…¨
 set wildmenu
-" ÔÚ vim Æô¶¯µÄÊ±ºòÄ¬ÈÏ¿ªÆô NERDTree£¨autocmd ¿ÉÒÔËõĞ´Îª au£©
+" åœ¨ vim å¯åŠ¨çš„æ—¶å€™é»˜è®¤å¼€å¯ NERDTreeï¼ˆautocmd å¯ä»¥ç¼©å†™ä¸º auï¼‰
 autocmd VimEnter * NERDTree
-" °´ÏÂ F2 µ÷³ö/Òş²Ø NERDTree
+" æŒ‰ä¸‹ F2 è°ƒå‡º/éšè— NERDTree
 map  :silent! NERDTreeToggle
-" ½« NERDTree µÄ´°¿ÚÉèÖÃÔÚ vim ´°¿ÚµÄÓÒ²à£¨Ä¬ÈÏÎª×ó²à£©
+" å°† NERDTree çš„çª—å£è®¾ç½®åœ¨ vim çª—å£çš„å³ä¾§ï¼ˆé»˜è®¤ä¸ºå·¦ä¾§ï¼‰
 "let NERDTreeWinPos="right"
-" µ±´ò¿ª NERDTree ´°¿ÚÊ±£¬×Ô¶¯ÏÔÊ¾ Bookmarks
+" å½“æ‰“å¼€ NERDTree çª—å£æ—¶ï¼Œè‡ªåŠ¨æ˜¾ç¤º Bookmarks
 let NERDTreeShowBookmarks=1
