@@ -1,0 +1,123 @@
+"设置编码"
+set encoding=utf-8
+set fileencodings=utf-8,chinese,latin-1
+if has("win32")
+    set fileencoding=chinese
+else
+    set fileencoding=utf-8
+endif
+language messages zh_CN.utf-8
+"设置菜单不乱码"
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+"设置字体"
+set guifont=Consolas:h14:cDEFAULT
+"设置折行"
+set wrap
+"设置自动缩进"
+set autoindent
+"设置主题"
+colorscheme murphy
+"设置tab为4个空格"
+set ts=4
+set expandtab
+set shiftwidth=4
+"设置语法高亮"
+syntax on
+"设置换行符为windows的"
+set ffs=dos
+"设置自动加载被其他程序修改的文件，相当于执行了:e!"
+set autoread
+""设置ctrl+A为全选"
+"map <C-A> ggVG
+"map! <C-A> <Esc>ggVG
+""设置键盘ctrl+C为复制"
+"vmap <C-c> "+y
+"设置标尺"
+set ruler
+"设置光标当前行浅色高亮"
+set cursorline
+"设置隐藏图标栏"
+set guioptions-=T
+"设置自动侦测文件类型"
+filetype on
+"设置自动缩进"
+filetype indent on
+set lines=40 columns=155
+"使回格键（backspace）正常处理indent, eol, start等"
+set backspace=2
+" 允许backspace和光标键跨越行边界"
+set whichwrap+=<,>,h,l
+"共享剪贴板
+set clipboard+=unnamed
+"设置启动时最大化"
+if has('win32')
+	au GUIEnter * simalt ~x
+else
+	au GUIEnter * call MaximizeWindow()
+endif
+
+function! MaximizeWindow()
+	silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
+endfunction
+"设置相对行号"
+set number
+set relativenumber
+"搜索结果语法高亮"
+set hlsearch
+
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=%USERPROFILE%/vimfiles/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+"代码折叠
+set foldmethod=indent
+set foldlevel=99
+"使用空格代替za来折叠
+nnoremap <space> za
+"希望看到折叠代码的文档字符串？
+let g:SimpylFold_docstring_preview=1
+"如果你想要一个不错的文件树形结构，那么NERDTree是不二之选。
+Plugin 'scrooloose/nerdtree'
+"如果你想用tab键，可以利用vim-nerdtree-tabs插件实现：
+Plugin 'jistr/vim-nerdtree-tabs'
+"还想隐藏.pyc文件？那么再添加下面这行代码吧：
+let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+"超级搜索
+Plugin 'kien/ctrlp.vim'
+"Markdown
+Plugin 'suan/vim-instant-markdown'
+"Git集成
+Plugin 'tpope/vim-fugitive'
+"Powerline状态栏
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+"最好的python补全插件
+"Bundle 'Valloric/YouCompleteMe'
+"代码检查"
+Plugin 'scrooloose/syntastic'
+let python_highlight_all=1
+syntax on
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" 让配置变更立即生效
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
+" vim 自身命令行模式智能补全
+set wildmenu
+" 在 vim 启动的时候默认开启 NERDTree（autocmd 可以缩写为 au）
+autocmd VimEnter * NERDTree
+" 按下 F2 调出/隐藏 NERDTree
+map  :silent! NERDTreeToggle
+" 将 NERDTree 的窗口设置在 vim 窗口的右侧（默认为左侧）
+"let NERDTreeWinPos="right"
+" 当打开 NERDTree 窗口时，自动显示 Bookmarks
+let NERDTreeShowBookmarks=1
