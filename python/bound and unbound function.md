@@ -13,6 +13,10 @@ a_test.method_one()
 ```
 Test().method_one(a_test)
 ```
+因为调用方法的时候是采用元类里定义的__getattribute__方法，里面相当于这样。
+```
+Test.__dict__['method_one'].__get__(a_test,Test)
+```
 也可以绑定一个类对象
 ```
 class Test(object):
@@ -26,7 +30,11 @@ Test().method_two()
 method_two(Test)
 
 ```
-##  而classmethod操作类属性是所有实例共享的，classmethod也可以被实例调用。但是类不能调用方法。
+因为调用方法的时候是采用元类里定义的__getattribute__方法，里面相当于这样。
+```
+Test.__dict__['method_two'].__get__(None,Test)
+```
+##  而classmethod操作类属性是所有实例共享的，classmethod也可以被实例调用。但是类不能调用self那种方法。
 ```
 a_test = Test()
 a_test.method_two()
@@ -48,4 +56,3 @@ Test().method_three()
 ## 这种静态方法不会直接绑定类也不会绑定实例，属于非绑定方法。
 
 ## 带self的方法和classmethod是探讨的是python处理的东西  是第一个参数默认处理成什么的问题  是跟调用有关系的 跟方法体无关的
-
