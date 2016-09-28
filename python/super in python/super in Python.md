@@ -3,7 +3,7 @@
 ## e.g input:
 ![origin](image/origin.png)
 ## take a good look at here
-![Ligerdetial](image/Ligerdetail.png)
+![LigerDetail](image/LigerDetail.png)
 ## So,the output
 ![LigerOutput](image/LigerOutput.png)
 ## seems nothing.But when we change the args0 in super().
