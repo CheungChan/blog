@@ -70,6 +70,11 @@ set history=200
 "将<Up><Down>映射为<C-p><C-n>来使得<C-p><C-n>有过滤功能
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
+"设置自动补全菜单为zsh风格
+set wildmenu
+set wildmode=null
+"设置自动补全菜单为bash风格
+"set wildmode=longest,list
 
 
 set nocompatible              " be iMproved, required

@@ -17,3 +17,8 @@ set hlsearch
 colorscheme delek
 "设置历史为最大值
 set history=200
+"设置自动补全菜单为zsh风格
+set wildmenu
+set wildmode=null
+"设置自动补全菜单为bash风格
+"set wildmode=longest,list
