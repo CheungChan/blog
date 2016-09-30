@@ -65,6 +65,8 @@ set number
 set relativenumber
 "搜索结果语法高亮"
 set hlsearch
+"设置历史条数为最大"
+set history=200
 
 
 set nocompatible              " be iMproved, required

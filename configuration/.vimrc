@@ -7,3 +7,4 @@ filetype indent on
 set clipboard+=unnamed
 set hlsearch
 colorscheme delek
+set history=200
