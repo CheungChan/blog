@@ -1,5 +1,11 @@
 #!bin/sh
 
+#if the script self name not in ./.info/exclude,just write append to the file
+excludeAddr="./.info/exclude"
+excludeInfo=$(cat $excludeAddr|grep $0)
+if [ -z "$excludeInfo" ]; then
+    echo $0>>$excludeAddr
+fi
 #get the origin branch
 #e.g
 #"master"
