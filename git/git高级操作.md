@@ -85,7 +85,7 @@ f3cc40e changed my name a bit
 随后运行 git commit --amend 拿走当前的暂存区域并使其做为新提交的快照。
 使用这个技巧的时候需要小心，因为修正会改变提交的 SHA-1 校验和。 
 它类似于一个小的衍合 - 如果已经推送了最后一次提交就不要修正它。
-##Stash未提交的更改
+## Stash未提交的更改
 你正在修改某个bug或者某个特性，又突然被要求展示你的工作。而你现在所做的工作还不足以提交，这个阶段你还无法进行展示（不能回到更改之前）。在这种情况下， git stash可以帮助你。
 stash在本质上会取走所有的变更并存储它们为以备将来使用。stash你的变更，你只需简单地运行下面的命令-  
 ```
@@ -219,7 +219,7 @@ $ git remote show origin
   Local ref configured for 'git push':
     master pushes to master (up to date)
 ```
-这时候能够看到b1是stale的，使用 git remote prune origin 可以将其从本地版本库中去除。  
+这时候能够看到b1是stale(污浊，污染）的，使用 git remote prune(剪去) origin 可以将其从本地版本库中去除。  
 更简单的方法是使用这个命令，它在fetch之后删除掉没有与远程分支对应的本地分支：  
 ```
 git fetch -p
@@ -252,7 +252,7 @@ git fetch origin tag <tagname>
 
 列出标签  
 ```
-$ Git tag # 在控制台打印出当前仓库的所有标签
+$ git tag # 在控制台打印出当前仓库的所有标签
 $ git tag -l ‘v0.1.*’ # 搜索符合模式的标签
 ```
 打标签   
