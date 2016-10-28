@@ -155,3 +155,7 @@ git diff <branch1>..<branch2>
 git diff --staged   
 # 比较暂存区和版本库差异
 ```
+# 复位中软模式、硬模式、混合模式的区别
+```git reset --hard```硬模式代表index和working directory全部复位，包括未提交的更改  
+```git reset```混合模式代表reset index但是leving working diretory untouched，也就是变为未加入暂存区的状态，但是工作空间有所有改变的代码  
+```git reset --soft```软模式代表leaving working directory and index untouched，也就是文件所有的改变加入了暂存区而未提交
