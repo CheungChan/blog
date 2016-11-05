@@ -54,3 +54,20 @@ System.out.println("returnValue = " + returnValue);
 这个代码例子会打印出文本"returnValue = The private Value"，该值正好是私有方法的返回值。
 
 转自 [http://www.jb51.net/article/32170.htm](http://www.jb51.net/article/32170.htm)
+## 由ibatis中的逆向工程的bug引起空指针异常的血案：操作符优先级问题
+工作中同事采用ibatis的逆向工程根据数据库表生成了java代码，model、dao、sqlmap这些东西。其中的model层复写的equals方法是这样的
+``` java
+public boolean equals(User user1,User user2){
+    return user1.getUserName() == null ? false : user1.getUserName().equals(user2.getUserName())
+    && user1.getPassword() == null ? false: user1.getPassword.equals(user2.getPassword)
+    && user1.getGender() == null ? false: user1.getGender().equals(user2.getGender())
+}
+```
+bug在哪里呢？那我们看下面的例子
+``` java
+return true? false: true
+    && true? false:true
+```
+这句我们可能认为```true?false:true```返回的是```false```然后```false&&```无论什么都是```false```，所以最终结果返回```false```,但实际返回的是```true```。  
+怎么回事呢？事实上```&&```的优先级要比三目运算符```xx?xx:xx```要高，所以实际运算顺序是```true?false:true```这一步返回的是```false```，然后```false && xx```，这时候```user1.getUserName==null```根本没有进行判断而结果是```false```,然后是```false?false:true```,所以最好返回结果是```true```。   
+于是乎引发了这个血案，就是```user1.getName==null```是正确的所以是```false```，这时候```user1.getPassword()==null```没有进行判断就走到了```user1.getPassword.equals(user2.getPassword())```，而导致了空指针异常```NullPointerException```
