@@ -32,3 +32,14 @@ group by
     c.prod_name;
 ```
 这里有一个坑就是wmsys.wm_comcat()函数返回值说clob，不是varchar所以在resultMap里要定义成\<result column="SKU_PROPERTY" property="skuProperty" jdbcType="CLOB" javaType="java.lang.String"/>
+
+## oracle中decode()函数用法(oracle中的ifelse)
+decode(条件,值1,返回值1,值2,返回值2...值n,返回值n,缺省值)  
+该函数含义如下：  
+IF 条件=值1 THEN  RETURN(返回值1)  
+ELIF 条件=值2 THEN RETURN(返回值2)   
+...  
+ELSE RETURN（缺省值)  
+END IF
+## oracle中的sign函数，比较大小
+sign(变量1-变量2)返回0,-1,1 可结合decode使用
