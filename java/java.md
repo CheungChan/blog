@@ -71,8 +71,19 @@ return true? false: true
 这句我们可能认为```true?false:true```返回的是```false```然后```false&&```无论什么都是```false```，所以最终结果返回```false```,但实际返回的是```true```。  
 怎么回事呢？事实上```&&```的优先级要比三目运算符```xx?xx:xx```要高，所以实际运算顺序是```true?false:true```这一步返回的是```false```，然后```false && xx```，这时候```user1.getUserName==null```根本没有进行判断而结果是```false```,然后是```false?false:true```,所以最好返回结果是```true```。   
 于是乎引发了这个血案，就是```user1.getName==null```是正确的所以是```false```，这时候```user1.getPassword()==null```没有进行判断就走到了```user1.getPassword.equals(user2.getPassword())```，而导致了空指针异常```NullPointerException```
-
 ## ArrayList的默认值是多少，怎样扩容
 默认值是10，见ArrayList类的ArrayList()方法中有this(10)。扩容方法是原数组满了之后加上原来长度的一半加1，见ArrayList()的ensureCapacity(int minCapacity)方法。int newCapacity = (oldCapacity*3)/2+1;同时创建一个新的newCapacity长度的数组讲原来的数组迁移到新数组在放弃原数组。
 ## HashMap的默认值是多少，怎样扩容
 hashMap的默认值是16.见HashMap类的HashMap()方法中table = new Entry[DEFAULT_INITIAL_CAPACITY]，而此常量值为16.扩容是长度乘以2.见addEntry(int hash,K key,V value,int bucketIndex)方法。里面有resize(2*table.length)但是不是满了就扩容。而是达到原长度乘以扩容因子的乘积之后扩容。见addEntry方法中的if(size++ >= threshold) resize(2*table.length)。而threshold的值是DEFAULT_INITIAL_CAPACITY*DEFAULT_LOAD_FACTOR。扩容因子的值是0.75。
+## 子类集成父类的属性。修改了父类属性的类型导致运行时子类报NoSuchFieldException
+由于之前父类的这个属性是一个Service，在开事务的情况下，注入属性的时候写实体类的ServiceImpl类型会切不到事务，所以改bug讲这个属性类型改为了Service接口类型来注入。而子类中引用了这个属性，调用这个service上的add方法，综合环境报了NoSuchFieldException异常。原因是综合功能环境是采用的class文件增量更新。父类修改了导致重新编译了class。本地环境是全部编译，所以子类没有修改内容也重新编译了，所以没有报错。然后综合环境是class文件替换，如果子类没有修改过就不会替换class。而子类编译class的时候如果有引用父类的变量在编译的时候就会将对父类的引用转换为子类中的变量。而没有重新编译所以综合环境上子类还是持有的原来父类的引用。由此引申到如果定义一个static final int age=1的话，其他的类使用了这个final属性的引用的话，编译的时候会将这个引用替换为常量的值。所以反编译class的时候这时将没有这个常量的引用，而只有1。
+## AtomicLong、AtomicInteger在高并发的情况下可以保证线程安全而long不可以。
+高并发的情况下long i的i++这种跟原来的值有关系的赋值操作可能会出错，而使用AtomicLong就可以了。他的底层使用的不是乐观锁也不是悲观锁，而是Cas锁，就是copyandswap算法的锁，是一种无锁算法。采用的是c语言写的。用native修饰的方法。而c语言的代码是直接控制了cpu在执行这个属性简单的赋值操作的时候不允许cpu切换到别的线程干别的事情，是c语言直接控制了cpu。
+## ThreadLocal中的get()的时候可能会引起空指针问题
+由于ThreadLocal中的set()和get()方法都是操作的内部的叫做threadLocalmap的属性。这个属性以ThreadLocal类型的this对象为键以传入的Object类型的变量为值。但是这个ThreadLocal类型的this对象采用的是虚引用WeakedReference，所以在gc的时候就被回收了导致键没有了，导致get()空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用get()set()remove()方法的时候会检查有没有内存泄漏的，有的话就清楚一下。而jdk采用虚引用作为键官方解释是说为了防止时间长有大的对象被ThreadLocalmap长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的ThreadLocal对象=new TheadLocal()作为强引用。由于是静态变量，知道程序结束，才会被回收，这样就可以不检查get()是否返回空指针。
+举例
+```
+
+```
+## java中的四种引用类型
+按照从强到弱顺序是强引用，软引用，弱引用，虚引用。强引用是我们在编程过程中使用的最简单的引用，如代码String s=”abc”中变量s就是字符串对象”abc”的一个强引用。任何被强引用指向的对象都不能被垃圾回收器回收，这些对象都是在程序中需要的。而软引用是在内存快要溢出之前会被gc掉，常用于缓存的场景。而弱引用会在任意次gc的时候，不一定内存要溢出的时候被gc掉，常用于性能优化为目的的缓存而不是为了防止内存溢出。虚引用是影子引用，用的很少。
