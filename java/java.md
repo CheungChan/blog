@@ -72,7 +72,8 @@ return true? false: true
 怎么回事呢？事实上```&&```的优先级要比三目运算符```xx?xx:xx```要高，所以实际运算顺序是```true?false:true```这一步返回的是```false```，然后```false && xx```，这时候```user1.getUserName==null```根本没有进行判断而结果是```false```,然后是```false?false:true```,所以最好返回结果是```true```。   
 于是乎引发了这个血案，就是```user1.getName==null```是正确的所以是```false```，这时候```user1.getPassword()==null```没有进行判断就走到了```user1.getPassword.equals(user2.getPassword())```，而导致了空指针异常```NullPointerException```
 ## ArrayList的默认值是多少，怎样扩容
-默认值是10，见ArrayList类的ArrayList()方法中有this(10)。扩容方法是原数组满了之后加上原来长度的一半加1，见ArrayList()的ensureCapacity(int minCapacity)方法。int newCapacity = (oldCapacity*3)/2+1;同时创建一个新的newCapacity长度的数组讲原来的数组迁移到新数组在放弃原数组。
+1.6是默认值是10，见ArrayList类的ArrayList()方法中有this(10)。扩容方法是原数组满了之后加上原来长度的一半加1，见ArrayList()的ensureCapacity(int minCapacity)方法。int newCapacity = (oldCapacity*3)/2+1;同时创建一个新的newCapacity长度的数组讲原来的数组迁移到新数组在放弃原数组。  
+1.7是初始值是0，然后add的时候改成默认值10，增长见grow(int minCapacity)方法int newCapacity = oldCapacity + (oldCapacity >> 1);if (newCapacity - minCapacity < 0)newCapacity = minCapacity;所以是当数组满了之后增长为原来的3/2，也就是oldCapacity + (oldCapacity >> 1)
 ## HashMap的默认值是多少，怎样扩容
 hashMap的默认值是16.见HashMap类的HashMap()方法中table = new Entry[DEFAULT_INITIAL_CAPACITY]，而此常量值为16.扩容是长度乘以2.见addEntry(int hash,K key,V value,int bucketIndex)方法。里面有resize(2*table.length)但是不是满了就扩容。而是达到原长度乘以扩容因子的乘积之后扩容。见addEntry方法中的if(size++ >= threshold) resize(2*table.length)。而threshold的值是DEFAULT_INITIAL_CAPACITY*DEFAULT_LOAD_FACTOR。扩容因子的值是0.75。
 ## 子类集成父类的属性。修改了父类属性的类型导致运行时子类报NoSuchFieldException
