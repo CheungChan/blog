@@ -1,3 +1,19 @@
+## git简介
+Git的诞生确实是一个有趣的故事，我们知道，当年Linus创建了开源的Linux，从此，Linux系统不断发展，现在已经成为最大的服务器系统软件了。(请不要傻傻分不清Linus和Linux)
+
+但是随着Linux的不断壮大，就需要各种版本控制了，起初Linus带着他的小弟们使用的是BitKeeper(商业版本控制系统),之后呢由于某种原因BitKeeper的公司不让他们使用了，于是Linus自己花了两周时间写出了Git并且开源了(BitKeeper已哭晕在厕所)，阿弥陀佛，幸亏BitKeeper不让Linus他们用了，要不然我们现在也不会有这么好用的Git了，博主更不会在这写这篇博文了。
+
+之后的岁月里，渐渐有了github,coding等一些可以使用git存储的网站，Git的江湖地位变得无可替代了，如果你是个开发者却还不会使用Git那就太out了。  
+
+这里先引用一张图解释Git  
+工作原理：
+![image](image/fea7461e85aee80bbe96.png)
+Git原理  
+* Workspace:工作区，执行git add *命令就把改动提交到了暂存区，执行git pull命令将远程仓库的数据拉到当前分支并合并，执行git checkout [branch-name]切换分支  
+* Index:暂存区，执行git commit -m '说明' 命令就把改动提交到了仓库区（当前分支）  
+* Repository:仓库区（或本地仓库），执行git push origin master提交到远程仓库，执行git clone 地址将克隆远程仓库到本地
+* Remote:远程仓库，就是类似github，coding等网站所提供的仓库
+
 ## 安装
 1. 安装git
 
