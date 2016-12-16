@@ -5,7 +5,7 @@
 1.访问私有字段。   
 2.访问私有方法。   
 访问私有字段:   
-为了访问私有字段，你需要调用Class.getDeclaredField(String name)或者Class.getDeclaredFields()方法。方法Class.getField(String name)和Class.getFields()仅仅返回共公开的字段，所以它们都无法起到作用。这里有一个例子，该例子中有一个包含私有字段的类，在该类下面有通过反射访问私有字段的代码。   
+为了访问私有字段，你需要调用```Class.getDeclaredField(String name)```或者```Class.getDeclaredFields()```方法。方法```Class.getField(String name)```和```Class.getFields()```仅仅返回共公开的字段，所以它们都无法起到作用。这里有一个例子，该例子中有一个包含私有字段的类，在该类下面有通过反射访问私有字段的代码。   
 复制代码 代码如下:
 ```java
 public class PrivateObject { 
@@ -28,7 +28,7 @@ System.out.println("fieldValue = " + fieldValue);
 注意到我们使用了方法```PrivateObject.class.getDeclaredfield("privateString")```。正是这个调用这个方法返回了私有字段。这个方法仅仅根据指定的类返回字段，不会返回父类声明的字段。 
 另外仔细观察加粗的语句。通过调用 ```Field.setAccessible(true)```，你关掉了对于这个指定字段实例的访问检查，仅仅对反射有效。现在你能访问它了，不管它是私有的，保护的或是默认的(default)，即时调用者并不在该范围中。你仍然不能通过常规方法访问该字段，因为编译器不允许。 
 访问私有方法 
-为了访问一个私有方法，你需要调用```Class.getDeclaredMethod(String name,Class[] parameterTypes)```或者```Class.getDeclaredMethods()```方法。方法```Class.getMethod(String name,Class[] parameterTypes)```和```lass.getMethods()```仅仅返回公有方法，所以它们不会起到作用。下面是一个简单的例子，该例子中有一个拥有私有方法的类，类下面是通过反射机制访问私有方法的代码。 
+为了访问一个私有方法，你需要调用```Class.getDeclaredMethod(String name,Class[] parameterTypes)```或者```Class.getDeclaredMethods()```方法。方法```Class.getMethod(String name,Class[] parameterTypes)```和```class.getMethods()```仅仅返回公有方法，所以它们不会起到作用。下面是一个简单的例子，该例子中有一个拥有私有方法的类，类下面是通过反射机制访问私有方法的代码。 
 复制代码 代码如下:
 ```java
 public class PrivateObject { 
@@ -197,3 +197,13 @@ Outer.Inner.function();
 3.当内部类定义在局部时  
 1）不可以b被成员修饰符修饰  
 2）可以直接访问外部类中的成员，因为还持有外部类的引用。但是不可以访问它在局部定义的变量,只能访问被final修饰的局部变量。
+## 如何给javac设置编译后class文件的存放位置，如何运行别的位置处的class文件？
+```java
+javac -d c:\myclass   packa.DemoA.java
+```
+就会将编译后的class文件存放到制定目录下。  
+在当前目录下运行```c:\myclass```下的class文件
+```java
+set classpath=c:\myclass
+java packa.DemoA
+```
