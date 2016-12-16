@@ -80,10 +80,29 @@ return true? false: true
 ## ```AtomicLong```、```AtomicInteger```在高并发的情况下可以保证线程安全而```long```不可以。
 高并发的情况下```long i```的```i++```这种跟原来的值有关系的赋值操作可能会出错，而使用```AtomicLong```就可以了。他的底层使用的不是乐观锁也不是悲观锁，而是```Cas锁```，就是```copyandswap```算法的锁，是一种无锁算法。采用的是```c```语言写的。用```native```修饰的方法。而```c```语言的代码是直接控制了cpu在执行这个属性简单的赋值操作的时候不允许cpu切换到别的线程干别的事情，是c语言直接控制了cpu。
 ## ```ThreadLocal```中的```get()```的时候可能会引起空指针问题
-由于```ThreadLocal```中的```set()```和```get()```方法都是操作的内部的叫做```threadLocalmap```的属性。这个属性以```ThreadLocal```类型的```this```对象为键以传入的```Object```类型的变量为值。但是这个```ThreadLocal```类型的```this```对象采用的是虚引用```WeakedReference```，所以在```gc```的时候就被回收了导致键没有了，导致```get()```空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用```get()set()remove()```方法的时候会检查有没有内存泄漏的，有的话就清除一下。而jdk采用虚引用作为键官方解释是说为了防止时间长有大的对象被```ThreadLocalmap```长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的```ThreadLocal```对象```=new TheadLocal()```作为强引用。由于是静态变量，知道程序结束，才会被回收，这样就可以不检查```get()```是否返回空指针。
+由于```ThreadLocal```中的```set()```和```get()```方法都是操作的内部的叫做```threadLocalmap```的属性。这个属性以```ThreadLocal```类型的```this```对象为键以传入的```Object```类型的变量为值。但是这个```ThreadLocal```类型的```this```对象采用的是虚引用```WeakedReference```，所以在```gc```的时候就被回收了导致键没有了，导致```get()```空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用```get()set()remove()```方法的时候会检查有没有内存泄漏的，有的话就清除一下。而jdk采用虚引用作为键官方解释是说为了防止时间长有大的对象被```ThreadLocalmap```长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的```ThreadLocal```对象```=new TheadLocal()```作为强引用。由于是静态变量，直到程序结束，才会被回收，（静态变量随着类的加载而加载，随着类的消失而消失）这样就可以不检查```get()```是否返回空指针。
 举例
-```
-
+```java
+//退款需要操作的库存
+private static ThreadLocal<List<ProdStorage>> refundSuncessProdStorageHolder = new ThreadLocal<List<ProdStorage>>(){
+    @Override
+    protected List<ProdStorage> initialValue(){
+        return new ArrayList<ProdStorage>();
+    }
+}
+//商户是否使用redis存储库存
+private static ThreadLocal<Map<String,Boolean>> redisSupportHolder = new ThreadLocal<Map<String,Boolean>>(){
+    @Override
+    protected Map<String,Boolean> initialValue(){
+        return new HashMap<String,Boolean>();
+    }
+}
+public static ThreadLocal<List<ProdStorage>> getRefundSuccessProdStorageHolder(){
+    return refundSuncessProdStorageHolder;
+}
+public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
+    return redisSupportHolder;
+}
 ```
 另外的问题是当线程创建的时候把当前线程作为key，如果线程被销毁，则这个```ThreadLocal```被销毁，但是在使用线程池的时候，线程永生，可能会导致没有set值的时候调用get方法会返回上一次线程使用的值，所以应该在线程不用之前手动调用```remove()```方法。
 ## ```java```中的四种引用类型
