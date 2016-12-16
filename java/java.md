@@ -119,7 +119,37 @@ public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
 ## ```p.setName("lisi")```这句话又做了什么？
 ![image](image/p.setName()过程.png)
 如上图所示，从上面的7步继续，栈内存中原来有```main```方法，现在有引用```p```(指向堆内存中对象的地址0x0023），方法```setName```，```name```变量和```this```。```p```调用```setName```方法，这时候```p```就是```this```，所以将```p```的地址0x0023赋值给```this```，而```this```调用```setName```所以找到堆内存中的```setName```方法，讲堆内存中的name赋值为lisi，而再次调用```P p1 = new P1();p1.setName("qq");```时也是在栈内存产生引用```p```,```name```,```this```,方法```setName```，先给```this```赋值为```p```的地址，然后通过```this```找到堆内存中的对象，再将堆内存中的```name```赋值修改。
-
+## 单例模式中的懒汉模式和饿汉模式
+### 饿汉模式：先初始化对象
+``` java
+class Single{
+    private Single(){};
+    private static Single s = new Single();
+    public Single getInstance(){
+        return s;
+    }
+}
+```
+### 懒汉模式：对象方法被调用时再初始化，延时加载。
+``` java
+class Single{
+    private Single(){};
+    private static Single s = null;
+    public Single getInstance(){
+        if(s == null){
+            synchronized(Single.class){
+                if(s == null){
+                    s = new Single();
+                }
+               
+            }
+        }
+        return s;
+        
+    }
+}
+```
+两次判断，外层判断是为了已经有了对象不再去拿锁提高效率，内层判断是为了防止多线程并发出现错误，有可能在外层判断加锁之前程序切换。
 ## 多态总结
 ### 1.多态的体现
 父类的引用指向了自己的子类对象。  
@@ -147,7 +177,7 @@ public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
 1.当内部类定义在外部类的成员位置上，而且非私有，可以在外部其他类中可以直接访问内部类对象。  
 格式：  
 外部类名.内部类名 变量名 = 外部类对象.内部类对象  
-```
+```java
 Outer.Inner in = new Outer().new Inner();  
 ```
 2.当内部类在外部类的成员位置上时，就可以被成员修饰符所修饰。比如  
@@ -155,11 +185,11 @@ private:将内部类在外部类中进行封装。
 static：讲内部类变成静态内部类。
 当内部类被静态修饰时，只能访问外部的静态成员。  
 在外部其他类中，如何直接访问静态内部类的非静态成员呢？  
-```
+```java
 new Outer.Inner().function();  
 ```
 在外部其他类中，如何直接访问static内部类的静态成员呢？ 
-``` 
+``` java
 Outer.Inner.function();  
 ```
 注意：当内部类中定义了静态成员，该内部类必须是静态内部类。  
