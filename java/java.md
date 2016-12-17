@@ -124,8 +124,8 @@ public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
 ``` java
 class Single{
     private Single(){};
-    private static Single s = new Single();
-    public Single getInstance(){
+    private static final Single s = new Single();
+    public static Single getInstance(){
         return s;
     }
 }
@@ -135,13 +135,12 @@ class Single{
 class Single{
     private Single(){};
     private static Single s = null;
-    public Single getInstance(){
+    public static Single getInstance(){
         if(s == null){
             synchronized(Single.class){
                 if(s == null){
                     s = new Single();
                 }
-               
             }
         }
         return s;
@@ -149,7 +148,7 @@ class Single{
     }
 }
 ```
-两次判断，外层判断是为了已经有了对象不再去拿锁提高效率，内层判断是为了防止多线程并发出现错误，有可能在外层判断加锁之前程序切换。
+两次判断，外层判断是为了已经有了对象不再去拿锁提高效率，内层判断是为了防止多线程并发出现错误，有可能在外层判断加锁之前程序切换。另外懒汉模式中锁是类的字节码对象因为此方法是静态方法。
 ## 多态总结
 ### 1.多态的体现
 父类的引用指向了自己的子类对象。  
