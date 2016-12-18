@@ -241,5 +241,76 @@ jdk1.5中提供了多线程的升级解决方案。
 当没有指定的方式让冻结的线程恢复到运行状态时，这时需要对冻结进行清除。  
 强制让线程恢复到运行状态中来，这样就可以操作标记让线程结束。  
 ```Thread``` 类提供了该方法```interrupt()```；相当于拍了睡的人一砖头，虽然醒了但是受伤了，产生了异常```InterruptedException```  
+```interrupt()```方法如果在```sleep()```之前被调用，则线程执行到```sleep()```时就会马上产出```InterruptedException```，此情此景叫做 决断中断。 
+示 例：  
+```java
+public class PendingInterrupt extends Object {  
+    public static void main(String[] args){  
+        //如果输入了参数，则在main线程中中断当前线程（亦即main线程）  
+        if( args.length > 0 ){  
+            Thread.currentThread().interrupt();  
+        }   
+        //获取当前时间  
+        long startTime = System.currentTimeMillis();  
+        try{  
+            Thread.sleep(2000);  
+            System.out.println("was NOT interrupted");  
+        }catch(InterruptedException x){  
+            System.out.println("was interrupted");  
+        }  
+        //计算中间代码执行的时间  
+        System.out.println("elapsedTime=" + ( System.currentTimeMillis() - startTime));  
+    }  
+}
+```
+执行结果  
+![image](image/决断中断.png)
+## 使用 isInterrupted()方法判断中断状态
+可以在 ```Thread``` 对象上调用 ```isInterrupted()```方法来检查任何线程的中断状态。这里需要注意：线程一旦被中断，```isInterrupted()```方法便会返回 true，而一旦 ```sleep()```方法抛出异常，它将清空中断标志，此时```isInterrupted()```方法将返回 ```false```。
+下面的代码演示了 isInterrupted()方法的使用：
+```java
+public class InterruptCheck extends Object{  
+    public static void main(String[] args){  
+        Thread t = Thread.currentThread();  
+        System.out.println("Point A: t.isInterrupted()=" + t.isInterrupted());  
+        //待决中断，中断自身  
+        t.interrupt();  
+        System.out.println("Point B: t.isInterrupted()=" + t.isInterrupted());  
+        System.out.println("Point C: t.isInterrupted()=" + t.isInterrupted());  
+
+        try{  
+            Thread.sleep(2000);  
+            System.out.println("was NOT interrupted");  
+        }catch( InterruptedException x){  
+            System.out.println("was interrupted");  
+        }  
+        //抛出异常后，会清除中断标志，这里会返回false  
+        System.out.println("Point D: t.isInterrupted()=" + t.isInterrupted());  
+    }  
+}  
+```
+运行结果如下：  
+![image](image/isInterrupted.png)
+## 使用 Thread.interrupted()方法判断中断状态
+可以使用 ```Thread.interrupted()```方法来检查当前线程的中断状态（并隐式重置为 ```false```）。又由于它是静态方法，因此不能在特定的线程上使用，而只能报告调用它的线程的中断状态，如果线程被中断，而且中断状态尚不清楚，那么，这个方法返回 ```true```。与 ```isInterrupted()```不同，它将自动重置中断状态为 ```false```，第二次调用 ```Thread.interrupted()```方法，总是返回 ```false```，除非中断了线程。
+如下代码演示了 Thread.interrupted()方法的使用：  
+```java
+public class InterruptReset extends Object {  
+    public static void main(String[] args) {  
+        System.out.println(  
+            "Point X: Thread.interrupted()=" + Thread.interrupted());  
+        Thread.currentThread().interrupt();  
+        System.out.println(  
+            "Point Y: Thread.interrupted()=" + Thread.interrupted());  
+        System.out.println(  
+            "Point Z: Thread.interrupted()=" + Thread.interrupted());  
+    }  
+}
+```
+运行结果如下：  
+![image](image/interrupted.png)
 ## 守护线程介绍
 ```setDaemon(true)``` 将线程可以设置为守护线程（后台线程），当正在运行的线程都是守护线程时，java虚拟机退出。该方法必须在```start```方法之前被调用。这个方法可使得守护线程不中断而自动结束，就像是圣斗士星矢哥五个守护雅典娜，雅典娜挂了哥五个就失业了。
+## ```join``` 方法介绍
+当A线程执行到了B线程的```join()```方法时，A线程就会等待。等B线程都执行完，A才会执行。  
+```join``` 方法可以临时加入线程执行。
