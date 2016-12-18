@@ -264,6 +264,7 @@ public class DeadLockTest{
 ## 生产者、消费者模型在多线程模式下为什么需要用```while```判断标记，为什么定义 ```notifyAll```？
 使用```while```原因：让被唤醒的线程再一次判断标记。  
 使用```notifyAll```原因：因为只用```notify```，容易出现只唤醒本方线程的情况，导致程序中所有的线程被等待。  
+代码示例：<a href="example/ProducerConsumerDemo.java" target="_blank">生产者消费者代码示例</a>  
 jdk1.5中提供了多线程的升级解决方案。  
 讲同步```syncronized```替换成为显式的```Lock```操作。  
 将```Object```中的```wait、notify、notifyAll```替换成了```Condition```对象。该对象可以通过```Lock```锁进行获取。该示例中，实现了本方只唤醒对方操作。  
