@@ -268,4 +268,4 @@ public class DeadLockTest{
 jdk1.5中提供了多线程的升级解决方案。  
 讲同步```syncronized```替换成为显式的```Lock```操作。  
 将```Object```中的```wait、notify、notifyAll```替换成了```Condition```对象。该对象可以通过```Lock```锁进行获取。该示例中，实现了本方只唤醒对方操作。  
-
+代码示例：<a href="example/ProducerConsumerDemo2.java" target="_blank">生产者消费者代码示例5.0升级版</a>
