@@ -214,46 +214,7 @@ java packa.DemoA
 ## 多线程中方法的锁是什么？
 非静态方法的锁是this，静态方法的锁是类的字节码文件。同步的关键是锁必须是同一个锁才能同步。
 ## 写一个死锁Demo
-```java
-class Test implements Runnable{
-    private boolean flag;
-    Test(boolean flag){
-        this.flag = flag;
-    }
-    @Override
-    public void run(){
-        while(true){
-            if(flag){
-                synchronized(MyLock.locka){
-                    System.out.println("if---locka");
-                    synchronized(MyLock.lockb){
-                        System.out.println("if--lockb");
-                    }
-                }
-            }else{
-                synchronized(MyLock.lockb){
-                    System.out.println("else--lockb");
-                    synchronized(MyLock.locka){
-                        System.out.println("else--locka");
-                    }
-                }
-            }
-        }
-    }
-}
-class MyLock{
-    static Object locka = new Object();
-    static Object lockb = new Object();
-}
-public class DeadLockTest{
-    public static void main(String[] args){
-        Thread t1 = new Thread(new Test(false));
-        Thread t2 = new Thread(new Test(true));
-        t1.start();
-        t2.start();
-    }
-}
-```
+<a href="example/DeadLockTest.java">死锁示例</a>
 ## ```wait()、notify()、notifyAll()```的使用场景，为什么定义在Object中?
 
 ```wait()、notify()、notifyAll()```都是用在同步中，因为要对持有监视器（锁）的线程操作，  所以要使用在同步中，因为只有同步才具有锁。  
