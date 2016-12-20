@@ -314,3 +314,5 @@ public class InterruptReset extends Object {
 ## ```join``` 方法介绍
 当A线程执行到了B线程的```join()```方法时，A线程就会等待。等B线程都执行完，A才会执行。  
 ```join``` 方法可以临时加入线程执行。
+## ```String s1 = "abc" ```与 ```String s2 = new String("abc") ```有什么区别？
+就一个区别，s1在内存中有一个对象，s2在内存中有两个对象，分别是abc和new的对象。
