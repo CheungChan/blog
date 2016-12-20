@@ -72,7 +72,8 @@ return true? false: true
 于是乎引发了这个血案，就是```user1.getName==null```是正确的所以是```false```，这时候```user1.getPassword()==null```没有进行判断就走到了```user1.getPassword.equals(user2.getPassword())```，而导致了空指针异常```NullPointerException```
 ## ```ArrayList```的默认值是多少，怎样扩容
 1.6是默认值是```10```，见```ArrayList```类的```ArrayList()```方法中有```this(10)```。扩容方法是原数组满了之后加上原来长度的一半加1，见```ArrayList()```的```ensureCapacity(int minCapacity)```方法。```int newCapacity = (oldCapacity * 3) / 2 + 1```;同时创建一个新的```newCapacity```长度的数组讲原来的数组迁移到新数组在放弃原数组。  
-1.7是初始值是```0```，然后```add```的时候改成默认值```10```，增长见```grow(int minCapacity)```方法```int newCapacity = oldCapacity + (oldCapacity >> 1);if (newCapacity - minCapacity < 0)newCapacity = minCapacity;```所以是当数组满了之后增长为原来的3/2，也就是```oldCapacity + (oldCapacity >> 1)```
+1.7是初始值是```0```，然后```add```的时候改成默认值```10```，增长见```grow(int minCapacity)```方法```int newCapacity = oldCapacity + (oldCapacity >> 1);if (newCapacity - minCapacity < 0)newCapacity = minCapacity;```所以是当数组满了之后增长为原来的3/2，也就是```oldCapacity + (oldCapacity >> 1)```  
+```Vector``` 是jdk1.1就有的，那时候还没有集合框架，集合框架是jdk1.2诞生的，```Vector``` 线程安全操作慢，```ArrayList``` 线程不安全操作快，而且```Vector``` 满了之后扩增一倍，浪费空间。
 ## ```HashMap```的默认值是多少，怎样扩容
 ```hashMap```的默认值是```16```.见```HashMap```类的```HashMap()```方法中```table = new Entry[DEFAULT_INITIAL_CAPACITY]```，而此常量值为16.扩容是长度乘以2.见```addEntry(int hash,K key,V value,int bucketIndex)```方法。里面有```resize(2 * table.length)```但是不是满了就扩容。而是达到原长度乘以扩容因子的乘积之后扩容。见```addEntry```方法中的```if(size++ >= threshold) resize(2 * table.length)```。而```threshold```的值是```DEFAULT_INITIAL_CAPACITY*DEFAULT_LOAD_FACTOR```。扩容因子的值是```0.75```。
 ## 子类集成父类的属性。修改了父类属性的类型导致运行时子类报```NoSuchFieldException```
@@ -316,7 +317,7 @@ public class InterruptReset extends Object {
 ```join``` 方法可以临时加入线程执行。
 ## ```String s1 = "abc" ```与 ```String s2 = new String("abc") ```有什么区别？
 就一个区别，s1在内存中有一个对象，s2在内存中有两个对象，分别是abc和new的对象。
-## 获取两个字符串中最大的相同子串,```String s1="abcwerthelloyuiodef",s2="cvhellobnm"```
+## 获取两个字符串中最大的相同子串,```String s1="abcwerthelloyuiodef",s2="cvhellobnm";```
 思路：  
 1.将短的子串按照长度递减的方式获取到  
 2.将获取到的子串去长串中判断是否包含，如果包含，已经找到。
@@ -339,5 +340,6 @@ public String getMaxSubString(String s1,String s2){
 ```
 ## 集合框架中迭代器的注意事项
 迭代器```Iterator```是一个接口，所有集合框架类里面都有```iterator()```方法（实现的```Collection```接口中的方法），该方法返回各自集合类中定义的迭代器内部类。
-```List```集合特有的迭代器,```ListIterator```是```Iterator```的子接口。  
-在迭代时，不可以通过集合对象中的方法操作集合中的元素。因为会发生```ConcurrentModificationException```异常。所以,在迭代器时，只能用迭代器的方法操作元素，可是```Iterator```方法是有限的,只能对元素进行判断、取出、删除操作。如果想要其他的操作，如增加、修改等，就要使用其子接口```ListIterator```，该接口只能通过```List```集合的```listIterator()```方法获取。
+```List``` 集合特有的迭代器,```ListIterator``` 是```Iterator``` 的子接口。  
+在迭代时，不可以通过集合对象中的方法操作集合中的元素。因为会发生```ConcurrentModificationException```异常。所以,在迭代器时，只能用迭代器的方法操作元素，可是```Iterator```方法是有限的,只能对元素进行判断、取出、删除操作。如果想要其他的操作，如增加、修改等，就要使用其子接口```ListIterator```，该接口只能通过```List```集合的```listIterator()```方法获取。  
+```Vector``` 有一个方法```Enumeration en = v.elements()```,枚举是```Vector``` 特有的取出方式。发现枚举和迭代器很像，其实枚举和迭代器是一样的。因为枚举的名称以及方法的名称都过长，所以枚举被迭代器取代了，枚举郁郁而终了。
