@@ -316,3 +316,24 @@ public class InterruptReset extends Object {
 ```join``` 方法可以临时加入线程执行。
 ## ```String s1 = "abc" ```与 ```String s2 = new String("abc") ```有什么区别？
 就一个区别，s1在内存中有一个对象，s2在内存中有两个对象，分别是abc和new的对象。
+## 获取两个字符串中最大的相同子串,```String s1="abcwerthelloyuiodef",s2="cvhellobnm"```
+思路：  
+1.将短的子串按照长度递减的方式获取到  
+2.将获取到的子串去长串中判断是否包含，如果包含，已经找到。
+代码实现：
+```java
+public String getMaxSubString(String s1,String s2){
+    String max = "",min = "";
+    max = (s1.length() > s2.length()) ? s1 : s2;
+    min = (max==s1) ? s2 : s1;
+    for(int x=0; x<min.length(); x++){
+        for(int y=0,z=min.length()-x; z!=min.length()+1; y++,z++){
+            String temp = min.substring(y,z);
+            if(max.contains(temp)){
+                return temp;
+            }
+        }
+    }
+    return "";
+}
+```
