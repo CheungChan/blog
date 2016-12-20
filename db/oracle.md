@@ -31,15 +31,34 @@ group by
     c.sku_foreign_currency_price,
     c.prod_name;
 ```
-这里有一个坑就是wmsys.wm_comcat()函数返回值说clob，不是varchar所以在resultMap里要定义成\<result column="SKU_PROPERTY" property="skuProperty" jdbcType="CLOB" javaType="java.lang.String"/>
+这里有一个坑就是```wmsys.wm_comcat()```函数返回值说clob，不是varchar所以在resultMap里要定义成
+```xml
+<result column="SKU_PROPERTY" property="skuProperty" jdbcType="CLOB" javaType="java.lang.String"/>
+```
 
 ## oracle中decode()函数用法(oracle中的ifelse)
-decode(条件,值1,返回值1,值2,返回值2...值n,返回值n,缺省值)  
+```decode(条件,值1,返回值1,值2,返回值2...值n,返回值n,缺省值)  ```  
 该函数含义如下：  
+```sql
 IF 条件=值1 THEN  RETURN(返回值1)  
 ELIF 条件=值2 THEN RETURN(返回值2)   
 ...  
 ELSE RETURN（缺省值)  
 END IF
-## oracle中的sign函数，比较大小
-sign(变量1-变量2)返回0,-1,1 可结合decode使用
+```
+## oracle中的```sign```函数，比较大小
+```sign(变量1-变量2)```返回0,-1,1 可结合decode使用
+## oracle一条sql插入多行记录方式
+```sql 
+insert into 表名(字段1，字段2) 
+select 值1，值2 from dual 
+union all 
+select 值11,值22 from dual
+```
+可起到插入时间优化的效果。  
+mysql的方式是
+```sql
+insert into 表名(字段1,字段2)
+values(值1,值2),
+(值11，值22)
+```
