@@ -341,5 +341,5 @@ public String getMaxSubString(String s1,String s2){
 ## 集合框架中迭代器的注意事项
 迭代器```Iterator```是一个接口，所有集合框架类里面都有```iterator()```方法（实现的```Collection```接口中的方法），该方法返回各自集合类中定义的迭代器内部类。
 ```List``` 集合特有的迭代器,```ListIterator``` 是```Iterator``` 的子接口。  
-在迭代时，不可以通过集合对象中的方法操作集合中的元素。因为会发生```ConcurrentModificationException```异常。所以,在迭代器时，只能用迭代器的方法操作元素，可是```Iterator```方法是有限的,只能对元素进行判断、取出、删除操作。如果想要其他的操作，如增加、修改等，就要使用其子接口```ListIterator```，该接口只能通过```List```集合的```listIterator()```方法获取。  
+在迭代时，不可以通过集合对象中的方法操作集合中的元素。因为会发生```ConcurrentModificationException```异常。所以,在迭代器时，只能用迭代器的方法操作元素，可是```Iterator```方法是有限的,只能对元素进行判断、取出、删除操作。如果想要其他的操作，如增加、修改等，就要使用其子接口```ListIterator```，该接口中的方法除了```hasNext();next();remove();```之外，还有```hasPrevious();previous();set()```等方法。该接口只能通过```List```集合的```listIterator()```方法获取。  
 ```Vector``` 有一个方法```Enumeration en = v.elements()```,枚举是```Vector``` 特有的取出方式。发现枚举和迭代器很像，其实枚举和迭代器是一样的。因为枚举的名称以及方法的名称都过长，所以枚举被迭代器取代了，枚举郁郁而终了。
