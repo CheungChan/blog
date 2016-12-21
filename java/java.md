@@ -343,3 +343,33 @@ public String getMaxSubString(String s1,String s2){
 ```List``` 集合特有的迭代器,```ListIterator``` 是```Iterator``` 的子接口。  
 在迭代时，不可以通过集合对象中的方法操作集合中的元素。因为会发生```ConcurrentModificationException```异常。所以,在迭代器时，只能用迭代器的方法操作元素，可是```Iterator```方法是有限的,只能对元素进行判断、取出、删除操作。如果想要其他的操作，如增加、修改等，就要使用其子接口```ListIterator```，该接口中的方法除了```hasNext();next();remove();```之外，还有```hasPrevious();previous();set()```等方法。该接口只能通过```List```集合的```listIterator()```方法获取。  
 ```Vector``` 有一个方法```Enumeration en = v.elements()```,枚举是```Vector``` 特有的取出方式。发现枚举和迭代器很像，其实枚举和迭代器是一样的。因为枚举的名称以及方法的名称都过长，所以枚举被迭代器取代了，枚举郁郁而终了。
+## ```linkedList```中的特有方法
+```java
+void addFirst();
+void addLast();
+```
+```java
+E getFirst();
+E getLast();
+```
+获取元素，但不删除元素。如果集合中没有元素，会出现```NoSuchElementExption```
+```java
+E removeFirst();
+E removeLast();
+```
+获取元素，但是元素被删除。如果集合中没有元素，会出现```NoSuchElementExption``` ，可以用来实现堆栈和队列数据结构。  
+但是在jdk1.6之后出现了替代方法
+```java
+boolean offerFirst();
+boolean offerLast();
+```
+```java
+E peakFirst();
+E peakLast();
+```
+获取元素，但不删除元素。如果集合中没有元素，会返回```null```。
+```java
+E pollFirst();
+E pollLast();
+```
+获取元素，但是元素被删除。如果集合中没有元素，会返回```null```。可以用来实现堆栈和队列数据结构。
