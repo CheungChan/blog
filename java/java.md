@@ -531,3 +531,53 @@ class GerericDemo{
     }
 }
 ```
+## 泛型的上限和下限
+?是通配符,也可以理解为占位符。  
+```? extends E``` 可以接收E的类型或者E的子类型。上限  
+```? super E``` 可以接收E的类型或者E的父类型。下限  
+```? super E```的应用：```TreeSet```的构造方法是这样的
+```java
+TreeSet(Comparator<? super E> Comparator)
+```
+所以可以这样使用
+```java
+class Comp implements Comparator<Person>{
+    public int compare(Person p1, Person p2){
+        return p1.getName().compareTo(p2.getName());
+    }
+}
+public GerericDemo{
+    public static void main(String[] args){
+        TreeSet<Student> ts = new TreeSet<Student>(new Comp());
+        ts.add(new Student("abc1"));
+        ts.add(new Student("abc2"));
+        ts.add(new Student("abc3"));
+        Iterator<Student> it = ts.iterator();
+        while(it.hasNext()){
+            System.out.println(it.next.getName());
+        }
+        TreeSet<Worker> ts1 = new TreeSet<Worker>(new Comp());
+        ts1.add(new Worker("abc---1"));
+        ts1.add(new Worker("abc---2"));
+        ts1.add(new Worker("abc---3"));
+        Iterator<Worker> it1 = ts1.iterator();
+        while(it1.hasNext()){
+            System.out.println(it.next.getName());
+        }
+    }
+}
+class Person{
+    private String name;
+    public Person(String name){
+        this.name = name;
+    }
+    public getName(){
+        return name;
+    }
+}
+class Student extends Person{}
+class Worker extends Person{}
+```
+这里面两个```TreeSet```的比较器进行了复用，全都是因为```TreeSet```的构造函数定义是```TreeSet(Comparator<? super E> comp);```。所以说使用父类的比较器就OK。   
+注意：如果在集合中使用了上限或者下限。用了上限，则```add```方法不可以用除了```null```，下界```get```方法不可以用除了返回```Object```  
+举例：<a href="example/泛型的上界和下界.md">java泛型中的上界下界(上限下限)</a>
