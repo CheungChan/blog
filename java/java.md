@@ -436,3 +436,70 @@ public interface Comparator<T>{
 }
 ```
 这样不需要再强转了。
+## 什么时候使用泛型方法
+泛型类中定义的泛型，在整个类中有效，如果被方法使用，那么泛型类的对象要操作的具体类型确定后，所有操作的类型就已经固定了。  
+为了让方法可以操作不同的类型，而且类型还不确定，那么可以将泛型定义在方法上，泛型起作用的范围只在方法里。  
+比如定义泛型类
+```java
+class Demo<T>{
+    public void show(T t){
+        System.out.println("show:" + t);
+    }
+    public void print(T t){
+        System.out.println("print:" + t);
+    }
+}
+```
+使用时
+```java
+public static void main(String[] args){
+    Demo<String> d = new Demo<String>();
+    d.show("haa");
+    //d.show(4);//编译报错
+    //如果要使用d.show(4)，必须这样
+    Demo<Integer> d1 = new Demo<Integer>();
+    d1.show(4);
+}
+```
+这种情况下，可以将泛型定义在方法上。
+```java
+class Demo{
+    public <T> void show(T t){
+        System.out.println("show:" + t);
+    }
+    public <T> void print(T t){
+        System.out.println("print:" + t);
+    }
+}
+```
+使用时很方便也很安全
+```java
+public static void main(String[] args){
+    Demo d = new Demo();
+    d.show("haha");
+    d.show(4);
+}
+```
+并且，泛型类和泛型方法可以同时存在
+```java
+class Demo<T>{
+    public void show(T t){
+        System.out.println("show:" + t);
+    }
+    public <Q> void print(Q q){
+        System.out.println("print:" + q);
+    }
+}
+```
+调用时
+```java
+public static void main(String[] args){
+    Demo<String> d = new Demo<String>();
+    d.show("haha");
+    //d.show(4);//编译报错
+    d.print("hehe");
+    d.print(4);
+}
+```
+另注意：静态方法不可访问类上定义的泛型,因为类上的泛型是产生对象时才确定的。如果静态方法操作的应用数据类型不确定，可以将泛型定义在方法上。  
+还有定义在方法上的泛型必须放在修饰符之后返回值之前。
