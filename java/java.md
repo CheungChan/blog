@@ -503,3 +503,31 @@ public static void main(String[] args){
 ```
 另注意：静态方法不可访问类上定义的泛型,因为类上的泛型是产生对象时才确定的。如果静态方法操作的应用数据类型不确定，可以将泛型定义在方法上。  
 还有定义在方法上的泛型必须放在修饰符之后返回值之前。
+## 泛型定义在接口上的应用
+```java
+public interface Inter<T>{
+    void show(T t);
+}
+public class InterImpl implements Inter<String>{
+    public void show(String s){
+        System.out.println("show" + s);
+    }
+}
+```
+如果实现类实现接口的时候类型仍然不确定，可以
+```java
+public interface Inter<T>{
+    void show(T t);
+}
+public class InterImpl<T> implements Inter<T>{
+    public void show(T t){
+        System.out.println("show" + t);
+    }
+}
+class GerericDemo{
+    public static void main(String[] args){
+        Inter<Integer> in = new InterImpl<Integer>();
+        in.show(4);
+    }
+}
+```
