@@ -393,3 +393,46 @@ E pollLast();
 当两种方式都存在时，以比较器为主。
 
 定义一个类，实现```Comparator``` 接口，实现```compare``` 方法。
+## 什么时候使用泛型类
+当类中要操作的引用数据类型不确定的时候。早期定义用```Object```  来扩展，现在定义泛型来扩展。  
+举例：
+```java
+class Utils<QQ>{
+    private QQ q;
+    public void setObject(QQ q){
+        this.q = q;
+    }
+    public QQ getObject(){
+        return q;
+    }
+}
+```
+使用时很简单
+```java
+public static void main(String[] args){
+    Utils<Worker> utils = new Utils<Worker();
+    utils.setObject(new Worker());
+    Worker w = utils.getObject();
+}
+```
+即可，如果使用```utils.setObject(new Teacher());``` 会在编译时就报错起到了安全作用而且也不用强转。  
+再比如定义```TreeSet``` 构造函数所使用的比较器时
+```java
+class LenComparator implements Comparator<String>{
+    @Override
+    public int compare(String s1,String s2){
+        int num = new Integer(s1.length()).compareTo(s2.length());
+        if(num == 0){
+            return s1.compareTo(s2);
+        }
+        return num;
+    }
+}
+```
+因为```Comparator```的定义是
+```java
+public interface Comparator<T>{
+    int compare(T t1, T t2);
+}
+```
+这样不需要再强转了。
