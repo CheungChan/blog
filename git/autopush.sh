@@ -38,10 +38,10 @@ fi
 echo "(1/7)初始化脚本成功"
 git checkout $oribr
 echo "(2/7)切换到${oribr}成功"
-git cherry-pick $s
-echo "(3/7)优选${num}个提交成功"
 git pull --rebase --progress "origin"
-echo "(4/7)衍合拉取成功"
+echo "(3/7)衍合拉取成功"
+git cherry-pick $s
+echo "(4/7)优选${num}个提交成功"
 git push --recurse-submodules=check --progress "origin" refs/heads/$oribr:refs/heads/$oribr
 echo "(5/7)推送成功"
 git checkout $curbr 
