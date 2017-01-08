@@ -581,3 +581,9 @@ class Worker extends Person{}
 这里面两个```TreeSet```的比较器进行了复用，全都是因为```TreeSet```的构造函数定义是```TreeSet(Comparator<? super E> comp);```。所以说使用父类的比较器就OK。   
 注意：如果在集合中使用了上限或者下限。用了上限，则```add```方法不可以用除了```null```，下界```get```方法不可以用除了返回```Object```  
 举例：<a href="example/泛型的上界和下界.md">java泛型中的上界下界(上限下限)</a>
+## Map需要注意的点
+```HashTable``` ：底层是哈希表数据结构。不允许存入null键或null值，线程同步，jdk1.0。效率低  
+```HashMap``` ：底层是哈希表数据结构。允许存入null键或null值，线程非同步。jdk1.2。效率高  
+```TreeMap``` ：底层是二叉树数据结构。线程不同步。可以给key排序。  
+添加元素（put）时，如果原来的键已存在，会覆盖原来的值，并把原来的值返回。  
+```entrySet()``` 返回的是```Map.Entry<K,V>``` 类型的对象，此类包含```getKey();getValue();setValue();``` 方法  
