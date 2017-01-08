@@ -587,3 +587,37 @@ class Worker extends Person{}
 ```TreeMap``` ：底层是二叉树数据结构。线程不同步。可以给key排序。  
 添加元素（put）时，如果原来的键已存在，会覆盖原来的值，并把原来的值返回。  
 ```entrySet()``` 返回的是```Map.Entry<K,V>``` 类型的对象，此类包含```getKey();getValue();setValue();``` 方法  
+## Conllections帮助类中的方法有
+binarySearch(list,key)二分查找、sort(list) 排序， sort(list,Comparator<? super T> c)排序。reverseOrder()或者reverseOrder(Comparator c)将比较器返回为反转比较器。fill()全部替换为指定的元素、syschronizedList(List list) 、syschronizedMap(map)、syschronizedSet(set)将线程不安全的集合转变为线程安全的集合。内部原理是在类内部再维护一个集合，然后增删改方法都被syschronized包住并采用同一个锁。swap(list,int i,int j)交换两个位置的元素、shuffle(list)将list元素打乱。
+## Arrays帮助类中的方法有
+binarySearch()各种二分查找，copyOf(list)各种复制,copyOfRange(array,from,to),deepequals()不但比较数组还比较数组中的元素内容。fill(array,from,to)全部替换asList(a)把数组变为list集合。但是此list集合不可以使用list中的增删方法。否则会发生UnSupportedOperationException。还有，如果数组中的元素都是对象，那么数组中的元素都会变成集合中的元素，但是如果数组中的元素都是基本类型，那么数组就会变成集合中的元素。
+举例：
+```java
+String[] arr = {"aa","bb","cc"};
+List<String> l = Arrays.asList(arr);
+System.out.println(l.length);//3
+int[] arr2 = {1,2,3};
+List<int[]> l2 = Arrays.asList(arr2);
+System.out.println(l2.length);//1
+```
+## 集合转数组
+```java
+ArrayList<String> al = new ArrayList<String>();
+al.add("abc1");
+al.add("abc2");
+al.add("abc3");
+String[] arr = al.toArray(new String[1]);
+System.out.println(Arrays.toString(arr));//[abc1,abc2,abc3]
+String[] arr2 = al.toArray(new String[5]);
+System.out.println(Arrays.toString(arr2));//[abc1,abc2,abc3,null,null]
+```
+1. 指定数组长度到底要定义多长呢？
+当指定的数组的长度小于了集合的size，那么该方法内部就会创建一个新的数组，长度为集合的size。  
+当指定的数组的长度大于了集合的size，就不会创建新的数组,而是采用传递过来的数组。  
+所以传递一个刚刚好的数组最优。  
+所以最好采用
+```java
+String[] arr3 = al.toArray(new String[al.size()]);
+```
+2.为什么要集合变数组？  
+为了限制对元素的操作。不需要进行增删了。
