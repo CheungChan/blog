@@ -621,3 +621,82 @@ String[] arr3 = al.toArray(new String[al.size()]);
 ```
 2.为什么要集合变数组？  
 为了限制对元素的操作。不需要进行增删了。
+## javaio
+### java写文件demo
+```java
+public class FileWriterDemo{
+    public static void main(String[] args){
+        FileWriter fw = null;
+        try{
+            fw = new FileWriter("demo.txt");
+            fw.write("abc");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }finally{
+            try{
+                if(fw != null){
+                    fw.close();
+                }
+            }catch(IOException e){
+                System.out.println(e);
+            }
+        }
+    }
+}
+```
+
+java读文件demo
+
+```java
+public class FileReaderDemo2{
+    public static void main(String[] args){
+        FileReader fr = null;
+        try{
+            fr = new FileReader("demo.txt");
+            int ch = 0;
+            while((ch=fr.read()) !=  -1){
+                System.out.print(ch);
+            }
+        }catch(IOException e){
+            System.out.println(e)
+        }finally{
+            if(fr != null){
+                try{
+                    fr.close();
+                }catch(IOException e){
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+}
+```
+
+读文件第二种方式，通过字符数组读取
+
+```java
+public class FileReaderDemo3{
+    public static void main(String[] args){
+        FileReader fr = null;
+        try{
+            fr = new FileReader("demo.txt");
+            char[] ch = new char[1024];
+            int num = 0
+            while((num = fr.read(ch)) != -1){
+                System.out.print(new String(ch, 0, num));
+            }
+        }catch(IOException){
+            System.out.println(e);
+        }finally{
+            if(fr != null){
+                try{
+                    fr.close();
+                }catch(IOException e){
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+}
+```
