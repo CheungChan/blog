@@ -1,5 +1,6 @@
 #### 查询所有记录
 ```python
+>>> from polls.models import Question, Choice
 >>> Question.objects.all()
 <QuerySet [<Question: What's up?>]>
 >>> Question.objects.count()
