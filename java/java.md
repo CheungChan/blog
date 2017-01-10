@@ -621,9 +621,16 @@ String[] arr3 = al.toArray(new String[al.size()]);
 ```
 2.为什么要集合变数组？  
 为了限制对元素的操作。不需要进行增删了。
-## javaio
+## javaio流
+字节流的抽象基类：InputStream、OutputStream  
+字符流的抽象基类：Reader、Writer  
+由这四个抽象基类派生出来的子类的名称都是以其父类名作为子类名的后缀，前缀名是该类的功能。如InputStream的子类FileInputStream。Reader的子类FileReader。
+## 字符流
+抽象基类：Reader、Writer  
+Writer有一个子类叫OutputStreamWriter,该子类又有一个子类是FileWriter。
 ### java写文件demo
 ```java
+import java.io.*;
 public class FileWriterDemo{
     public static void main(String[] args){
         FileWriter fw = null;
@@ -646,9 +653,11 @@ public class FileWriterDemo{
 }
 ```
 
-java读文件demo
+java读文件demo  
+FileReader读文件只能一个字符一个字符的读或者读一个字符数组
 
 ```java
+import java.io.*;
 public class FileReaderDemo2{
     public static void main(String[] args){
         FileReader fr = null;
@@ -656,10 +665,10 @@ public class FileReaderDemo2{
             fr = new FileReader("demo.txt");
             int ch = 0;
             while((ch=fr.read()) !=  -1){
-                System.out.print(ch);
+                System.out.print((char)ch);
             }
         }catch(IOException e){
-            System.out.println(e)
+            System.out.println(e);
         }finally{
             if(fr != null){
                 try{
@@ -676,17 +685,18 @@ public class FileReaderDemo2{
 读文件第二种方式，通过字符数组读取
 
 ```java
+import java.io.*;
 public class FileReaderDemo3{
     public static void main(String[] args){
         FileReader fr = null;
         try{
             fr = new FileReader("demo.txt");
             char[] ch = new char[1024];
-            int num = 0
+            int num = 0;
             while((num = fr.read(ch)) != -1){
                 System.out.print(new String(ch, 0, num));
             }
-        }catch(IOException){
+        }catch(IOException e){
             System.out.println(e);
         }finally{
             if(fr != null){
@@ -700,3 +710,68 @@ public class FileReaderDemo3{
     }
 }
 ```
+BufferedReader读文件加入了缓冲技术，不但可以按字符读取，读到一个字符数组里，还可以按行读取，注意readLine()方法不带换行符。
+
+```java
+import java.io.*;
+public class BufferedReaderDemo{
+    public static void main(String[] args) throws IOException{
+        FileReader r = new FileReader("demo.txt");
+        BufferedReader br = new BufferedReader(r);
+        String line = null;
+        while((line = br.readLine()) != null){
+            System.out.println(line);
+        }
+        br.close();
+    }
+}
+```
+
+使用BufferedReader拷贝文件
+
+```java
+import java.io.*;
+public class CopyTextByBuffer{
+    public static void main(String[] args){
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try{
+            br = new BufferedReader(new FileReader("CopyTextByBuffer.java"));
+            bw = new BufferedWriter(new FileWriter("copyto.txt"));
+            String line = null;
+            while((line = br.readLine()) != null){
+                bw.write(line);
+                // readLine()方法不返回任何终止符。
+                bw.newLine();
+                bw.flush();
+            }
+        }catch(IOException e){
+            System.out.println("读写出错");
+        }finally{
+            if(br != null){
+                try{
+                    br.close();
+                }catch(IOException e){
+                    System.out.println("读取关闭失败");
+                }
+                try{
+                    bw.close();
+                }catch(IOException e){
+                    System.out.println("写入关闭失败");
+                }
+            }
+        }
+    }
+}
+```
+readLine()的原理还是调用read()方法存入一个临时的数组缓冲区，直到遇到终止符就不存了返回。
+#### 装饰设计模式
+当想要对已有的对象进行功能增强时，可以定义类，将已有的对象传入，基于已有的功能，并提供增强功能。那么自定义的该类称为装饰类。  
+装饰类通常会通过构造方法接受被装饰的对象，并基于被装饰的对象的功能，提供增强功能。  
+装饰模式比继承要灵活，避免了继承体系的臃肿，而且降低了类与类之间的关系。  
+装饰类因为增强已有对象，具备的功能和已有的是相同的，只不过提供了更强的功能。所以装饰类和被装饰类通常都属于一个体系中的。  
+如图  
+![image](image/装饰1.png)  
+![image](image/装饰2.png)  
+装饰设计模式把继承关系变成了组合关系，而且通常属于同一父类。  
+LineNumberReader是BufferedReader的子类，也是装饰了Reader，功能增加了setLineNumber()和getLineNumber()，可以跟踪行号，默认行号从0开始。  
