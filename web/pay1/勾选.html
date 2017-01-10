@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        /*
+		 * 隐藏默认的checkbox
+		 */
+        
+        input[type=checkbox] {
+            visibility: hidden;
+        }
+        /**
+			 * Checkbox Five
+			 */
+        
+        .checkboxFive {
+            width: 25px;
+            margin: 20px 100px;
+            position: relative;
+        }
+        /**
+			 * Create the box for the checkbox
+			 */
+        
+        .checkboxFive label {
+            cursor: pointer;
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 0;
+            left: 0;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+        }
+        
+        .checkboxFive label.active {
+            background-color: red;
+        }
+        /**
+			 * Display the tick inside the checkbox
+			 */
+        
+        .checkboxFive label:after {
+            /*opacity:0;*/
+            content: '';
+            position: absolute;
+            width: 9px;
+            height: 5px;
+            background: transparent;
+            top: 4px;
+            left: 4px;
+            border: 3px solid white;
+            border-top: none;
+            border-right: none;
+            -webkit-transform: rotate(-45deg);
+            -moz-transform: rotate(-45deg);
+            -o-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+        /**
+			 * Create the hover event of the tick
+			 */
+        /**
+			 * Create the checkbox state for the tick
+			 */
+        /*.checkboxFive input[type=checkbox]:checked + label:after {
+				opacity:1;
+			}*/
+        
+        .checkboxFive input[type=checkbox]:checked {
+            opacity: 1;
+        }
+    </style>
+    <script src="js/jquery-1.11.3.min.js"></script>
+</head>
+
+<body>
+    <section>
+        <!-- Checbox Five -->
+        <h3>Checkbox Five</h3>
+        <div class="checkboxFive">
+            <input type="checkbox" value="1" id="checkboxFiveInput" name="" />
+            <label for="checkboxFiveInput"></label>
+        </div>
+    </section>
+    <script>
+        $(function() {
+            $('label').click(function() {
+                $(this).toggleClass('active')
+            })
+        })
+    </script>
+</body>
+
+</html>

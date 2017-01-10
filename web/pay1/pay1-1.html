@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="description" content="">
+		<meta name="apple-touch-fullscreen" content="yes" />
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+		<meta content="no" name="apple-mobile-web-app-capable" />
+		<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+		<meta content="telephone=no" name="format-detection" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/touch_logo_precomposed.png" />
+		<title>支付页面1-2</title>
+		<script src="js/jquery-1.11.3.min.js"></script>
+		<script>
+			$(function(){
+				$('label').click(function(){
+					$('label').removeClass('active');
+					$(this).addClass('active')
+				})
+				$('input.entermoney-s').focus(function(){
+					$(this).attr('placeholder','')
+				})
+				$('input.entermoney-s').blur(function(){
+					$(this).attr('placeholder','请询问服务员后输入')
+				})
+			})
+		</script>
+		<!--基础响应式的样式-->
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<!--自定义页面的样式-->
+		<link rel="stylesheet" type="text/css" href="css/paynew.css"/>
+	</head>
+	<body class="moblie-wrap-bg">
+		<div class="search-wrap"> 
+			<!--导航部分-->
+			<header>
+				<div class='paynav'>
+					<a href="#" class='a01 icon-back'>
+						<span>返回</span>
+					</a>
+					<a href="#" class='a02'>
+						付款
+					</a>
+					<a href="#" class='a03 icon-list'></a>
+				</div>
+			</header>
+			<!--主体部分-->
+			<section>
+				<!--消费金额-->
+				<div class='proname'>
+					<h2>天天鲜果水果店</h2>
+					<div class='enter'>
+						<span class='sp-01'>消费金额：</span>
+						<input type='text' dir="rtl" name='entermoney' placeholder="请询问服务员后输入" class='entermoney-s'>
+						<span class='sp-02'>元</span>
+					</div>
+					<a href="#" class='remarks'>备注</a>
+				</div>
+				<!--消费方式-->
+				<div class='paychoose'>
+					<h2>支付方式</h2>
+					<ul>
+						<li>
+							<ul class='paylist'>
+								<li>
+									<img src="images/weixin.jpg">
+								</li>
+								<li>
+									微信支付
+								</li>
+								<li class='checkboxOne'>
+									<input type="checkbox" value="1" id="checkboxInput" name="" />
+			  						<label for="checkboxInput" class='active'></label>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<ul class='paylist'>
+								<li>
+									<img src='images/gongyin.jpg'>
+								</li>
+								<li class='favorable'>
+									满减优惠
+								</li>
+								<li class='checkboxOne'>
+									<input type="checkbox" value="1" id="checkboxInput" name="" />
+			  						<label for="checkboxInput" ></label>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<button type='button' class='sure'>确定</button>
+			</section>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			.personinfo-s{
+				position:relative;
+			}
+			.personinfo-s label{
+				position:absolute;
+				left:0;
+				top:0
+			}
+			.text-tel{
+				width:100%;height: 4rem;padding-left:4rem;border: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class='personinfo'>
+					<from action="" method='post'>
+ 					<div class='personinfo-s'>
+						<label for='tel' >手机号</label>
+						<input type="text" name="tel" id="" placeholder="请输入银行预留手机号" class='text-tel'/>
+					</div>
+					<div class='personinfo-s'>
+						<label for='num' style='position:absolute;left:0;top:0'>卡号</label>
+						<input type="text" name="num" id="" placeholder="请输入卡号的后六位\别名" class='text-num' style='width:100%;height: 4rem;padding-left:4rem;border: none;'/>
+					</div>
+					<p>如果未注册e支付，请输入完整的卡号</p>
+					<input type="button" value="下一步"/>
+					</from>
+				</div>
+	</body>
+</html>

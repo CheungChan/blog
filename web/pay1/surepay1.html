@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="description" content="">
+		<meta name="apple-touch-fullscreen" content="yes" />
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+		<meta content="no" name="apple-mobile-web-app-capable" />
+		<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+		<meta content="telephone=no" name="format-detection" />
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/touch_logo_precomposed.png" />
+		<title>蒙版</title>
+		<script src="js/jquery-1.11.3.min.js"></script>
+		<script>
+			$(function(){
+				$('.payrightnow').click(function(){
+					$('.paybox-s').show()
+				})
+				$('.chart').click(function(){
+					$('.paybox-s').hide()
+				})
+			})
+		</script>
+		<!--基础响应式的样式-->
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<!--自定义页面的样式-->
+		<link rel="stylesheet" type="text/css" href="css/paynew.css"/>
+	</head>
+	<body class="moblie-wrap-bg" >
+		<div class="search-wrap"> 
+			<a href="#" class='payrightnow'>立即支付</a>
+			<!--浮动层-->
+			<div class="paybox-s">
+			  <div class="bankpay-box">
+			    <div class='header-s'>
+			    	<a href="#" class='chart'>叉叉</a>
+			    	<a href='#'>支付</a>
+			    	<a href='#'>使用密码</a>
+			    </div>
+			    <div class="bank-info">
+			      <h3>工商银行微信支付商户</h3>
+			      <h3>￥26.9</h3>
+			    </div>
+			    <div class='bank-msg'>
+			 		<img >
+			 		<span>工商银行信用卡（2225）</span>
+			 		<a href="#"></a>
+			    </div>
+			  </div>
+			  <div class="marks"></div>
+			</div>
+		</div>
+	</body>
+</html>

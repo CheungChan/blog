@@ -1,0 +1,301 @@
+/*2017-1-6 金鑫*/
+/*图1-1 付款 消费金额页面*/
+
+body{
+	background-color:#eee;
+}
+/*导航部分*/
+header{
+	height:3rem;
+	background-color:black;
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+}
+header .paynav{
+	position:relative;
+	height:100%;
+	width:100%;
+	box-sizing: border-box;
+}
+header .paynav a{
+	color:white;
+	display: block;
+	height: 100%;
+	box-sizing: border-box;
+	line-height:3rem;
+}
+header .paynav a.a01,header .paynav a.a03{
+	position:absolute;
+}
+header .paynav a.a01{
+	font-size:1rem;
+	left:0;
+	top:0;
+}
+header .paynav a.a01 span{
+	text-align: center;
+	vertical-align: 1rem;
+}
+header .paynav a.a03{
+	font-size:1rem;
+	right:0;
+	top:0;
+}
+header .paynav a.a02{
+	font-size: 1.5rem;
+    width: 100%;
+    padding: 0 4rem 0 4rem;
+    text-align: center;
+    font-weight: bold;
+}
+/*导航部分字体图标*/
+.icon-back:before {
+    content: "\e64e";
+    font-size:3rem;
+	padding-right:0;
+	line-height: 3rem;
+}
+.icon-list:before{
+	content: "\e6a7";
+	font-size:1.5rem;
+	padding:1rem;
+}
+/*主体部分*/
+/*消费金额部分*/
+section{
+	margin-top: 3rem;
+}
+section .proname{
+	padding:1rem 1rem 5rem 1rem
+}
+section .proname h2{
+	font-size:1.5rem;
+	line-height: 1.5rem;
+	text-align: center;
+	font-weight: bold;
+	padding-bottom: 1.2rem;
+}
+section .proname .enter{
+	position:relative
+}
+section .proname .enter .sp-01,section .proname .enter .sp-02{
+	position:absolute;
+	font-weight: bold;
+	font-size:1.5rem;
+	line-height: 4rem;
+}
+section .proname .enter .sp-01{
+	left:0.5rem;
+	top:0;
+	
+}
+section .proname .enter .sp-02{
+	right:0.8rem;
+	top:0;
+}
+section .proname .enter .entermoney-s{
+	width:100%;
+	padding:0 3rem 0 6rem;
+	height:4rem;
+	border-radius: 0.5rem;
+	-moz-border-radius: 0.5rem;
+	box-sizing: border-box;
+}
+section .proname .remarks{
+	display: block;
+	float: right;
+	color:blue;
+	text-decoration: underline;
+	padding-top:0.5rem
+}
+/*支付方式选择*/
+section .paychoose .paylist{
+	overflow: hidden;
+	background: white;
+	height:4rem;
+	line-height: 4rem;
+}
+section .paychoose ul>li:nth-child(1){
+	border-bottom: 1px solid #eee;
+}
+section .paychoose h2{padding:0 0 0.5rem 2rem;font-size:1rem}
+section .paychoose .paylist li{
+	float: left;
+}
+section .paychoose .paylist li:nth-child(3){
+	float: right;
+}
+section .paychoose .paylist li:nth-child(1){
+	padding:0 1rem;
+}
+section .paychoose .paylist li.favorable{
+	color:orangered;
+	font-weight: bold;
+}
+/*小圆点的勾选*/
+section .paychoose .paylist li input[type=checkbox] {
+	visibility: hidden;
+}
+section .paychoose .paylist li.checkboxOne {
+	width:2rem;
+	position: relative;
+}
+section .paychoose .paylist li.checkboxOne label {
+	cursor: pointer;
+	position: absolute;
+	width: 1.5rem;
+	height:1.5rem;
+	top: 1.1rem;
+	left: 0;
+	border:1px solid #eee;
+	border-radius: 50%;
+}
+section .paychoose .paylist li.checkboxOne label.active{
+	background-color:red;
+}
+section .paychoose .paylist li.checkboxOne label:after {
+		opacity:0;
+		content: '';
+		position: absolute;
+		width:0.9rem;
+		height:0.35rem;
+		background:transparent;
+		top:0.4rem;
+		left: 0.15rem;
+		border:2.5px solid white;
+		border-top: none;
+		border-right: none;
+		-webkit-transform: rotate(-45deg);
+		-moz-transform: rotate(-45deg);
+		-o-transform: rotate(-45deg);
+		-ms-transform: rotate(-45deg);
+		transform: rotate(-45deg);
+	}
+			
+section .paychoose .paylist li.checkboxOne input[type=checkbox]:checked{
+	opacity:1;
+}
+section .paychoose .paylist li.checkboxOne label:after {
+	opacity:1;
+}
+/*确定按钮*/
+section .sure{
+	margin-top:1rem;
+	font-size:1.5rem;
+	width:100%;
+	height:3rem;
+	line-height: 3rem;
+	color:white;
+	background-color:#f75e3b;
+	text-align: center;
+	border: none;
+}
+
+
+/*图2  蒙版的页面*/
+.payrightnow{
+	display: block;
+	width:100%;
+	height:4rem;
+	background-color:green;
+	color:white;
+	text-align: center;
+	line-height: 4rem;
+	font-size:2rem
+}
+/*外面最大的盒子，包括主体部分和蒙版*/
+.paybox-s{
+	display: block;
+	position:fixed;
+	left:0;
+	top:0;
+	width:100%;
+	height: 100%;
+	z-index: 99;
+}
+/*蒙版*/
+.paybox-s .marks{
+	width:100%;
+	height: 100%;
+	position:absolute;
+	left:0;
+	top:0;
+	background: black;
+	opacity: 0.4;
+	z-index: 10;
+}
+/*主体部分*/
+.paybox-s .bankpay-box{
+	width:90%;
+	position: absolute;
+	left:50%;
+	top:50%;
+	margin-left: -45%;
+	background-color:white;
+	z-index: 20;
+} 
+/*第一行导航关闭部分*/
+.paybox-s .bankpay-box .header-s{
+	width:100%;
+	position:relative;
+	height: 3rem;
+	line-height: 3rem;
+	border-bottom: 1px solid greenyellow;
+}
+.paybox-s .bankpay-box .header-s a{
+	display: block;
+	box-sizing: border-box;
+}
+.paybox-s .bankpay-box .header-s a:nth-child(1){
+	position:absolute;
+	left:0;
+	top:0
+}
+.paybox-s .bankpay-box .header-s a:nth-child(2){
+	width:100%;
+	padding:0 4rem 0 2rem;
+	text-align: center;
+}
+.paybox-s .bankpay-box .header-s a:nth-child(3){
+	position:absolute;
+	right:0;
+	top:0;
+}
+/*图5付款商铺信息*/
+/*导航*/
+.payshop-title{background:white;height: 3rem;line-height:3rem}
+.payshop-title .payshop{height:100%;}
+.payshop-title .payshop a{display: block;}
+.payshop-title .payshop a.back-s:before{font-size:3rem}
+.payshop-title .payshop a:nth-child(1){position:absolute;top:0;left:0;text-align: center;}
+.payshop-title .payshop a:nth-child(1) span{color:#999;vertical-align: 1rem;font-size:1rem;text-align: center;}
+.payshop-title .payshop a:nth-child(2){width:100%;text-align: center;font-size:1.5rem;color:#333}
+/*付款的个人信息*/
+section .shopinfo{width:100%;margin-top: 3rem;padding:1.5rem 0}
+section .shopinfo h2{font-size:1.4rem;text-align: center;line-height: 3rem;}
+section .shopinfo h3{font-size:2rem;text-align: center;line-height: 2rem;}
+
+section .waypay{height: 3rem;line-height: 3rem;background: white;position:relative;margin-top:1.5rem}
+section .waypay span{padding:0 1rem;font-size:1rem;text-align: center;}
+section .waypay span:nth-child(2){position:absolute;right: 0;top;0}
+section .waypay span:nth-child(2) a{display: inline-block}
+.icon-new-back:before{content: '\e911';font-size:1rem;vertical-align:middle;padding: 0.5rem;}
+/*手机号和银行卡号*/
+.personinfo{width:100%;}
+.personinfo .personinfo-s{height:4rem;line-height:4rem;width: 100%;position: relative;background: white}
+.personinfo-s{position:relative;}
+.personinfo-s:nth-child(1){border-bottom: 1px solid #eee;}
+.personinfo-s label{position:absolute;left:0;top:0;padding-left:1rem}
+input.text-s{width:100%;height: 4rem;padding-left:6rem;border: none;}
+.explain{padding:1rem}
+input.next-pay-s{width:96%;background: #666;color:white;font-size:1rem;line-height: 2rem;border-radius: 5px;margin-left: 2%;}
+/*图6动态输入密码*/
+/*导航*/
+.teltesr-word{color:#333;font-weight: bold;}
+.tel-enter-num{position: relative;height:4rem;margin-top: 6rem;width:95%;margin-left: 2.5%;line-height:1.5rem;padding-bottom:4rem;}
+.tel-enter-num input{width:100%;padding:0.5rem 8rem 0.5rem 1rem;height: 4rem;border-radius: 5px;}
+.tel-enter-num .refresh-get{position: absolute;right:0;top:0;padding:0.5rem 2rem 0.5rem 2rem}
+.tel-enter-num .refresh-get p{border-left:1px solid #eee;padding-left:2rem;text-align: center;}
+.sure-tel{width:95%;background: #333;color:white;height: 2rem;font-size:1rem;border: none;margin-top: 2rem;margin-left: 1%;position: absolute;left:0;bottom:0rem;}
