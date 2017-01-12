@@ -775,3 +775,151 @@ readLine()的原理还是调用read()方法存入一个临时的数组缓冲区�
 ![image](image/装饰2.png)  
 装饰设计模式把继承关系变成了组合关系，而且通常属于同一父类。  
 LineNumberReader是BufferedReader的子类，也是装饰了Reader，功能增加了setLineNumber()和getLineNumber()，可以跟踪行号，默认行号从0开始。  
+## 字节流
+字节流不需要刷新，因为不需要中间转换直接写入字节。字符流可以读到字符数组中，字节流可读入字节数组中。数据小的时候可以 
+```java
+FileInputStream fis = new FileInputStream("fos.txt");
+byte[] buf = new byte[fis.available()];//定义一个刚刚好的缓冲区，就不用循环了。
+fis.read(buf);
+System.out.println(new String(buf));
+fis.close();
+```
+，因为available方法放回当前指针后面还有多少数据。但是当数据过大的时候有可能虚拟机内存不够用。这时候还是得用
+```java
+FileInputStream fis = new FileInputStream("fos.txt");
+byte[] buf = new byte[1024];
+int len=0; 
+while((len=fis.read()) != -1){
+    System.out.println(new Stirng(buf, 0, len));
+}
+fis.close();
+```
+
+### 使用字节流拷贝图片
+
+```java
+ import java.io.*;
+ public class CopyPic{
+     public static void main(String[] args){
+        long start = System.currentTimeMillis();
+        copy();
+        long end = System.currentTimeMillis();
+        System.out.println(end-start + "毫秒");
+     }
+     public static void copy(){
+         FileOutputStream fos = null;
+         FileInputStream fis = null;
+         try{
+             fos = new FileOutputStream("c:\\0.bmp");
+             fis = new FileInputStream("c:\\1.bmp");
+             byte[] buf = new byte[1024];
+             int len = 0;
+             while((len=fis.read(buf)) != -1){
+                 fos.write(buf, 0, len);
+             }
+         }catch(IOException e){
+             throw new RuntimeException("复制文件失败");
+         }finally{
+             try{
+                 if(fis!=null){
+                     fis.close();
+                 }
+             }catch(IOException e){
+                 System.out.println("读取关闭失败");
+             }
+             try{
+                 if(fos!=null){
+                     fos.close();
+                 }
+             }catch(IOException e){
+                 System.out.println("写入关闭失败");
+             }
+         }
+     }
+ }
+ //执行时间大约是56ms。
+ ```
+使用带缓冲区的字节流复制图片，也是BufferedInputStream装饰了FileInputStream()
+```java
+ import java.io.*;
+ public class CopyMP3{
+    public static void main(String[] args) throws IOException{
+        long start = System.currentTimeMillis();
+        copy();
+        long end = System.currentTimeMillis();
+        System.out.println(end-start + "毫秒");
+    }
+    public static void copy() throws IOException{
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("c:\\0.mp3"));
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream("c:\\1.mp3"));
+        int by = 0;
+        while((by=bis.read()) != -1){
+            bos.write(by);
+        }
+        bis.close();
+        bos.close();
+    }
+ }
+ //执行时间大约是331ms
+ ```
+### 特别注意：read()方法返回的不是byte类型而是int类型，做了类型提升，而write()方法再将int类型强转成byte类型再写入。
+举例：
+
+```java
+
+import java.io.*;
+class MyBufferedInputStream{
+        private InputStream in;
+        private byte[] buf = new byte[1024];
+        private int pos = 0, count = 0;
+        public MyBufferedInputStream(InputStream in){
+            this.in = in;
+        }
+        // 一次读一个字节，从缓冲区（字节数组）读取
+        public int myRead() throws IOException{
+            // 通过in对象从硬盘读取，缓存到buf中
+            if(count==0){
+                pos = 0;
+                count = in.read(buf);
+                if(count<0){
+                    return -1;
+                }
+                byte b = buf[pos];
+                count--;
+                pos++;
+                return b & 0xff;
+                // read()方法返回的不是byte类型而是int类型，做了类型提升这样原本11111111也就是-1，自动提升到int后也就是11111111 11111111 11111111 11111111还是-1应该变成00000000 00000000 00000000 11111111也就是255，方法是&255。
+            }else if(count > 0){
+                byte b = buf[pos];
+                count--;
+                pos++;
+                return b & 0xff;
+            }
+            return -1;
+    }
+    public void close() throws IOException{
+        in.close();
+    }
+
+}
+ public class MyCopyMP3{
+    public static void main(String[] args) throws IOException{
+        long start = System.currentTimeMillis();
+        copy();
+        long end = System.currentTimeMillis();
+        System.out.println("");
+        System.out.println(end-start + "毫秒");
+    }
+    public static void copy() throws IOException{
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("c:\\0.mp3"));
+        MyBufferedInputStream bis = new MyBufferedInputStream(new FileInputStream("c:\\1.mp3"));
+        int by = 0;
+        while((by=bis.myRead()) != -1){
+            bos.write(by);
+        }
+        bis.close();
+        bos.close();
+    }
+ }
+
+```
