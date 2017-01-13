@@ -1122,3 +1122,61 @@ public class FileDemo2 {
     }
 }
 ```
+## Properties对象
+该对象是hashTable的子类，也就是具备了map集合的特点，而且它存储的键值对都是字符串。该对象是集合中和IO结合的技术。  
+load(InputStream)、load(Reader)方法可将硬盘中的配置文件加载进内存中的properties中。  
+list(OutputStream)可以像配置文件中内容一样由换行隔开 输出到指定的输出流中。  
+setProperty("wangwu","39")可以更改property的值。  
+更改之后可以存储到指定的文件中，使用store(OutputStream out,String comments)方法。注释信息会前面加上#号    
+Set<String> stringPropertyNames()将Properties中的键转换成set集合返回。  
+应用：（程序使用次数计数器）
+```java
+
+import java.io.*;
+import java.util.*;
+
+public class RunCount{
+    public static void main(String[] args) throws IOException{
+        Properties prop = new Properties();
+        File f = new File("count.ini");
+        if(!f.exists()){
+            f.createNewFile();
+        }
+        FileInputStream fi = new FileInputStream(f);
+        prop.load(fi);
+        String time = prop.getProperty("time");
+        int count = 0;
+        if(time != null){
+            count = Integer.parseInt(time);
+            if(count >= 5){
+                System.out.println("您好，使用次数已到，拿钱！");
+                return;
+            }
+        }
+        count++;
+        prop.setProperty("time", count + "");
+        FileOutputStream fo = new FileOutputStream(f);
+        prop.save(fo,"");
+
+        fo.close();
+        fi.close();
+
+    }
+}
+```
+## 打印流
+强大的地方是对各种数据类型的数据原样打印。  
+分为两种：  
+字节打印流：PrintStream，  
+构造方法可以接受的参数类型：  
+1.file对象。File  
+2.字符串路径。String  
+3.字节输出流。OutputStream  
+字符打印流PrintWriter。  
+构造方法可以接受的参数类型：  
+1.file对象。File  
+File file,String codingset  
+2.字符串路径。String  
+3.字节输出流。OutputStream  
+OutputStream out, boolean autoflush  
+4.字符输出流。Writer
