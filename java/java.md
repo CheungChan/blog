@@ -923,3 +923,145 @@ class MyBufferedInputStream{
  }
 
 ```
+## 从键盘读取字符，按行读取，将读入的字符大写输出，遇到over停止
+### 字节流只有read方法，没有readLine方法，如果使用readLine方法，必须将字节流转换为字符流，只能使用转换流InputStreamReader。
+```java
+
+import java.io.*;
+public class MyRead{
+    public static void main(String[] args) throws IOException{
+        // 获取键盘录入对象
+        InputStream in = System.in;
+        // 将字节流对象转换为字符流对象，使用转换流。InputStreamReader
+        InputStreamReader isr = new InputStreamReader(in);
+        // 为了提高效率，将字符流进行缓冲区技术高效操作，使用BufferedReader
+        BufferedReader bufr = new BufferedReader(isr);
+        String line = null;
+        while((line=bufr.readLine()) != null){
+            if("over".equals(line)){
+                break;
+            }
+            System.out.println(line.toUpperCase());
+        }
+        bufr.close();
+    }
+}
+```
+### 输出时还有字符流转换成字节流的需求，使用OutputStreamWriter。如果要输出最后的换行可以装饰成为BufferedWriter这样才有跨平台的newLine方法
+```java
+
+import java.io.*;
+public class MyRead{
+    public static void main(String[] args) throws IOException{
+        // 获取键盘录入对象
+        InputStream in = System.in;
+        // 将字节流对象转换为字符流对象，使用转换流。InputStreamReader
+        InputStreamReader isr = new InputStreamReader(in);
+        // 为了提高效率，将字符流进行缓冲区技术高效操作，使用BufferedReader
+        BufferedReader bufr = new BufferedReader(isr);
+
+        OutputStream os = System.out;
+        OutputStreamWriter osw = new OutputStreamWriter(os);
+        BufferedWriter bw = new BufferedWriter(osw);
+
+        String line = null;
+        while((line=bufr.readLine()) != null){
+            if("over".equals(line)){
+                break;
+            }
+            //System.out.println(line.toUpperCase());
+            bw.write(line.toUpperCase());
+            bw.newLine();
+            bw.flush();
+        }
+        bufr.close();
+    }
+}
+```
+### 所以日常经常使用键盘使用如下形式
+```java
+BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+```
+### 如需要将控制台输入改为输入到文件中
+```java
+BufferedWriter bw = new BufferWriter(new OutputStreamWriter(new FileOutputStream("test.txt")));
+```
+### 如需将键盘录入改为从文件中读取
+```java
+BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("test.txt")));
+```
+### 流操作的基本规律:最痛苦的是流对象很多，不知道要用哪一个
+#### 1.明确源和目的
+    源：输入流 InputStream Reader
+    目的：输出流 OutputStream Writer
+#### 2.操作的对象是否是纯文本
+    是：字符流
+    不是：字节流
+#### 3.当体系明确后，再明确要使用哪个具体的对象
+    通过设备来区分:
+    源设备：内存、硬盘、键盘
+    目的设备：内存、硬盘、控制台
+### 应用举例
+1。将一个文本文件中的数据存储到另一个文件中。复制文件  
+源：因为是源，所以使用读取流InputStream Reader  
+是不是操作文本文件?是，这时就可以使用Reader  
+这样体系就明确了。  
+接下来明确要使用体系中的哪个对象  
+明确设备：硬盘上的一个文件  
+Reader体系中可以操作文件的对象是FileReader()  
+FileReader fr = new FileReader("demo.txt");  
+是否需要提高效率？是！  
+BufferedReader br = new BufferedReader(fr);
+
+目的：OutputStream Writer  
+是否是纯文本文件？是，这时就可以使用Writer  
+设备：硬盘上的一个文件  
+Writer体系中可以操作文件的对象是FileWriter  
+FileWriter fw = new FileWriter("demo2.txt");  
+是否需要提高效率？是！  
+BufferedWriter bw = new BufferWriter(fw);  
+2。需求：将键盘录入的数据保存到一个文件中。  
+这个需求有源和目的都存在  
+那么这么分析  
+源：InputStream Reader  
+是不是纯文本?是! Reader  
+设备：键盘。对应的对象应该是System.in  
+不是选择Reader吗？System.in对应的不是字节流吗  
+为了操作键盘上的文本数据方便，把字节流转换成字符串操作才是最方便的  
+用了Reader体系中的转换流InputStreamReader  
+InputStreamReader isr = new　InputStreamReader(System.in);  
+需要提高效率吗？需要！BufferedReader  
+BufferedReader br = new BufferedReader(isr);  
+
+目的：OutputStream Writer  
+是否是纯文本文件？是，这时就可以使用Writer  
+设备：硬盘上的一个文件  
+Writer体系中可以操作文件的对象是FileWriter  
+FileWriter fw = new FileWriter("demo2.txt");  
+是否需要提高效率？是！  
+BufferedWriter bw = new BufferWriter(fw);  
+
+扩展一下,想把录入的数据按照指定的编码表存到指定的文本文件中
+目的：OutputStream Writer  
+是否是纯文本文件？是，这时就可以使用Writer  
+设备：硬盘上的一个文件  
+Writer体系中可以操作文件的对象是FileWriter  
+但是存储时需要指定编码表(utf-8),而指定编码表只有转换流可以指定。所以要使用的对象是OutputStreamWriter.而该转换流需要接收一个字节输出流，而且是还可以操作文件的字节输出流.FileOutputStream  
+OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("d.txt"),"UTF-8");  
+FileWriter fw = new FileWriter("demo2.txt");  
+是否需要提高效率？是！  
+BufferedWriter bw = new BufferWriter(osw);  
+### 所以，记住。转换流什么时候使用呢？通常涉及到指定编码表时使用而InputStreamReader的子类FileReader虽然也能操作文件，但是只使用默认编码表。
+注意还可以使用System.setIn()或者System.setOut()方法改变默认的标准输入，输出，这样获取的System.in或System.out就是设置之后的种类了。  
+系统类中有这样的方法
+```java
+Properties prop = System.getProperties();
+System.out.println(prop);
+```
+打印的是一个map，没有换行。如果换行，可以使用Properties中的list方法，传一个输出流进去。
+```java
+Properties prop = System.getProperties();
+prop.list(System.out);
+```
+这样可以换行输出此map，如果想打印到别的里面，可以传入别的输出流。
