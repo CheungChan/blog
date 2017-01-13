@@ -794,7 +794,7 @@ while((len=fis.read()) != -1){
 }
 fis.close();
 ```
-
+另外一个坑是文件太大available的int不够放时，返回的是错误的值。
 ### 使用字节流拷贝图片
 
 ```java
@@ -1065,3 +1065,60 @@ Properties prop = System.getProperties();
 prop.list(System.out);
 ```
 这样可以换行输出此map，如果想打印到别的里面，可以传入别的输出流。
+## File类
+常见方法  
+创建：  
+boolean createNewFile()当文件不存在时创建返回true，如果已存在不在创建返回false  
+boolean mkdir()创建单级文件夹  
+boolean mkdirs()创建多级文件夹  
+删除：  
+boolean delete()删除文件，当删除成功返回true，出现异常删除失败返回false  
+deleteOnExit()当程序退出时删掉文件，即使该文件被打开了也可以删掉。  
+判断：  
+boolean exists()判断文件是否存在  
+boolean isfile()、boolean isDerectory()注意判断是否是文件还是目录会先判断是否存在，不存在都会返回false  
+boolean isHidden()、boolean isAbsolute()  
+获取信息：
+getParent()、getPath()、getAbsolutePath()、getAbsoluteFile()、length()、lastModified()。注意getParent()方法中返回的是绝对路径中的父目录，如果获取的相对目录返回的是null,如果相对路径中有上一级，则返回的是该目录。  
+File[] listRoots()列出系统中所有的盘符。  
+String[] list()列出当前目录下的所有文件名（包括隐藏文件）但是注意调用他的方法的对象必须是一个存在的目录。否则遍历会出现空指针异常。  
+String[] list(FilenameFilter filter)，而FilenameFilter是一个接口，里面只有一个boolean accept(File dir, String name)方法，可以使用一个匿名内部类来实现过滤。
+举例:
+```java
+import java.io.*;
+public class FileDemo{
+    public static void main(String[] args){
+        File f = new File("C:\\");
+        String[] files = f.list(new FilenameFilter(){
+            @Override
+            public boolean accept(File dir, String name){
+                return name.endsWith(".mp3");
+            }
+        });
+        for(String s: files){
+            System.out.println(s);
+        }
+    }
+}
+```
+File[] listFiles()返回当前存在的目录下的所有文件，返回文件数组对象。  
+递归查找目录和所有下面的文件
+```java
+import java.io.*;
+public class FileDemo2 {
+    public static void main(String[] args) {
+        showDir(new File("d:\\ENVS"));
+    }
+    public static void showDir(File dir){
+        System.out.println(dir);
+        File[] files = dir.listFiles();
+        for(File f: files){
+            if(f.isDirectory()){
+                showDir(f);
+            }else{
+                System.out.println(f);
+            }
+        }
+    }
+}
+```
