@@ -1164,19 +1164,133 @@ public class RunCount{
     }
 }
 ```
-## 打印流
-强大的地方是对各种数据类型的数据原样打印。  
-分为两种：  
-字节打印流：PrintStream，  
+## 打印流 PrintWriter和PrintStream直接操作输入流或文件，打印流（字符打印流和字节打印流）里除了操作字节外还有各种基本数据类型的打印方法。  。
+PrintStream为其他输出流添加了功能，使他们能够方便的打印各种数据值表示形式。OutputStream的方法只能操作字节，而打印流（字符打印流和字节打印流）里除了操作字节外还有各种基本数据类型的打印方法。  
+![image](image/PrintStream方法.png)  
+而其中的write(int b)方法打印的是该int变量的后八位。    
 构造方法可以接受的参数类型：  
-1.file对象。File  
-2.字符串路径。String  
-3.字节输出流。OutputStream  
+- 1.file对象。File  PrintStream能直接操作文件，这很关键。  
+File file,String csn 还可以接受字符集  
+- 2.字符串路径。String  filename  
+String filename, String csn  
+- 3.字节输出流。OutputStream  out  
+OutputStream out, boolean autoflush   
 字符打印流PrintWriter。  
+非常常用，web开发使用它打印到客户端  
 构造方法可以接受的参数类型：  
-1.file对象。File  
-File file,String codingset  
-2.字符串路径。String  
-3.字节输出流。OutputStream  
+- 1.file对象。File  PrintStream能直接操作文件，这很关键。  
+File file,String csn 还可以接受字符集  
+- 2.字符串路径。String  filename  
+String filename, String csn  
+- 3.字节输出流。OutputStream  out    
 OutputStream out, boolean autoflush  
-4.字符输出流。Writer
+4.字符输出流。Writer  out
+Writer out, boolean autoflush  
+多了一个字符输出流  
+举例：  
+```java
+import java.io.*;
+public class PrintStreamDemo{
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        PrintWriter out = new PrintWriter(System.out, true); // 自动刷新 但是没有标记的方法不能刷新，此demo标记是println的ln
+        //如果不是System.out而是文件，则没有自动刷新的构造方法，无法自动刷新。如果要使用刷新方法，把文件封装成输出流就可以了。
+        // PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("a.txt")),true);
+        String line = null;
+        while((line=br.readLine()) != null){
+            if("over".equals(line)){
+                break;
+            }
+            //out.writer(line);
+            //out没有newLine方法，newLine方法是BufferedStream中的方法。打印流应该用打印方法
+            out.println(line.toUpperCase());
+            //out.flush(); //自动刷新了
+        }
+        out.close();
+        br.close();
+    }
+}
+```
+
+## 序列流SequenceInputStream对多个流进行合并
+SequenceInputStream 表示其他输入流的逻辑串联，它从输入流的有序集合开始，并从第一个输入流开始读取，直到到达文件末尾，接着从第二个输入流开始，以此类推,直到到达包含的最后一个输入流的文件末尾为止。  
+该类有两个构造函数  
+- SequenceInputStream(Enumeration<? extends InputStream> e);
+- SequenceInputStream(InputStream in1, InputStream in2);
+如果有三个输入流的话只能用第一个构造函数了，而Enumeration是jdk1.0提供的，要想获得Enumeration必须用到集合才能通过elements()方法获取，而jdk1.0中的集合只能用Vector。  
+举例：  
+```java
+
+import java.io.*;
+import java.util.*;
+public class SequenceDemo{
+    public static void main(String[] args) throws IOException{
+        Vector<FileInputStream> v = new Vector<FileInputStream>();
+        v.add(new FileInputStream("1.txt"));
+        v.add(new FileInputStream("2.txt"));
+        v.add(new FileInputStream("3.txt"));
+        Enumeration<FileInputStream> en = v.elements();
+        SequenceInputStream sis = new SequenceInputStream(en);
+        FileOutputStream fos = new FileOutputStream("4.txt");
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while((len=sis.read(buff)) != -1){
+            fos.write(buff, 0, len);
+        }
+        fos.close();
+        sis.close();
+    }
+}
+```
+## 合并流
+一个输入流对应多个输出流，根据输入文件的大小再循环中创建输出流。  
+切割与合并举例：  
+```java
+import java.io.*;
+import java.util.*;
+public class SplitAndMergeDemo{
+    public static void main(String[] args) throws IOException{
+        split();
+        merge();
+    }
+    public static void split() throws IOException{
+        FileInputStream in = new FileInputStream("J2EE中文API.CHM");
+        FileOutputStream out = null;
+        byte[] buff = new byte[1024 * 100];
+        int len = 0;
+        int count = 1;
+        while((len=in.read(buff)) != -1){
+            out = new FileOutputStream("splitfiles\\" + (count++) + ".part");
+            out.write(buff, 0, len);
+            out.close();
+        }
+        in.close();
+    }
+    public static void merge() throws IOException{
+        ArrayList<FileInputStream> list = new ArrayList<FileInputStream>();
+        for(int i=1; i<=3; i++){
+            list.add(new FileInputStream("splitfiles\\" + i + ".part"));
+        }
+        Iterator<FileInputStream> it = list.iterator();
+        final Enumeration<FileInputStream> en = new Enumeration<FileInputStream>(){
+            @Override
+            public boolean hasMoreElements(){
+                return it.hasNext();
+            }
+            @Override
+            public FileInputStream nextElement(){
+                return it.next();
+            }
+        };
+        SequenceInputStream sis = new SequenceInputStream(en);
+        FileOutputStream out = new FileOutputStream("splitfiles//0.CHM");
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while((len=sis.read(buff)) != -1){
+            out.write(buff, 0, len);
+        }
+        out.close();
+        sis.close();
+    }
+}
+```
