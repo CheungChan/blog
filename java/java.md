@@ -1294,3 +1294,48 @@ public class SplitAndMergeDemo{
     }
 }
 ```
+## 直接操作对象的流
+ObjectInputStream与ObjectOutputStream，被操作的对象需要实现Serializable(标记接口（没有方法）)；  
+这两个是一对，用ObjectOutputStream持久化的对象只能用ObjectInputStream来读取。   
+ObjectOutputStream类具有构造方法ObjectOutputStream(OutputStream out)。方法中除了有write方法，还有writeInt(int)、writeFloat(float)等方法操作基本数据类型,writeObject(Object)写入对象。  
+举例：  
+```java
+import java.io.*;
+import java.util.*;
+public class OutputStreamDemo{
+    public static void main(String[] args) throws IOException, ClassNotFoundException{
+        writeObj();
+        readObj();//输出：name:lisi  age:0  country: cn
+    }
+    public static void writeObj() throws IOException{
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("test.object"));
+        oos.writeObject(new Student("lisi",34,"jp"));
+        oos.close();
+    }
+    public static void readObj() throws IOException, ClassNotFoundException{
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.object"));
+        Student s = (Student)ois.readObject();
+        System.out.println(s);
+        ois.close();
+    }
+}
+class Student implements Serializable{
+    String name;
+    transient int age;
+    static String country = "cn";
+    Student(String name, int age, String country){
+        this.name=name;
+        this.age=age;
+        country = country;
+    }
+    public String toString(){
+        return "name:" + name + "  age:" + age + "  country: " + country;
+    }
+}
+```
+但是如果修改了Student类，  
+- 比如给name加了一个private修饰，再次读取之前的test.object就会报错说序列号不一致，原因是实现了Serializable接口后，java会根据字段的信息生成一个序列号，如果更改了字段序列号就会跟原来不一致，但是当再次删掉private修饰之后就又可以读取原来的test.object中的对象了。原因就是这个序列号完全由字段信息决定，更改为和原来一致后生成的默认序列号也一致了。  
+- 如果想加了private而原来的test.object仍然能用，可在Student类里面显示的声明序列号如写上```public static final long serialVersionUID = 42L;``` ,随便写一个数字，这样无论怎样更改字段，都可以在test.object中读取对象。  
+- 如果将age写成静态变量，则写入test.object中的对象不包含age字段，因为序列化是序列化堆内存中的对象，而静态字段在方法区中存储，所以无法序列化该字段。  
+- 如果非静态的字段也不想序列化，可以在该变量上用```transient``` 修饰符修饰。则该字段不会被序列化到硬盘上。  
+- 如果想序列化多个对象，可以多次调用writeObject(Object obj)方法，读取时也调用多次readObject()方法来读取。  
