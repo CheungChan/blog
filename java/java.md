@@ -1339,5 +1339,59 @@ class Student implements Serializable{
 - 如果将加入country写成静态变量，则写入test.object中的对象不包含country字段，因为序列化是序列化堆内存中的对象，而静态字段在方法区中存储，所以无法序列化该字段。  
 - 如果非静态的字段也不想序列化，可以在该变量上用```transient``` 修饰符修饰。则该字段不会被序列化到硬盘上。  
 - 如果想序列化多个对象，可以多次调用writeObject(Object obj)方法，读取时也调用多次readObject()方法来读取。因为对象和对象之间自动加了标记结束符。  
-  
+
+## 管道流
+PipedInputStream和PipedOutputStream,输入输出可以直接连接，通常结合线程使用。  
+PipedInputStream管道输入流应该连接到管道输出流，管道输入流提供要写入管道输出流的所有数据字节。通常，数据由某个线程从PipedInputStream对象读取，并由其他线程将其写入对应的PipedOutputStream。不建议对这两个对象使用单线程，因为这样可能导致死锁线程。管道输入流包含一个缓冲区，可在缓冲区限定的范围内将读操作和写操作分离开。如果连接管道输出流提供数据字节的线程不再存在，则认为该管道已损坏。  
+使用方法要么使用构造函数PipedInputStream(PipedOutputStream src),要么使用connect(PipedOutputStream src)方法。  
+举例：  
+```java
+import java.io.*;
+public class PipedStreamDemo{
+    public static void main(String[] args) throws IOException{
+        PipedInputStream in = new PipedInputStream();
+        PipedOutputStream out = new PipedOutputStream();
+        in.connect(out);
+        new Thread(new Read(in)).start();
+        new Thread(new Write(out)).start();
+    }
+}
+class Read implements Runnable{
+    private PipedInputStream in;
+    Read(PipedInputStream in){
+        this.in = in;
+    }
+    @Override
+    public void run(){
+        try{
+            byte[] buff = new byte[1024];
+            System.out.println("开始读取数据");
+            int len =  in.read(buff);
+            String s = new String(buff, 0, len);
+            System.out.println(s);
+            in.close();
+        }catch(IOException e){
+            throw new RuntimeException("管道读取失败");
+        }
+    }
+}
+class Write implements Runnable{
+    private PipedOutputStream out;
+    Write(PipedOutputStream out){
+        this.out = out;
+    }
+    @Override
+    public void run(){
+        try{
+            System.out.println("等待6秒后开始写入数据");
+            Thread.sleep(6000);
+            out.write("管道写入数据".getBytes());
+            System.out.println("写入完成");
+            out.close();
+        }catch(Exception e){
+            throw new RuntimeException("管道写入失败");
+        }
+    }
+}
+```
 
