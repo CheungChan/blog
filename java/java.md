@@ -1528,3 +1528,35 @@ public class DataStreamDemo{
 
 }
 ```
+## ByteArrayInputStream、ByteArrayOutputStream
+用于操作字节数组的对象。  
+ByteArrayInputStream:在构造的时候,需要接受数据源，而且数据源是一个字节数组。  
+ByteArrayOutputStream:在构造的时候,不用定义数据目的,因为该对象已经内部封装了可变长度的字节数组,这就是数据目的地。  
+因为这两个流对象，都是操作的数组，并没有操作系统资源，所以不用进行close关闭，不用捕获异常。即使close了也能继续使用。  
+举例：  
+```java
+import java.io.*;
+public class ByteArrayStreamDemo{
+    public static void main(String[] args){
+        // 数据源
+        ByteArrayInputStream bis = new ByteArrayInputStream("ABCDEF".getBytes());
+        // 数据目的
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int ch = 0;
+        while((ch=bis.read()) != -1){
+            bos.write(ch);
+        }
+        System.out.println(bos.size()); // 6
+        System.out.println(bos.toString()); //ABCDEF
+    }
+}
+```
+在流操作规律讲解时：  
+源设备：键盘 System.in 硬盘FileStream 内存  ArrayStream  
+目的设备： 控制台 System.out 硬盘FileStream 内存 ArrayStream  
+可变长度的数组。
+该ByteArrayOutputStream还有一个writeTo(OutputStream out)方法，可将数组一次性写入输出流中。  
+## CharArrayReader、CharArrayWriter()操作字符数组
+方法同上。
+## StringReader、StringWriter()操作字符串
+方法同上。
