@@ -1211,7 +1211,7 @@ public class PrintStreamDemo{
     }
 }
 ```
-
+### 可以设置字符编码的流只有两个，一个是字节字符转换流InputStreamReader,OutputStreamWriter，另一个就是打印流PrintWriter,PrintStream。
 ## 序列流SequenceInputStream对多个流进行合并
 SequenceInputStream 表示其他输入流的逻辑串联，它从输入流的有序集合开始，并从第一个输入流开始读取，直到到达文件末尾，接着从第二个输入流开始，以此类推,直到到达包含的最后一个输入流的文件末尾为止。  
 该类有两个构造函数  
