@@ -1459,3 +1459,72 @@ public class RandomAccessFileDemo{
 }
 ```
 如果模式为r，不会创建文件，会读取一个已存在的文件，如果文件不存在,则会出现异常。如果模式为rw，如果文件不存在会创建，存在则不会覆盖。  
+## DataInputStream、DataOutputStream操作基本数据类型
+这个流对象可以写入（读取）基本数据类型  
+举例：  
+```java
+import java.io.*;
+public class DataStreamDemo{
+    public static void main(String[] args) throws IOException{
+        writeData();
+        // 写入的文件一共13个字节  4+1+8
+        readData();
+        // 输出 num=234 b=true d=3223.3224
+        writeUTF();
+        // 得到的文件里面存的是修改版的utf-8的你好。只能用读修改版utf-8的方法readUTF()读
+        // 该文件占8个字节
+        readUTF();
+        // 输出 s=你好
+        writeUTFOrigin();
+        // 以utf-8写入文件
+        // 该文件占6字节
+    }
+    public static void writeData() throws IOException{
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream("data.txt"));
+        dos.writeInt(234);
+        dos.writeBoolean(true);
+        dos.writeDouble(3223.3224);
+        dos.close();
+    }
+    public static void readData() throws IOException{
+        DataInputStream dis = new DataInputStream(new FileInputStream("data.txt"));
+        int num = dis.readInt();
+        boolean b = dis.readBoolean();
+        double d = dis.readDouble();
+        // 顺序反了就全错了
+        System.out.println("num=" + num);
+        System.out.println("b=" + b);
+        System.out.println("d=" + d);
+        dis.close();
+    }
+    /**
+     * 使用utf-8的修改版写入字符
+     * @throws IOException [description]
+     */
+    public static void writeUTF() throws IOException{
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream("utfdata.txt"));
+        dos.writeUTF("你好");
+        dos.close();
+    }
+    /**
+     * 使用utf-8的修改版读取字符
+     * @throws IOException [description]
+     */
+    public static void readUTF() throws IOException{
+        DataInputStream dis = new DataInputStream(new FileInputStream("utfdata.txt"));
+        String s = dis.readUTF();
+        System.out.println("s=" + s);
+        dis.close();
+    }
+    /**
+     * 使用正常的utf写入文件，使用转换流
+     * @throws IOException [description]
+     */
+    public static void writeUTFOrigin() throws IOException{
+        OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("utf.txt"), "utf-8");
+        osw.write("你好");
+        osw.close();
+    }
+
+}
+```
