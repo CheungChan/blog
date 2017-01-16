@@ -1395,3 +1395,67 @@ class Write implements Runnable{
 }
 ```
 
+## RandomAccessFile随机访问文件，自身具备读写的方法。通过skipBytes(int x)(不可以是负数),seek(int x)(可以是负数)来达到随机访问
+该类后缀不是io体系的，自成一派，直接继承Object。随机访问文件的行为类似存储在文件系统中的一个大型byte数组，存在指向该数组的索引，称为文件指针。随着文件的读或者写指针发生移动，写入隐含数组的末尾时数组扩展，文件指针可通过```getFilePointer()```方法获取，并通过```seek(int x)```方法设置。  
+其实能完成读写的原理就是封装了字节输入流和输出流。  
+构造方法RandomAccessFile(File file,String mode),RandomAcessFile(String name, String mode)可以看出具有局限性，只能操作文件。
+举例：  
+```java
+import java.io.*;
+public class RandomAccessFileDemo{
+    public static void main(String[] args) throws IOException{
+        System.out.println("===========writeFile()");
+        writeFile();
+        System.out.println("===============readFile()");
+        readFile();
+        // 输出
+        // name=张三 age=97 name=李四 age=99
+        System.out.println("=================readFile2()");
+        readFile2();
+        // 输出
+        // name=李四  age=99
+        System.out.println("==================writeFile2");
+        writeFile2();
+        // 写入可以seek到后面，这就是多线程分部分下载的原理。
+    }
+    public static void writeFile() throws IOException{
+        RandomAccessFile raf = new RandomAccessFile("ran.txt","rw");
+        raf.write("张三".getBytes());
+        raf.writeInt(97);
+        raf.write("李四".getBytes());
+        raf.writeInt(99);
+    }
+    public static void readFile() throws IOException{
+        RandomAccessFile raf = new RandomAccessFile("ran.txt", "r");
+        for(int i=0; i<2;i++){
+            byte[] buff = new byte[4];
+            raf.read(buff);
+            String name = new String(buff);
+            int age = raf.readInt();
+            System.out.println("name=" + name);
+            System.out.println("age=" + age);
+        }
+        raf.close();
+    }
+    public static void readFile2() throws IOException{
+        RandomAccessFile raf = new RandomAccessFile("ran.txt","r");
+        //raf.seek(8);
+        raf.skipBytes(8); // 用法同上，但是不可以传入负数。seek可以传入负数
+        byte[] buff = new byte[4];
+        raf.read(buff);
+        String name = new String(buff);
+        int age = raf.readInt();
+        System.out.println("name=" + name);
+        System.out.println("age=" + age);
+        raf.close();
+    }
+    public static void writeFile2() throws IOException{
+        RandomAccessFile raf = new RandomAccessFile("ran.txt","rw");
+        raf.seek(3*8);//改成0*8还可以修改
+        raf.write("周期".getBytes());
+        raf.writeInt(88);
+        raf.close();
+    }
+}
+```
+如果模式为r，不会创建文件，会读取一个已存在的文件，如果文件不存在,则会出现异常。如果模式为rw，如果文件不存在会创建，存在则不会覆盖。  
