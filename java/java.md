@@ -1976,3 +1976,11 @@ public class OpenFileDialogDemo{
     }
 }
 ```
+## 如何制作可以双击运行的jar包
+在java文件头上先写上package mymenu。这样编译的时候可以指定输出路径。编译命令```javac -d D:\myclass OpenFileDialogDemo.java```，如果报gbk不可映射的字符可加上```-encoding utf-8```参数。结果是将class文件编译输出到了D:\myclass文件夹下的mymenu包里。  
+要打包生成jar文件，命令是先切换到目录然后```jar -cvf my.jar mymenu```，然后双击jar会报错  
+![image](image/双击jar报错.png)  
+因为此jar包没有写入主函数所在的清单。  
+解决办法是添加清单。  
+新建一个文本文件，比如叫1.txt里面写入内容“Main-Class: mymenu.FileOpenDialogDemo回车”，不要忘记冒号后面的空格和回车，然后运行```jar -cvfm my.jar 1.txt mymenu```即可。  
+如果不管用，重装jdk即可（双击exe文件重新安装，而不是拷贝）
