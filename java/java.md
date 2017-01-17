@@ -1797,7 +1797,7 @@ public class MouseAndKeyEvent{
             public void keyPressed(KeyEvent e){
                 int code = e.getKeyCode();
                 if(!(code >= KeyEvent.VK_0 && code <= KeyEvent.VK_9)){
-                    System.out.println(code + "是非法的");
+                    System.out.println(code + "。。。。是非法的");
                     e.consume();// 阻止事件的默认行为。
                 }
             }
@@ -1805,6 +1805,174 @@ public class MouseAndKeyEvent{
     }
     public static void main(String[] args){
         new MouseAndKeyEvent();
+    }
+}
+```
+添加对话框不再举例，通过Dialog(Frame owner, String title, boolean mode)构造，第三个参数是true时，如果不处理此对话框，该对话框的父Frame无法处理，如果是false，不处理此对话框也能处理其父对话框。  
+可以在对话框上加label和button进行布局。通过setVisible(true)设置显隐。  
+添加菜单
+```java
+import java.awt.*;
+import java.awt.event.*;
+public class MenuDemo{
+    private Frame f;
+    private MenuBar mb;
+    private Menu m, subMenu;
+    private MenuItem closeItem, subItem;
+    MenuDemo(){
+        init();
+    }
+    public void init(){
+        f = new Frame("my window");
+        f.setBounds(300, 100, 500, 600);
+        f.setLayout(new FlowLayout());
+        mb = new MenuBar();
+        m = new Menu("文件");
+        subMenu = new Menu("子菜单");
+        subItem = new MenuItem("子条目");
+        closeItem = new MenuItem("退出");
+        subMenu.add(subItem);
+        m.add(subMenu);//menu是继承自menuItem的，所以menu的add(menuItem m)既可以添加menuItem，也可以添加menu,菜单menu右面有箭头，menuItem没有箭头，如果不想有箭头就用menuItem。
+        m.add(closeItem);
+        mb.add(m);
+        f.setMenuBar(mb);//将菜单栏添加到窗体中
+        addEvent();
+        f.setVisible(true);
+    }
+    private void addEvent(){
+        f.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+        closeItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                System.exit(0);
+            }
+        });
+    }
+    public static void main(String[] args){
+        new MenuDemo();
+    }
+}
+```
+打开保存文件对话框调new一个FileDialog类，该类构造函数FileDialog(Frame owner, String title, int mode)，其中模式有两个值，FileDialog.LOAD和FileDialog.SAVE，区分打开和保存，模式不写默认是LOAD。为menuItem添加ActionListener,将fileDialog.setVisible(true);
+举例：  
+```java
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+
+
+public class OpenFileDialogDemo{
+    private Frame f;
+    private MenuBar bar;
+    private Menu m;
+    private MenuItem closeItem, openItem, saveItem;
+    private TextArea ta;
+    private File file;
+    OpenFileDialogDemo(){
+        init();
+    }
+    public void init(){
+        f = new Frame("my window");
+        f.setBounds(300, 100, 500, 600);
+        bar = new MenuBar();
+        m = new Menu("文件");
+        openItem = new MenuItem("打开");
+        saveItem = new MenuItem("保存");
+        closeItem = new MenuItem("退出");
+        m.add(openItem);
+        m.add(saveItem);//menu是继承自menuItem的，所以menu的add(menuItem m)既可以添加menuItem，也可以添加menu
+        m.add(closeItem);
+        bar.add(m);
+        f.setMenuBar(bar);//将菜单栏添加到窗体中
+        ta = new TextArea();
+        f.add(ta);
+        addEvent();
+        f.setVisible(true);
+    }
+    private void addEvent(){
+        f.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+        closeItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                System.exit(0);
+            }
+        });
+        openItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                FileDialog fileDia = new FileDialog(f, "打开", FileDialog.LOAD);
+                fileDia.setVisible(true);
+                String mypath = fileDia.getDirectory();
+                String myfile = fileDia.getFile();
+                if(mypath == null || myfile == null){
+                    return;
+                }
+                ta.setText("");
+                BufferedReader br = null;
+                file = new File(mypath, myfile);
+                try{
+                    br = new BufferedReader(new FileReader(file));
+                    String line = null;
+                    while((line=br.readLine()) != null){
+                        ta.append(line + "\r\n");
+                    }
+                }catch(IOException e1){
+                    throw new RuntimeException("文件打开失败");
+                }finally{
+                    if(br != null){
+                        try{
+                            br.close();
+                        }catch(IOException e2){
+                            throw new RuntimeException("文件关闭失败");
+                        }
+                    }
+                }
+            }
+        });
+        saveItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                if(file == null){
+                    FileDialog fileDia = new FileDialog(f, "另存为", FileDialog.SAVE);
+                    fileDia.setVisible(true);
+                    String mypath = fileDia.getDirectory();
+                    String myfile = fileDia.getFile();
+                    if(mypath == null || myfile == null){
+                        return;
+                    }
+                    file = new File(mypath, myfile);
+                }
+                String text = ta.getText();
+                BufferedWriter bw = null;
+                try{
+                    bw = new BufferedWriter(new FileWriter(file));
+                    bw.write(text);
+                }catch(IOException e1){
+                     throw new RuntimeException("文件保存失败");
+                }finally{
+                    if(bw != null){
+                        try{
+                            bw.close();
+                        }catch(IOException e2){
+                            throw new RuntimeException("文件关闭失败");
+                        }
+                    }
+                }
+            }
+        });
+    }
+    public static void main(String[] args){
+        new OpenFileDialogDemo();
     }
 }
 ```
