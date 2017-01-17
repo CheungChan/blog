@@ -1630,3 +1630,107 @@ Frame默认的是边界布局管理器。
 3.定义组件
 4.将组件通过窗体的add方法添加到窗体中。  
 5.让窗体显示,通过setVisiable(true)  
+举例：  
+```java
+import java.awt.*;
+public class AwtDemo{
+    public static void main(String[] args){
+        Frame f = new Frame("my awt");
+        f.setSize(500, 400);
+        f.setLocation(300, 200);
+        f.setLayout(new FlowLayout());
+        //Frame默认的是边界布局，如果不设置流式布局，会使真个按钮特别大占据整个位置，因为默认是中心
+
+        Button b = new Button("我是一个按钮");
+        f.add(b);
+
+        f.setVisible(true);
+    }
+}
+```
+但是最小化最大化管用，关闭不管用，要添加关闭的监听器才能处理关闭事件。  
+该方法是在Frame的父类Window中的addWindowListener(WindowListener l)方法。  
+该参数WindowListener是一个监听器接口，里面有各种处理窗口事件的方法，但是使用匿名内部类要全部复写这些方法太麻烦，所以提供了一个适配器WindowAdapter。这个适配器是一个抽象类，只要继承它就行了。  
+更改之后的代码：  
+```java
+import java.awt.*;
+import java.awt.event.*;
+//组件都在awt包，WindowEvent在awt.event包
+public class AwtDemo{
+    public static void main(String[] args){
+        Frame f = new Frame("my awt");
+        f.setSize(500, 400);
+        f.setLocation(300, 200);
+        f.setLayout(new FlowLayout());
+        //Frame默认的是边界布局，如果不设置流式布局，会使真个按钮特别大占据整个位置，因为默认是中心
+        f.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                System.out.println("我关了");
+                System.exit(0);
+            }
+            @Override
+            public void windowActivated(WindowEvent e){
+                System.out.println("我活了");
+            }
+            @Override
+            public void windowOpened(WindowEvent e){
+                System.out.println("我开了");
+            }
+        });
+        // WindowsAdaptor是WindowsListener的子类，对所有方法进行了空实现。
+
+        Button b = new Button("我是一个按钮");
+        f.add(b);
+
+        f.setVisible(true);
+    }
+}
+```
+用面向对象重构一些下，再将按钮加上监听器，按钮是Button，可以用addActionListender(ActionListener l)
+```java
+import java.awt.*;
+import java.awt.event.*;
+public class FrameDemo{
+    private Frame f;
+    private Button b;
+    FrameDemo(){
+        init();
+    }
+    public void init(){
+        f = new Frame("My Frame");
+        f.setBounds(300, 200, 500, 400);
+        f.setLayout(new FlowLayout());
+        b = new Button("我是一个按钮");
+        f.add(b);
+        f.setVisible(true);
+        addListener();
+    }
+    public void addListener(){
+        f.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+
+        // 让按钮具备退出的功能
+        // 按钮就是事件源
+        // 那么选择哪个监听器呢？
+        // 通过关闭窗体示例了解到，想要知道哪个组件具备什么样的特有监听器。
+        // 需要查看该组件对象的功能。
+        // 通过查阅button的api文档，发现按钮支持一个特有监听
+        //addActionListener(ActionListener l),ActionListener是少有的几个没有适配器的接口，因为方法只有一个，通常超过3个包括三个方法的接口都有适配器。
+        b.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                System.out.println("关闭，按钮干的");
+                System.exit(0);
+            }
+        });
+    }
+    public static void main(String[] args){
+        new FrameDemo();
+    }
+}
+```
