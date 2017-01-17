@@ -1734,3 +1734,77 @@ public class FrameDemo{
     }
 }
 ```
+添加鼠标和键盘事件监听器
+```java
+import java.awt.*;
+import java.awt.event.*;
+public class MouseAndKeyEvent{
+    private Frame f;
+    private Button b;
+    private TextField tf;
+    MouseAndKeyEvent(){
+        init();
+    }
+    public void init(){
+        f = new Frame("My Frame");
+        f.setBounds(300, 200, 500, 400);
+        f.setLayout(new FlowLayout());
+        tf = new TextField(10);
+        b = new Button("我是一个按钮");
+        f.add(tf);
+        f.add(b);
+        f.setVisible(true);
+        addListener();
+    }
+    public void addListener(){
+        f.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+        // 鼠标和键盘事件是所有组件共有的，所以addMouseListener和addKeyListener定义在了Component方法里。
+        b.addMouseListener(new MouseAdapter(){
+            int count = 0;
+            int clickcount = 0;
+            int doubleclick = 0;
+            @Override
+            public void mouseEntered(MouseEvent e){
+                System.out.println("鼠标进入该组件" + count++);
+            }
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(e.getClickCount() == 2){
+                    System.out.println("双击动作" + doubleclick++);
+                    //双击时会触发两次此事件。输出点击动作0 双击动作0 点击动作1
+                }
+                System.out.println("点击动作" + clickcount++);
+            }
+        });
+        b.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyPressed(KeyEvent e){
+                System.out.println(KeyEvent.getKeyText(e.getKeyCode()) + "...." + e.getKeyCode());
+                // 输出类似
+                // J....74 L....76 Shift....16 Ctrl....17 空格....32 Backspace....8
+                if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER){
+                    System.exit(0);
+                }
+            }
+        });
+        tf.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyPressed(KeyEvent e){
+                int code = e.getKeyCode();
+                if(!(code >= KeyEvent.VK_0 && code <= KeyEvent.VK_9)){
+                    System.out.println(code + "是非法的");
+                    e.consume();// 阻止事件的默认行为。
+                }
+            }
+        });
+    }
+    public static void main(String[] args){
+        new MouseAndKeyEvent();
+    }
+}
+```
