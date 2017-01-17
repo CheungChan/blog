@@ -1560,3 +1560,59 @@ public class ByteArrayStreamDemo{
 方法同上。
 ## StringReader、StringWriter()操作字符串
 方法同上。
+## 编码问题
+gbk编码的文件用utf-8查会变成??位置乱码,gbk编码的文件用iso8859-1查也会变成???,utf-8编码的文件用gbk查会变成浣豺之类的乱码。 
+编码解码: 编码str.getBytes()或str.getBytes("gbk");解码new String(byte[])或new String(byte[],"gbk");  
+如果乱码了将乱码按照错误的编码方式再编码成字节再用正确的方式解码也能获得正确的文字。  
+举例：  
+```java
+import java.util.*;
+public class EncodeDemo{
+    public static void main(String[] args) throws Exception{
+        String s = "你好";
+        byte[] b1 = s.getBytes("GBK");
+        System.out.println(Arrays.toString(b1));//[-60, -29, -70, -61]
+        String s1 = new String(b1, "ISO8859-1");
+        System.out.println("s1="+s1);//s1=????
+
+        //对s1进行ISO8859-1编码
+        byte[] b2 = s1.getBytes("ISO8859-1");
+        System.out.println(Arrays.toString(b2));//[-60, -29, -70, -61]
+        String s2 = new String(b2, "gbk");
+        System.out.println("s2=" + s2);//s2=你好
+    }
+}
+```
+Tomcat服务器由于默认编码是ISO8859-1，如果收到的是乱码，处理的话，如果是get请求，则可以把乱码再用ISO8859-1编码一次再用UTF-8解码，如果是post请求，可以采用setCharaterEncoding("utf-8")来处理。  
+但是gbk编码的文字用utf-8解码错了，再用utf-8编码一次再用gbk解码，不可以！！！因为gbk和utf-8都识别中文，UTF-8不识别会返回未知区域的文字。  
+## 编码问题变戏法
+### 戏法：
+在桌面上新建一个txt文件，在里面写上“你好”，保存关闭，再打开还是你好。删掉。在桌面上新建一个txt文件，在里面写上“联通”，再打开乱码。  
+### 解密：
+看代码
+```java
+import java.util.*;
+public class EncodeDemo2{
+    public static void main(String[] args) throws Exception{
+        String s = "联通";
+        byte[] b1 = s.getBytes("GBK");
+        for(byte b : b1){
+            System.out.println(b);
+            // -63
+            // -86
+            // -51
+            // -88
+            System.out.println(Integer.toBinaryString(b & 0xff));//取后8位
+            // 输出
+            // 11000001
+            // 10101010
+            // 11001101
+            // 10101000
+        }
+    }
+}
+```
+联通被编码之后字节11000001, 10101010, 11001101, 10101000,与utf-8的编码冲突。  
+科普一下utf-8编码规则，utf-8编码根据字符规则如果一个字符可以编码就按一个字符进行编码，如果两个字符可以编码就按照两个字符编码，最多是三个字符来编码。他会在字节的口头加上标志。  
+比如这个字符用一个字符来表示那就是03442322,0开头表示该字符就用一个字节编码跟ascii一样，如果由两个字节编码则开头第一个字节会是110xxxxx，10xxxxxx由10开头。如果三个字节组成则是1110xxxx,10xxxxxx,10xxxxxx。  
+而联通的字节110开头，第二个10开头与utf-8规则冲突了，记事本保存默认编码是gbk，解码的时候发现规则是符合utf-8的按utf-8解码了，导致乱码，如果“联通”前面加一个汉字比如“你联通”就不会乱码，但是“a联通”还是乱码，因为a是0开头，还是符合utf-8规则。而你的gbk编码字节是11000100,11100011不符合utf-8规则。
