@@ -1984,3 +1984,25 @@ public class OpenFileDialogDemo{
 解决办法是添加清单。  
 新建一个文本文件，比如叫1.txt里面写入内容“Main-Class: mymenu.FileOpenDialogDemo回车”，不要忘记冒号后面的空格和回车，然后运行```jar -cvfm my.jar 1.txt mymenu```即可。  
 如果不管用，重装jdk即可（双击exe文件重新安装，而不是拷贝）
+## 网络编程
+#### OSI模型：从下到上是物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。
+#### TCP/IP参考模型：从下到上是 主机至网络层、网际层、传输层、应用层
+网络编程处理的是网际层和传输层，java开发http是在应用层，传输层常见的是tcp，网际层常用的是ip。  
+### InetAddress类封装ip地址
+demo  
+```java
+import java.net.*;
+public class IPDemo{
+    public static void main(String[] args) throws UnknownHostException{
+        InetAddress i = InetAddress.getLocalHost();
+        System.out.println(i.toString());//CCPC/192.168.193.1
+        System.out.println(i.getHostAddress());//192.168.193.1
+        System.out.println(i.getHostName());//CCPC
+
+        InetAddress ia = InetAddress.getByName("www.baidu.com");
+        System.out.println(ia.getHostAddress());//119.75.217.109
+        System.out.println(ia.getHostName());//www.baidu.com
+
+    }
+}
+```
