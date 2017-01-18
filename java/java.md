@@ -1999,10 +1999,49 @@ public class IPDemo{
         System.out.println(i.getHostAddress());//192.168.193.1
         System.out.println(i.getHostName());//CCPC
 
-        InetAddress ia = InetAddress.getByName("www.baidu.com");
+        InetAddress ia = InetAddress.getByName("www.baidu.com");//也可以写ip地址也可以写域名
         System.out.println(ia.getHostAddress());//119.75.217.109
         System.out.println(ia.getHostName());//www.baidu.com
 
     }
 }
 ```
+### 发送udp包
+demo
+```java
+import java.net.*;
+public class UdpSend {
+    public static void main(String[] args) throws Exception{
+        // 1.创建udp服务，通过DatagramSocket对象。
+        DatagramSocket ds = new DatagramSocket();
+        //可以指定发送端端口DatagramSocket ds = new DatagramSocket(8888);
+        // 2.确定数据，并封装成数据报包，
+        byte[] buff = "udp ge men lai la".getBytes();
+        DatagramPacket dp = new DatagramPacket(buff, buff.length, InetAddress.getByName("127.0.0.1"), 8000);//构建发送的数据报包
+        // 3.通过socket资源，将已有的数据报包发送出去，通过send方法
+        ds.send(dp);
+        // 4.关闭资源
+        ds.close();
+    }
+}
+```
+### 接收udp包
+demo
+```java
+import java.net.*;
+public class UdpReceiv {
+    public static void main(String[] args) throws Exception{
+        DatagramSocket ds = new DatagramSocket(8000);
+        byte[] buff = new byte[1024];
+        DatagramPacket dp = new DatagramPacket(buff, buff.length);//构建接收的数据报包
+        ds.receive(dp);
+        String ip = dp.getAddress().getHostAddress();
+        int port = dp.getPort();
+        String data = new String(dp.getData(), 0, dp.getLength());
+        System.out.println(ip + "::" + port + "::" + data);
+        //127.0.0.1::51656::udp ge men lai la
+    }
+}
+```
+
+
