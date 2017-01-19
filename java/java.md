@@ -2007,6 +2007,7 @@ public class IPDemo{
 }
 ```
 ### 发送udp包
+udp最大64k，多了以多个小包形式发出，tcp可以传输大量数据。  
 demo
 ```java
 import java.net.*;
@@ -2032,16 +2033,125 @@ import java.net.*;
 public class UdpReceiv {
     public static void main(String[] args) throws Exception{
         DatagramSocket ds = new DatagramSocket(8000);
-        byte[] buff = new byte[1024];
-        DatagramPacket dp = new DatagramPacket(buff, buff.length);//构建接收的数据报包
-        ds.receive(dp);
-        String ip = dp.getAddress().getHostAddress();
-        int port = dp.getPort();
-        String data = new String(dp.getData(), 0, dp.getLength());
-        System.out.println(ip + "::" + port + "::" + data);
-        //127.0.0.1::51656::udp ge men lai la
+        while(true){
+            byte[] buff = new byte[1024];
+            DatagramPacket dp = new DatagramPacket(buff, buff.length);//构建接收的数据报包
+            ds.receive(dp);
+            String ip = dp.getAddress().getHostAddress();
+            int port = dp.getPort();
+            String data = new String(dp.getData(), 0, dp.getLength());
+            System.out.println(ip + "::" + port + "::" + data);
+            //127.0.0.1::51656::udp ge men lai la
+        }
     }
 }
 ```
+但是发送只能发送固定的字符串，将发送改为从键盘中录入
+```java
+import java.net.*;
+import java.io.*;
+public class UdpSend {
+    public static void main(String[] args) throws Exception{
+        // 1.创建udp服务，通过DatagramSocket对象。
+        DatagramSocket ds = new DatagramSocket();
+        //可以指定发送端端口DatagramSocket ds = new DatagramSocket(8888);
+        // 2.确定数据，并封装成数据报包，
+        // 从键盘中读取数据发送
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String line = null;
+        while((line=br.readLine()) != null){
+            if("886".equals(line)){
+                break;
+            }
+            byte[] buff = line.getBytes();
+            DatagramPacket dp = new DatagramPacket(buff, buff.length, InetAddress.getByName("127.0.0.1"), 8000);//构建发送的数据报包
+            // 3.通过socket资源，将已有的数据报包发送出去，通过send方法
+            ds.send(dp);
+        }
+        // 4.关闭资源
+        ds.close();
+    }
+}
+```
+tcp分为客户端和服务端，udp分为发送端和接收端。tcp客户端和服务端分别被封装成Socket和ServerSocket.tcp是面向连接的，所以必须先连接再进行数据传输。  
+### tcp demo
+```java
+import java.net.*;
+import java.io.*;
+public class TcpClient{
+    public static void main(String[] args) throws Exception{
+        Socket s = new Socket("127.0.0.1", 8000);
+        // 客户端已启动就连接服务端的ip和端口号拿到socket
+        OutputStream os = s.getOutputStream();
+        os.write("服务端你好".getBytes());
+        InputStream in = s.getInputStream();
+        byte[] buff = new byte[1024];
+        int len = in.read(buff);
+        System.out.println(new String(buff, 0, len));
+        s.close();
+    }
+}
+```
+```java
+import java.io.*;
+import java.net.*;
+public class TcpServer{
+    public static void main(String[] args) throws Exception{
+        ServerSocket ss = new ServerSocket(8000);
+        // 服务端已启动就绑定端口号，监听端口 获取ServerSocket
+        Socket s = ss.accept();
+        InputStream in = s.getInputStream();
+        byte[] buff = new byte[1024];
+        int len = in.read(buff);
+        System.out.println(new String(buff, 0 , len));
+        OutputStream out = s.getOutputStream();
+        out.write("客户端你也好".getBytes());
 
+    }
+}
+```
+上传图片的话完成结束标记可以用socket中的方法shutdownOutput()方法。  
+### 上传图片demo
+```java
+import java.io.*;
+import java.net.*;
+public class PicClient{
+    public static void main(String[] args) throws Exception{
+        Socket s = new Socket("127.0.0.1", 8000);
+        OutputStream out = s.getOutputStream();
+        FileInputStream fis = new FileInputStream("C:\\Users\\13776\\Music\\浮夸.mp3");
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while((len = fis.read(buff)) != -1){
+            out.write(buff, 0, len);
+        }
+        s.shutdownOutput();
+        InputStream in = s.getInputStream();
+        byte[] buffin = new byte[1024];
+        int num = in.read(buffin);
+        System.out.println(new String(buffin, 0, num));
+    }
+}
+```
+```java
+import java.io.*;
+import java.net.*;
+public class PicServer{
+    public static void main(String[] args) throws Exception{
+        ServerSocket ss = new ServerSocket(8000);
+        Socket s = ss.accept();
+        InputStream in = s.getInputStream();
+        FileOutputStream fos = new FileOutputStream("upload.mp3");
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while((len=in.read(buff)) != -1){
+            fos.write(buff, 0, len);
+        }
+        OutputStream out = s.getOutputStream();
+        out.write("上传成功".getBytes());
+        s.close();
+        ss.close();
+    }
+}
+```   
 
