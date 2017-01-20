@@ -2125,7 +2125,7 @@ public class PicClient{
         while((len = fis.read(buff)) != -1){
             out.write(buff, 0, len);
         }
-        s.shutdownOutput();
+        s.shutdownOutput();//不写结束标记服务端读取停不下来
         InputStream in = s.getInputStream();
         byte[] buffin = new byte[1024];
         int num = in.read(buffin);
@@ -2133,6 +2133,8 @@ public class PicClient{
     }
 }
 ```
+服务端的
+
 ```java
 import java.io.*;
 import java.net.*;
@@ -2154,4 +2156,49 @@ public class PicServer{
     }
 }
 ```   
+## java在代码中如何发送http请求？
+```java
+import java.io.*;
+import java.net.*;
+private String sendHttpGet(String url, String params){
+    String result = "";
+    BufferedReader in = null;
+    try{
+        String urlNameString = url + "?" + params;
+        URL realUrl = new URL(urlNameString);
+        URLConnection connection = realUrl.openConnection();
+        connection.setRequestProperty("accept","*/*");
+        connection.connect();
+        in = new BufferedReader(new InputStreamReader(connection.getInputStream));
+        String line = null;
+        while((line=in.readLine()) != null){
+                result += line;
+        }
+        return result;
+    }catch(Exception e){
+        System.out.println("发送Get请求异常");
+    }finally{
+        if(in!=null){
+            try{
+                in.close();
+            }catch(Exception e){
+                System.out.println("关闭异常");
+            }
+        }
+    }
+    return result;
+}
+```
+如何处理http请求之后返回的是json对象,可以使用alibaba提供的fastjson来处理。
 
+```java
+import com.alibaba.fastjson.JSONObject;
+String url = "http://api.weixin.com/sns/oauth2/access_tocken";
+String params = "appid=APPID&secret=SECRET&code=" + code + "&grant_type=authorization_code";
+String tokenString = sendHttpGet(url,params);
+JSONObject jsonObj = JSONObject.parseObject(tokenString);
+String access_tocken = (String)jsonObj.get("access_tocken");
+String openid = (String)jsonObj.get("openid");
+System.out.println("access_tocken="+access_tocken);
+System.out.println("openid="+openid);
+```
