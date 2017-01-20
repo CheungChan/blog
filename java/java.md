@@ -2352,3 +2352,19 @@ System.out.println("openid="+openid);
 ```
 #### Socket对象实例化的时候可以指定ip和端口，也可以使用无参的构造方法Socket()之后使用connect(SocketAddress a)方法，SocketAddress是一个抽象类，他的子类InetSocketAddress里可以通过ip地址和端口进行构造.
 #### ServerSocket对象实例化的时候可以指定监听的端口ServerSocket(int port)，除了这个构造方法外还有一个ServerSocket(int port, int backlog),backlog代表队列的最大长度，也就是能同时连接到服务器的客户端的最大个数。
+## 正则表达式的高级部分
+### 叠词
+可以使用```(.)\1+```,这里括号是组，将一个任意字符划分为组，使用反斜杠1表示第一个组。  
+### 将叠词替换成单个字母
+
+```java
+String str1="fsdfdffffffffsdfesffffffdssssss"
+return str1.replaceAll("(.)\\1+","$1");
+// (.)\\1+拿到了叠词，要替换的值是前一个拿到的值，使用$1获取。$可获得前一个规则中的组
+```
+### 字符串的matches()方法是对字符串全量匹配。
+### 将字符串中符合规则的子串取出流程步骤
+1. 将正则表达式封装成对象  
+2. 将正则表达式和操作的字符串相关联
+3. 关联后，获取正则表达式引擎（配去器）
+4. 通过引擎对符合规则的子串进行操作，比如取出。
