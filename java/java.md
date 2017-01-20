@@ -2350,3 +2350,5 @@ String openid = (String)jsonObj.get("openid");
 System.out.println("access_tocken="+access_tocken);
 System.out.println("openid="+openid);
 ```
+#### Socket对象实例化的时候可以指定ip和端口，也可以使用无参的构造方法Socket()之后使用connect(SocketAddress a)方法，SocketAddress是一个抽象类，他的子类InetSocketAddress里可以通过ip地址和端口进行构造.
+#### ServerSocket对象实例化的时候可以指定监听的端口ServerSocket(int port)，除了这个构造方法外还有一个ServerSocket(int port, int backlog),backlog代表队列的最大长度，也就是能同时连接到服务器的客户端的最大个数。
