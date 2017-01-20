@@ -2291,6 +2291,20 @@ public class MyChrome{
 ```
 
 ## java在代码中如何发送http请求？
+上面都是传输层基础上做的打印输出，所有会有http的请求头。而如果想只获取内容可以使用jdk里封装的对象URLConnection来操作。
+具体例子
+
+```java
+URL url = new URL("http://www.baidu.com");
+URLConnection connection = url.openConnection();
+InputStream in = connection.getInputStream();
+byte[] buff = new byte[1024];
+int len = in.read(buff);
+System.out.println(new String(buff, 0, len));
+
+```
+这就是应用层的协议，打印出来的只有消息体中的内容，没有请求头的内容。
+
 ```java
 import java.io.*;
 import java.net.*;
