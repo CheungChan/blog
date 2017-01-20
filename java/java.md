@@ -2156,6 +2156,140 @@ public class PicServer{
     }
 }
 ```   
+
+修改代码，让服务端可以处理多个客户端的并发请求
+
+```java
+import java.io.*;
+import java.net.*;
+public class PicServer{
+    public static void main(String[] args) throws Exception{
+        ServerSocket ss = new ServerSocket(8000);
+        while(true){
+            Socket s = ss.accept();
+            new Thread(new Serve(s)).start();
+        }
+    }
+}
+class Serve implements Runnable{
+    private Socket s;
+    Serve(Socket s){
+        this.s = s;
+    }
+    @Override
+    public void run(){
+        int count = 1;
+        try{
+            String ip = s.getInetAddress().getHostAddress();
+            System.out.println(ip+"....connceted");
+            InputStream in = s.getInputStream();
+            File file = new File(ip + "(" + count + ").mp3");
+            while(file.exists()){
+                file = new File(ip + "(" + (count++) + ").mp3");
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            byte[] buff = new byte[1024];
+            int len = 0;
+            while((len=in.read(buff)) != -1){
+                fos.write(buff, 0, len);
+            }
+            fos.close();
+            OutputStream out = s.getOutputStream();
+            // Thread.sleep(10000);
+            out.write("上传成功".getBytes());
+            s.close();
+        }catch(Exception e){
+            System.out.println("处理上传异常");
+        }
+    }
+}
+```
+客户端代码
+
+```java
+import java.io.*;
+import java.net.*;
+public class PicClient{
+    public static void main(String[] args) throws Exception{
+        if(args.length != 1){
+            System.out.println("请选择一个MP3文件");
+            return;
+        }
+        File file = new File(args[0]);
+        if(!file.exists() || !file.isFile()){
+            System.out.println("该文件不存在，要么存在是目录");
+            return;
+        }
+        if(!file.getName().endsWith(".mp3")){
+            System.out.println("音乐文件格式有问题，请重新选择");
+            return;
+        }
+        if(file.length() > 1024*1024*5){
+            System.out.println("文件大于5M，没安好心");
+            return;
+        }
+        Socket s = new Socket("127.0.0.1", 8000);
+        OutputStream out = s.getOutputStream();
+        FileInputStream fis = new FileInputStream(file);
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while((len = fis.read(buff)) != -1){
+            out.write(buff, 0, len);
+        }
+        s.shutdownOutput();
+        InputStream in = s.getInputStream();
+        byte[] buffin = new byte[1024];
+        int num = in.read(buffin);
+        System.out.println(new String(buffin, 0, num));
+    }
+}
+```
+## 使用ServerSocket模拟Tomcat
+```java
+import java.io.*;
+import java.net.*;
+public class MyTomcat{
+    public static void main(String[] args) throws Exception{
+        ServerSocket ss = new ServerSocket(8080);
+        while(true){
+            Socket s = ss.accept();
+            System.out.println(s.getInetAddress().getHostAddress() + "...connceted");
+            InputStream in = s.getInputStream();
+            byte[] buff = new byte[1024];
+            int len = in.read(buff);
+            System.out.println(new String(buff, 0, len));
+            PrintWriter out = new PrintWriter(s.getOutputStream(),true);
+            out.println("欢迎光临");
+            s.close();
+        }
+        ss.close();
+    }
+}
+```
+## 使用socket模拟一个浏览器
+```java
+import java.io.*;
+import java.net.*;
+public class MyChrome{
+    public static void main(String[] args) throws Exception{
+        Socket s = new Socket("127.0.0.1", 8080);
+        PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+        out.println("GET /myapp/1.txt HTTP/1.1");
+        out.println("Accept-Language:zh-CN,zh;q=0.8,en;q=0.6,en-US;q=0.4");
+        out.println("Cache-Control:max-age=0");
+        out.println("Connection:keep-alive");
+        out.println("Host:localhost:8080");
+        out.println("User-Agent:Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+        out.println("");
+        out.println("");
+        InputStream in = s.getInputStream();
+        byte[] buff = new byte[1024];
+        int len = in.read(buff);
+        System.out.println(new String(buff, 0, len));
+    }
+}
+```
+
 ## java在代码中如何发送http请求？
 ```java
 import java.io.*;
