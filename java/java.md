@@ -1,58 +1,3 @@
-## Java 反射之私有字段和方法详细介绍
-尽管我们通常认为通过JAVA的反射机制来访问其它类的私有字段和私有方法是可行的，其实并没有那么困难。   
-注释：只有在单独的JAVA程序中运行该代码才有效，就像你做一些单元测试或者常规的程序。如果你尝试在JAVA APPLET内使用该方法，你需要稍稍修改SecurityManager。但是，因为你不是经常需要与它打交道，这里也就不再赘述了。   
-这里是本次内容的列表:   
-1.访问私有字段。   
-2.访问私有方法。   
-访问私有字段:   
-为了访问私有字段，你需要调用```Class.getDeclaredField(String name)```或者```Class.getDeclaredFields()```方法。方法```Class.getField(String name)```和```Class.getFields()```仅仅返回共公开的字段，所以它们都无法起到作用。这里有一个例子，该例子中有一个包含私有字段的类，在该类下面有通过反射访问私有字段的代码。   
-复制代码 代码如下:
-```java
-public class PrivateObject { 
-private String privateString = null; //声明为私有字段 
-public PrivateObject(String privateString) { 
-    this.privateString = privateString; 
-} 
-} 
-```
-复制代码 代码如下:
-```java
-PrivateObject privateObject = new PrivateObject("The Private Value");//实例化对象 
-Field privateStringField = PrivateObject.class. 
-getDeclaredField("privateString"); 
-privateStringField.setAccessible(true);//允许访问私有字段 
-String fieldValue = (String) privateStringField.get(privateObject);//获得私有字段值 
-System.out.println("fieldValue = " + fieldValue); 
-```
-这个代码会打印出文本```"fieldValue = The Private Value"```，而该值正好是对象```PrivateObject```的私有字段```privateString```的值。 
-注意到我们使用了方法```PrivateObject.class.getDeclaredfield("privateString")```。正是这个调用这个方法返回了私有字段。这个方法仅仅根据指定的类返回字段，不会返回父类声明的字段。 
-另外仔细观察加粗的语句。通过调用 ```Field.setAccessible(true)```，你关掉了对于这个指定字段实例的访问检查，仅仅对反射有效。现在你能访问它了，不管它是私有的，保护的或是默认的(default)，即时调用者并不在该范围中。你仍然不能通过常规方法访问该字段，因为编译器不允许。 
-访问私有方法 
-为了访问一个私有方法，你需要调用```Class.getDeclaredMethod(String name,Class[] parameterTypes)```或者```Class.getDeclaredMethods()```方法。方法```Class.getMethod(String name,Class[] parameterTypes)```和```class.getMethods()```仅仅返回公有方法，所以它们不会起到作用。下面是一个简单的例子，该例子中有一个拥有私有方法的类，类下面是通过反射机制访问私有方法的代码。 
-复制代码 代码如下:
-```java
-public class PrivateObject { 
-private String privateString = null; 
-public PrivateObject(String privateString) { 
-    this.privateString = privateString; 
-} 
-private String getPrivateString(){//私有方法 
-    return this.privateString; 
-} 
-} 
-```
-复制代码 代码如下:
-```java
-PrivateObject privateObject = new PrivateObject("The Private Value"); 
-Method privateStringMethod = PrivateObject.class. 
-getDeclaredMethod("getPrivateString", null); 
-privateStringMethod.setAccessible(true); 
-String returnValue = (String)privateStringMethod.invoke(privateObject, null); 
-System.out.println("returnValue = " + returnValue); 
-```
-这个代码例子会打印出文本```"returnValue = The private Value"```，该值正好是私有方法的返回值。
-
-转自 [http://www.jb51.net/article/32170.htm](http://www.jb51.net/article/32170.htm)
 ## 由```ibatis```中的逆向工程的bug引起空指针异常的血案：操作符优先级问题
 工作中同事采用ibatis的逆向工程根据数据库表生成了java代码，model、dao、sqlmap这些东西。其中的model层复写的equals方法是这样的
 ``` java
@@ -2631,5 +2576,125 @@ public class Spider{
             }
         }
     }
+}
+```
+## java反射
+定义：java反射机制是在运行状态中，对于任意一个类（class文件）,都能知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及调用对象的方法的功能称为java语言的反射机制。就是对类的解剖。  
+反射比多态更加大大的提高了程序的扩展性。可以把对象的名字要求展这者写到配置文件中，在我的程序中不直接new对象，而是通过配置文件拿到类的名字，获取类中所有的内容，调用类中的构造方法创建对象。  
+应用：tomcat服务器。tomcat服务器的原理是io和多线程。提供了处理请求和响应应答的方式。因为具体处理动作不同，所以对外提供了接口，由开发者来实现具体请求和应答处理。tomcat不能直接new开发者写的对象，所以需要web.xml进行配置，tomcat对去web.xml中配置的类名来动态的创建对象，获取方法，调用方法。  
+### 获取class对象的方法
+1. Object.getClass()方法.想要用这种方式，必须要明确体的类，并创建对象。
+2. 任何数据类型都有一个静态的属性class来获取class对象。相对简单，但是还是要明确用到类中的静态成员。还是不够扩展。
+3. 只要通过给定类的字符串名称就可以获取该类，更为扩展。可以使用Class类中的方法。例如Class t = Class.forName("java.lang.Thread"),Class p = Class.forName("com.itcast.bean.Person")字符串必须写全名。这种方式只要有名称即可，更为方便，扩展性更强。
+```java
+public class ReflectDemo{
+	public static void main(String[] args) throws Exception{
+		Class clazz = Class.forName("java.lang.String");
+		Object o = clazz.newInstance();//相当于无参的构造方法创建对象
+	}
+}
+```
+用反射创建对象一般都必须有无参构造函数。  
+而想使用非空参构造函数该怎么办呢？应该先拿到构造函数。getConstructors()返回所有public的构造参数的数组，还可以使用Class类中的getConstructor(Class<?>... parameterTypes)，参数是参数列表的字节码文件，例如getConstructor(String.class,int.class)。如果想获取私有的或者包权限的，使用getDeclaredConstructors()返回所有权限的构造函数数组。拿到构造函数之后，可以调用Constructor类中的getInstance()方法，创建对象。例如
+```java
+import java.lang.reflect.*;
+public class ReflectDemo{
+	public static void main(String[] args) throws Exception{
+		Class clazz = Class.forName("java.lang.String");
+		Object o = clazz.newInstance();//相当于无参的构造方法创建对象
+        Constructor constructor = clazz.getConstructor(byte[].class);
+        Object o1 = constructor.newInstance("年后".getBytes());
+        System.out.println(o1);//年后
+	}
+}
+```
+拿字段，拿所有public字段Field[] getFields(),拿单个public字段Field getField(String name)。拿所有包括私有字段Field[] getDeclaredFields(),拿单个包括私有字段Field getDeclaredField(String name).  
+拿到字段中的值get(Object obj),obj表示拿哪个对象的字段值。但是如果成员是私有的，会报IlligleAccessException异常。但是Field有一个父类AccessObject，里面有setAccessible(true)可以取消这样的限制，进行暴力访问。  
+设置值，使用field.set(obj,val)来设置值。  
+
+拿方法：拿所有public方法Method[] getMethods(),拿单个public方法Method getMethod(String name,Class... parameterTypes),方法没有参数传null。拿所有包括私有方法Method[] getDeclaredMethods(),拿单个包括私有字段Method getDeclaredMethod(String name,Class... parameterTypes)，方法没有参数传入null。   
+运行方法method.invoke(Object obj, Class... parameterTypes)。
+
+## Java 反射之私有字段和方法详细介绍
+尽管我们通常认为通过JAVA的反射机制来访问其它类的私有字段和私有方法是可行的，其实并没有那么困难。   
+注释：只有在单独的JAVA程序中运行该代码才有效，就像你做一些单元测试或者常规的程序。如果你尝试在JAVA APPLET内使用该方法，你需要稍稍修改SecurityManager。但是，因为你不是经常需要与它打交道，这里也就不再赘述了。   
+这里是本次内容的列表:   
+1.访问私有字段。   
+2.访问私有方法。   
+访问私有字段:   
+为了访问私有字段，你需要调用```Class.getDeclaredField(String name)```或者```Class.getDeclaredFields()```方法。方法```Class.getField(String name)```和```Class.getFields()```仅仅返回共公开的字段，所以它们都无法起到作用。这里有一个例子，该例子中有一个包含私有字段的类，在该类下面有通过反射访问私有字段的代码。   
+复制代码 代码如下:
+```java
+public class PrivateObject { 
+private String privateString = null; //声明为私有字段 
+public PrivateObject(String privateString) { 
+    this.privateString = privateString; 
+} 
+} 
+```
+复制代码 代码如下:
+```java
+PrivateObject privateObject = new PrivateObject("The Private Value");//实例化对象 
+Field privateStringField = PrivateObject.class. 
+getDeclaredField("privateString"); 
+privateStringField.setAccessible(true);//允许访问私有字段 
+String fieldValue = (String) privateStringField.get(privateObject);//获得私有字段值 
+System.out.println("fieldValue = " + fieldValue); 
+```
+这个代码会打印出文本```"fieldValue = The Private Value"```，而该值正好是对象```PrivateObject```的私有字段```privateString```的值。 
+注意到我们使用了方法```PrivateObject.class.getDeclaredfield("privateString")```。正是这个调用这个方法返回了私有字段。这个方法仅仅根据指定的类返回字段，不会返回父类声明的字段。 
+另外仔细观察加粗的语句。通过调用 ```Field.setAccessible(true)```，你关掉了对于这个指定字段实例的访问检查，仅仅对反射有效。现在你能访问它了，不管它是私有的，保护的或是默认的(default)，即时调用者并不在该范围中。你仍然不能通过常规方法访问该字段，因为编译器不允许。 
+访问私有方法 
+为了访问一个私有方法，你需要调用```Class.getDeclaredMethod(String name,Class[] parameterTypes)```或者```Class.getDeclaredMethods()```方法。方法```Class.getMethod(String name,Class[] parameterTypes)```和```class.getMethods()```仅仅返回公有方法，所以它们不会起到作用。下面是一个简单的例子，该例子中有一个拥有私有方法的类，类下面是通过反射机制访问私有方法的代码。 
+复制代码 代码如下:
+```java
+public class PrivateObject { 
+private String privateString = null; 
+public PrivateObject(String privateString) { 
+    this.privateString = privateString; 
+} 
+private String getPrivateString(){//私有方法 
+    return this.privateString; 
+} 
+} 
+```
+复制代码 代码如下:
+```java
+PrivateObject privateObject = new PrivateObject("The Private Value"); 
+Method privateStringMethod = PrivateObject.class. 
+getDeclaredMethod("getPrivateString", null); 
+privateStringMethod.setAccessible(true); 
+String returnValue = (String)privateStringMethod.invoke(privateObject, null); 
+System.out.println("returnValue = " + returnValue); 
+```
+这个代码例子会打印出文本```"returnValue = The private Value"```，该值正好是私有方法的返回值。
+
+转自 [http://www.jb51.net/article/32170.htm](http://www.jb51.net/article/32170.htm)
+
+## 完全不用修改代码，只需要实现接口，修改配置文件来完成扩展的例子
+不完整的小例子
+
+```java
+import java.lang.reflect.*;
+import java.io.*;
+public class ReflectDemo{
+	public static void main(String[] args) throws Exception{
+		Mainboard mb = new Mainboard();
+        mb.run();
+        // 每次添加设备都需要修改代码传递一个新创建的对象。
+        // mb.userPIC(new SoundCard());
+        // 能不能不修改代码就可以完成这个动作。
+        // 不用new来完成，而是只获取其class文件，在内部实现创建对象的动作。
+        File configFile = new File("pci.properties");
+        Properties prop = new Properties();
+        FileInputStream fis = new FileInputStream(configFile);
+        prop.load(fis);
+        for(int x=0; x< prop.size(); x++){
+            String pciName = prop.getProperty("pci" + x);
+            Class clazz = Class.forName(pciName);// 用class文件去加载这个pci子类。
+            Pci pci = (Pci)clazz.newInstance();
+            mb.userPIC(pci);
+        }
+	}
 }
 ```
