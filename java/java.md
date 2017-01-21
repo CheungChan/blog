@@ -2363,8 +2363,273 @@ return str1.replaceAll("(.)\\1+","$1");
 // (.)\\1+拿到了叠词，要替换的值是前一个拿到的值，使用$1获取。$可获得前一个规则中的组
 ```
 ### 字符串的matches()方法是对字符串全量匹配。
-### 将字符串中符合规则的子串取出流程步骤
+### 获取：将字符串中符合规则的子串取出流程步骤
 1. 将正则表达式封装成对象  
 2. 将正则表达式和操作的字符串相关联
 3. 关联后，获取正则表达式引擎（配去器）
 4. 通过引擎对符合规则的子串进行操作，比如取出。
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "3232324";
+        String reg = "[1-9][0-9]{4,14}";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        System.out.println(m.matches());
+    }
+}
+```
+这是字符串匹配，String类中的matches方法就是Matcher对象matches()方法的shortcut。使得匹配更加方便，但是功能单一。还有String累的replaceAll()也是。  
+#### Matcher中其他的String类里没有的方法：
+group()方法用来获取以前匹配后的结果。
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "ming tian jiu yao fang jia la, da jia.";
+        String reg = "[a-z]{3}";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        System.out.println(m.group());
+    }
+}
+```
+此次编译正常，运行报错
+```java
+Exception in thread "main" java.lang.IllegalStateException: No match found
+        at java.util.regex.Matcher.group(Unknown Source)
+        at java.util.regex.Matcher.group(Unknown Source)
+        at RegexDemo.getDemo(RegexDemo.java:13)
+        at RegexDemo.main(RegexDemo.java:4)
+```
+找不到匹配，原因是group()方法用于获取以前匹配后的子串，之前只是关联后获得了匹配器，还没有进行匹配。可以使用find()方法，该方法作用是尝试查找与该模式匹配的输入序列的下一个序列。  
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "ming tian jiu yao fang jia la, da jia.";
+        String reg = "[a-z]{3}";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        boolean b = m.find();// 将规则作用于字符串上，并进行符合规则的字串查找
+        System.out.println(b);
+        System.out.println(m.group());
+        // 输出 true min
+    }
+}
+```
+发现find()方法，找到之后直接就返回true，不再继续向下查找，所以改成循环
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "ming tian jiu yao fang jia la, da jia.";
+        String reg = "[a-z]{3}";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        while(m.find()){
+            System.out.println(m.group());
+            // 输出 min tia jiu yao fan jia jia
+        }
+    }
+}
+```
+发现，正则表达式待修正，应该加上单词边界。加上```\b```
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "ming tian jiu yao fang jia la, da jia.";
+        String reg = "\\b[a-z]{3}\\b";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        while(m.find()){
+            System.out.println(m.group());
+            // 输出 jiu yao jia jia
+    }
+}
+```
+start()、end()方法，返回上一次匹配的开头和结尾的偏移量。
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "ming tian jiu yao fang jia la, da jia.";
+        String reg = "\\b[a-z]{3}\\b";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        while(m.find()){
+            System.out.println(m.group());
+            System.out.println(m.start() + "..." + m.end());
+            // 输出
+            // jiu
+            // 10...13
+            // yao
+            // 14...17
+            // jia
+            // 23...26
+            // jia
+            // 34...37
+            // 包含头不包含尾
+        }
+    }
+}
+```
+获取group()和切割split是相反的，获取是拿到符合规则的，切割是拿到除了符合规则以外的。  
+注意下面这种情况
+```java
+import java.util.regex.*;
+public class RegexDemo{
+    public static void main(String[] args){
+        getDemo();
+    }
+    public static void getDemo(){
+        String str = "ming tian jiu yao fang jia la, da jia.";
+        String reg = "\\b[a-z]{4}\\b";
+        // 讲规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        // 将正则对象和匹配的字符串相关联,获取匹配器
+        Matcher m = p.matcher(str);
+        System.out.println(m.matches());
+        while(m.find()){
+            System.out.println(m.group());
+            System.out.println(m.start() + "..." + m.end());
+        }
+        // 输出
+        // false
+        // tian
+        // 5...9
+        // fang
+        // 18...22
+    }
+}
+```
+原因是matches()方法执行时指针走到了ming后面的空格这个位置的时候发现不匹配返回了false。所以应该去掉m.matches()方法。
+### 正则练习 
+#### 练习1：需求讲“我我...我要...要要...要..学学...学...学..学编编...编编编...程程..程程..程”替换成“我要学编程”
+到底要使用四种功能中的哪一个呢？或者哪几个呢？
+思路方式：
+1. 如果只想知道该字符到底是对是错，使用匹配.
+2. 想要将已有的字符串替换成另一个字符串，使用替换.
+3. 想要按照自定的方式将字符串分割成多个子串.切割。获取规则以外的子串。
+4. 想要拿到符合要求的子串，获取。
+```java
+import java.util.regex.*;
+public class RegexTest{
+    public static void main(String[] args){
+        String s = "我我...我要...要要...要..学学...学...学..学编编...编编编...程程..程程..程";
+        s = s.replaceAll("\\.","");
+        System.out.println(s);
+        // 我我我要要要要学学学学学编编编编编程程程程程
+        s = s.replaceAll("(.)\\1+","$1");
+        // 使用括号进行分组，使用反斜杠1代表第1组，使用$1获取之前的第一组。
+        System.out.println(s);
+        // 我要学编程
+    }
+}
+```
+#### 练习2：将ip地址"192.68.1.254 102.49.23.103 10.10.10.10 002.2.2.2 8.109.90.30"按照地址段的顺序排序
+思路：将ip地址的每一段前面都加两个0，这样保证每个网段至少3位，然后只要每个网段的最后3位，之后按空格进行分割，分割之后按照自然顺序排序，排完序之后去掉开头的0，之后再组合到一起。
+
+```java
+import java.util.regex.*;
+import java.util.*;
+public class RegexTest{
+    public static void main(String[] args){
+        String s = "192.68.1.254 102.49.23.103 10.10.10.10 002.2.2.2 8.109.90.30";
+        s = s.replaceAll("(\\d+)","00$1");
+        System.out.println(s);
+        // 00192.0068.001.00254 00102.0049.0023.00103 0010.0010.0010.0010 00002.002.002.002 008.00109.0090.0030
+        s = s.replaceAll("0*(\\d{3})","$1");
+        System.out.println(s);
+        // 192.068.001.254 102.049.023.103 010.010.010.010 002.002.002.002 008.109.090.030
+        String[] arr = s.split(" +");
+        Arrays.sort(arr);
+        for(String _s: arr){
+            System.out.print(_s + " ");
+            // 002.002.002.002 008.109.090.030 010.010.010.010 102.049.023.103 192.068.001.254
+        }
+        System.out.println();
+        StringBuffer sb = new StringBuffer();
+        for(String _s : arr){
+            sb.append(_s.replaceAll("0*(\\d+)","$1") + " ");
+        }
+        s = sb.toString();
+        System.out.println(s);
+        // 2.2.2.2 8.109.90.30 10.10.10.10 102.49.23.103 192.68.1.254
+    }
+}
+```
+使用了Arrays.sort()方法进行排序，也可以用TreeSet来排序，或者转换成ArrayList,再用Collections.sort()来排序都可以。  
+#### 练习3：校验邮箱
+```java
+import java.util.regex.*;
+import java.util.*;
+public class RegexTest{
+    public static void main(String[] args){
+        String s = "fsefsf@qq.com";
+        String reg = "[a-zA-Z0-9_]+@[a-zA-Z1-9]+(\\.[a-zA-Z]+){1,3}";
+        System.out.println(s.matches(reg));
+    }
+}
+```
+## 用java开发一个简单的爬虫，爬取网站上网友留下的邮箱
+
+```java
+import java.net.*;
+import java.io.*;
+import java.util.regex.*;
+public class Spider{
+    public static void main(String[] args) throws Exception{
+        URL url = new URL("http://bbs.tianya.cn/post-no20-531725-1.shtml");
+        URLConnection con = url.openConnection();
+        BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String line = null;
+        String regex = "\\w+@\\w+(\\.\\w+){1,3}";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = null;
+        while((line=br.readLine()) != null){
+            m = p.matcher(line);
+            while(m.find()){
+                System.out.print(m.group() + "\t");
+                // 打印结果
+                // 337472208@qq.com        577458501@qq.com        785154693@qq.com        4
+                // 56798613@qq.com 4634616@qq.com  haitianyisei@icloud.com 289561436@qq.com
+                // 1048144507@qq.com       635609212@qq.com        784341452@qq.com        8
+                // 78898780@qq.com 970927096@qq.com
+            }
+        }
+    }
+}
+```
