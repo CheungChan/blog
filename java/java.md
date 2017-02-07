@@ -1,58 +1,3 @@
-## 由```ibatis```中的逆向工程的bug引起空指针异常的血案：操作符优先级问题
-工作中同事采用ibatis的逆向工程根据数据库表生成了java代码，model、dao、sqlmap这些东西。其中的model层复写的equals方法是这样的
-``` java
-public boolean equals(User user1,User user2){
-    return user1.getUserName() == null ? false : user1.getUserName().equals(user2.getUserName())
-    && user1.getPassword() == null ? false: user1.getPassword.equals(user2.getPassword)
-    && user1.getGender() == null ? false: user1.getGender().equals(user2.getGender())
-}
-```
-bug在哪里呢？那我们看下面的例子
-``` java
-return true? false: true
-    && true? false:true
-```
-这句我们可能认为```true?false:true```返回的是```false```然后```false&&```无论什么都是```false```，所以最终结果返回```false```,但实际返回的是```true```。  
-怎么回事呢？事实上```&&```的优先级要比三目运算符```xx?xx:xx```要高，所以实际运算顺序是```true?false:true```这一步返回的是```false```，然后```false && xx```，这时候```user1.getUserName==null```根本没有进行判断而结果是```false```,然后是```false?false:true```,所以最好返回结果是```true```。   
-于是乎引发了这个血案，就是```user1.getName==null```是正确的所以是```false```，这时候```user1.getPassword()==null```没有进行判断就走到了```user1.getPassword.equals(user2.getPassword())```，而导致了空指针异常```NullPointerException```
-## ```ArrayList```的默认值是多少，怎样扩容
-1.6是默认值是```10```，见```ArrayList```类的```ArrayList()```方法中有```this(10)```。扩容方法是原数组满了之后加上原来长度的一半加1，见```ArrayList()```的```ensureCapacity(int minCapacity)```方法。```int newCapacity = (oldCapacity * 3) / 2 + 1```;同时创建一个新的```newCapacity```长度的数组讲原来的数组迁移到新数组在放弃原数组。  
-1.7是初始值是```0```，然后```add```的时候改成默认值```10```，增长见```grow(int minCapacity)```方法```int newCapacity = oldCapacity + (oldCapacity >> 1);if (newCapacity - minCapacity < 0)newCapacity = minCapacity;```所以是当数组满了之后增长为原来的3/2，也就是```oldCapacity + (oldCapacity >> 1)```  
-```Vector``` 是jdk1.1就有的，那时候还没有集合框架，集合框架是jdk1.2诞生的，```Vector``` 线程安全操作慢，```ArrayList``` 线程不安全操作快，而且```Vector``` 满了之后扩增一倍，浪费空间。
-## ```HashMap```的默认值是多少，怎样扩容
-```hashMap```的默认值是```16```.见```HashMap```类的```HashMap()```方法中```table = new Entry[DEFAULT_INITIAL_CAPACITY]```，而此常量值为16.扩容是长度乘以2.见```addEntry(int hash,K key,V value,int bucketIndex)```方法。里面有```resize(2 * table.length)```但是不是满了就扩容。而是达到原长度乘以扩容因子的乘积之后扩容。见```addEntry```方法中的```if(size++ >= threshold) resize(2 * table.length)```。而```threshold```的值是```DEFAULT_INITIAL_CAPACITY*DEFAULT_LOAD_FACTOR```。扩容因子的值是```0.75```。
-## 子类集成父类的属性。修改了父类属性的类型导致运行时子类报```NoSuchFieldException```
-由于之前父类的这个属性是一个```Service```，在开事务的情况下，注入属性的时候写实体类的```ServiceImpl```类型会切不到事务，所以改bug讲这个属性类型改为了```Service```接口类型来注入。而子类中引用了这个属性，调用这个```service```上的```add```方法，综合环境报了```NoSuchFieldException```异常。原因是综合功能环境是采用的```class```文件增量更新。父类修改了导致重新编译了```class```。本地环境是全部编译，所以子类没有修改内容也重新编译了，所以没有报错。然后综合环境是```class```文件替换，如果子类没有修改过就不会替换```class```。而子类编译```class```的时候如果有引用父类的变量在编译的时候就会将对父类的引用转换为子类中的变量。而没有重新编译所以综合环境上子类还是持有的原来父类的引用。由此引申到如果定义一个```static final int age=1```的话，其他的类使用了这个```final```属性的引用的话，编译的时候会将这个引用替换为常量的值。所以反编译```class```的时候这时将没有这个常量的引用，而只有```1```。
-## ```AtomicLong```、```AtomicInteger```在高并发的情况下可以保证线程安全而```long```不可以。
-高并发的情况下```long i```的```i++```这种跟原来的值有关系的赋值操作可能会出错，而使用```AtomicLong```就可以了。他的底层使用的不是乐观锁也不是悲观锁，而是```Cas锁```，就是```copyandswap```算法的锁，是一种无锁算法。采用的是```c```语言写的。用```native```修饰的方法。而```c```语言的代码是直接控制了cpu在执行这个属性简单的赋值操作的时候不允许cpu切换到别的线程干别的事情，是c语言直接控制了cpu。
-## ```ThreadLocal```中的```get()```的时候可能会引起空指针问题
-由于```ThreadLocal```中的```set()```和```get()```方法都是操作的内部的叫做```threadLocalmap```的属性。这个属性以```ThreadLocal```类型的```this```对象为键以传入的```Object```类型的变量为值。但是这个```ThreadLocal```类型的```this```对象采用的是虚引用```WeakedReference```，所以在```gc```的时候就被回收了导致键没有了，导致```get()```空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用```get()set()remove()```方法的时候会检查有没有内存泄漏的，有的话就清除一下。而jdk采用虚引用作为键官方解释是说为了防止时间长有大的对象被```ThreadLocalmap```长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的```ThreadLocal```对象```=new TheadLocal()```作为强引用。由于是静态变量，直到程序结束，才会被回收，（静态变量随着类的加载而加载，随着类的消失而消失）这样就可以不检查```get()```是否返回空指针。
-举例
-```java
-//退款需要操作的库存
-private static ThreadLocal<List<ProdStorage>> refundSuncessProdStorageHolder = new ThreadLocal<List<ProdStorage>>(){
-    @Override
-    protected List<ProdStorage> initialValue(){
-        return new ArrayList<ProdStorage>();
-    }
-}
-//商户是否使用redis存储库存
-private static ThreadLocal<Map<String,Boolean>> redisSupportHolder = new ThreadLocal<Map<String,Boolean>>(){
-    @Override
-    protected Map<String,Boolean> initialValue(){
-        return new HashMap<String,Boolean>();
-    }
-}
-public static ThreadLocal<List<ProdStorage>> getRefundSuccessProdStorageHolder(){
-    return refundSuncessProdStorageHolder;
-}
-public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
-    return redisSupportHolder;
-}
-```
-另外的问题是当线程创建的时候把当前线程作为key，如果线程被销毁，则这个```ThreadLocal```被销毁，但是在使用线程池的时候，线程永生，可能会导致没有set值的时候调用get方法会返回上一次线程使用的值，所以应该在线程不用之前手动调用```remove()```方法。
-## ```java```中的四种引用类型
-按照从强到弱顺序是强引用，软引用，弱引用，虚引用。```强引用```是我们在编程过程中使用的最简单的引用，如代码```String s="abc"```中变量```s```就是字符串对象```"abc"```的一个强引用。任何被强引用指向的对象都不能被垃圾回收器回收，这些对象都是在程序中需要的。而```软引用```是在内存快要溢出之前会被gc掉，常用于缓存的场景。而```弱引用```会在任意次gc的时候，不一定内存要溢出的时候被gc掉，常用于性能优化为目的的缓存而不是为了防止内存溢出。```虚引用```是影子引用，用的很少。
 ## ```Person p = new Person("zhangsan",20)``` 这句话都做了什么事情？
 1.因为new用到了```Person.class```,所以会先找到```Person.class```文件并加载到内存（方法区）中。  
 2.执行该类的```static```代码块，如果有的话，给```Person.class```类进行初始化（先将类代码静态内容放入静态方法区，再将类中非静态方法加入非静态方法区）。  
@@ -65,6 +10,10 @@ public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
 ## ```p.setName("lisi")```这句话又做了什么？
 ![image](image/p.setName()过程.png)
 如上图所示，从上面的7步继续，栈内存中原来有```main```方法，现在有引用```p```(指向堆内存中对象的地址0x0023），方法```setName```，```name```变量和```this```。```p```调用```setName```方法，这时候```p```就是```this```，所以将```p```的地址0x0023赋值给```this```，而```this```调用```setName```所以找到堆内存中的```setName```方法，讲堆内存中的name赋值为lisi，而再次调用```P p1 = new P1();p1.setName("qq");```时也是在栈内存产生引用```p```,```name```,```this```,方法```setName```，先给```this```赋值为```p```的地址，然后通过```this```找到堆内存中的对象，再将堆内存中的```name```赋值修改。
+
+## ```java```中的四种引用类型
+按照从强到弱顺序是强引用，软引用，弱引用，虚引用。```强引用```是我们在编程过程中使用的最简单的引用，如代码```String s="abc"```中变量```s```就是字符串对象```"abc"```的一个强引用。任何被强引用指向的对象都不能被垃圾回收器回收，这些对象都是在程序中需要的。而```软引用```是在内存快要溢出之前会被gc掉，常用于缓存的场景。而```弱引用```会在任意次gc的时候，不一定内存要溢出的时候被gc掉，常用于性能优化为目的的缓存而不是为了防止内存溢出。```虚引用```是影子引用，用的很少。
+
 ## 单例模式中的懒汉模式和饿汉模式
 ### 饿汉模式：先初始化对象
 ``` java
@@ -95,6 +44,10 @@ class Single{
 }
 ```
 两次判断，外层判断是为了已经有了对象不再去拿锁提高效率，内层判断是为了防止多线程并发出现错误，有可能在外层判断加锁之前程序切换。另外懒汉模式中锁是类的字节码对象因为此方法是静态方法。
+
+## 子类集成父类的属性。修改了父类属性的类型导致运行时子类报```NoSuchFieldException```
+由于之前父类的这个属性是一个```Service```，在开事务的情况下，注入属性的时候写实体类的```ServiceImpl```类型会切不到事务，所以改bug讲这个属性类型改为了```Service```接口类型来注入。而子类中引用了这个属性，调用这个```service```上的```add```方法，综合环境报了```NoSuchFieldException```异常。原因是综合功能环境是采用的```class```文件增量更新。父类修改了导致重新编译了```class```。本地环境是全部编译，所以子类没有修改内容也重新编译了，所以没有报错。然后综合环境是```class```文件替换，如果子类没有修改过就不会替换```class```。而子类编译```class```的时候如果有引用父类的变量在编译的时候就会将对父类的引用转换为子类中的变量。而没有重新编译所以综合环境上子类还是持有的原来父类的引用。由此引申到如果定义一个```static final int age=1```的话，其他的类使用了这个```final```属性的引用的话，编译的时候会将这个引用替换为常量的值。所以反编译```class```的时候这时将没有这个常量的引用，而只有```1```。
+
 ## 多态总结
 ### 1.多态的体现
 父类的引用指向了自己的子类对象。  
@@ -260,6 +213,37 @@ public class InterruptReset extends Object {
 ## ```join``` 方法介绍
 当A线程执行到了B线程的```join()```方法时，A线程就会等待。等B线程都执行完，A才会执行。  
 ```join``` 方法可以临时加入线程执行。
+
+## ```ThreadLocal```中的```get()```的时候可能会引起空指针问题
+由于```ThreadLocal```中的```set()```和```get()```方法都是操作的内部的叫做```threadLocalmap```的属性。这个属性以```ThreadLocal```类型的```this```对象为键以传入的```Object```类型的变量为值。但是这个```ThreadLocal```类型的```this```对象采用的是虚引用```WeakedReference```，所以在```gc```的时候就被回收了导致键没有了，导致```get()```空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用```get()set()remove()```方法的时候会检查有没有内存泄漏的，有的话就清除一下。而jdk采用虚引用作为键官方解释是说为了防止时间长有大的对象被```ThreadLocalmap```长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的```ThreadLocal```对象```=new TheadLocal()```作为强引用。由于是静态变量，直到程序结束，才会被回收，（静态变量随着类的加载而加载，随着类的消失而消失）这样就可以不检查```get()```是否返回空指针。
+举例
+```java
+//退款需要操作的库存
+private static ThreadLocal<List<ProdStorage>> refundSuncessProdStorageHolder = new ThreadLocal<List<ProdStorage>>(){
+    @Override
+    protected List<ProdStorage> initialValue(){
+        return new ArrayList<ProdStorage>();
+    }
+}
+//商户是否使用redis存储库存
+private static ThreadLocal<Map<String,Boolean>> redisSupportHolder = new ThreadLocal<Map<String,Boolean>>(){
+    @Override
+    protected Map<String,Boolean> initialValue(){
+        return new HashMap<String,Boolean>();
+    }
+}
+public static ThreadLocal<List<ProdStorage>> getRefundSuccessProdStorageHolder(){
+    return refundSuncessProdStorageHolder;
+}
+public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
+    return redisSupportHolder;
+}
+```
+另外的问题是当线程创建的时候把当前线程作为key，如果线程被销毁，则这个```ThreadLocal```被销毁，但是在使用线程池的时候，线程永生，可能会导致没有set值的时候调用get方法会返回上一次线程使用的值，所以应该在线程不用之前手动调用```remove()```方法。
+
+## ```AtomicLong```、```AtomicInteger```在高并发的情况下可以保证线程安全而```long```不可以。
+高并发的情况下```long i```的```i++```这种跟原来的值有关系的赋值操作可能会出错，而使用```AtomicLong```就可以了。他的底层使用的不是乐观锁也不是悲观锁，而是```Cas锁```，就是```copyandswap```算法的锁，是一种无锁算法。采用的是```c```语言写的。用```native```修饰的方法。而```c```语言的代码是直接控制了cpu在执行这个属性简单的赋值操作的时候不允许cpu切换到别的线程干别的事情，是c语言直接控制了cpu。
+
 ## ```String s1 = "abc" ```与 ```String s2 = new String("abc") ```有什么区别？
 就一个区别，s1在内存中有一个对象，s2在内存中有两个对象，分别是abc和new的对象。
 ## 获取两个字符串中最大的相同子串,```String s1="abcwerthelloyuiodef",s2="cvhellobnm";```
@@ -283,6 +267,13 @@ public String getMaxSubString(String s1,String s2){
     return "";
 }
 ```
+## ```ArrayList```的默认值是多少，怎样扩容
+1.6是默认值是```10```，见```ArrayList```类的```ArrayList()```方法中有```this(10)```。扩容方法是原数组满了之后加上原来长度的一半加1，见```ArrayList()```的```ensureCapacity(int minCapacity)```方法。```int newCapacity = (oldCapacity * 3) / 2 + 1```;同时创建一个新的```newCapacity```长度的数组讲原来的数组迁移到新数组在放弃原数组。  
+1.7是初始值是```0```，然后```add```的时候改成默认值```10```，增长见```grow(int minCapacity)```方法```int newCapacity = oldCapacity + (oldCapacity >> 1);if (newCapacity - minCapacity < 0)newCapacity = minCapacity;```所以是当数组满了之后增长为原来的3/2，也就是```oldCapacity + (oldCapacity >> 1)```  
+```Vector``` 是jdk1.1就有的，那时候还没有集合框架，集合框架是jdk1.2诞生的，```Vector``` 线程安全操作慢，```ArrayList``` 线程不安全操作快，而且```Vector``` 满了之后扩增一倍，浪费空间。
+## ```HashMap```的默认值是多少，怎样扩容
+```hashMap```的默认值是```16```.见```HashMap```类的```HashMap()```方法中```table = new Entry[DEFAULT_INITIAL_CAPACITY]```，而此常量值为16.扩容是长度乘以2.见```addEntry(int hash,K key,V value,int bucketIndex)```方法。里面有```resize(2 * table.length)```但是不是满了就扩容。而是达到原长度乘以扩容因子的乘积之后扩容。见```addEntry```方法中的```if(size++ >= threshold) resize(2 * table.length)```。而```threshold```的值是```DEFAULT_INITIAL_CAPACITY*DEFAULT_LOAD_FACTOR```。扩容因子的值是```0.75```。
+
 ## 集合框架中迭代器的注意事项
 迭代器```Iterator```是一个接口，所有集合框架类里面都有```iterator()```方法（实现的```Collection```接口中的方法），该方法返回各自集合类中定义的迭代器内部类。
 ```List``` 集合特有的迭代器,```ListIterator``` 是```Iterator``` 的子接口。  
@@ -2211,6 +2202,7 @@ public class MyTomcat{
     }
 }
 ```
+一定要注意socket使用时不要使用readLine()方法，因为readLine()方法在读完浏览器发来的数据之后不会返回null，而是阻塞住除非浏览器端关闭输出流或者遇到异常。而浏览器不会关流。所以网络连接时不要使用readLine()方法。
 ## 使用socket模拟一个浏览器
 ```java
 import java.io.*;
