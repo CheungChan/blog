@@ -93,7 +93,7 @@ Outer.Inner.function();
 注意：当内部类中定义了静态成员，该内部类必须是静态内部类。  
 当外部类中的静态方法访问内部类时，内部类也必须是静态内部类。  
 3.当内部类定义在局部时  
-1）不可以b被成员修饰符修饰  
+1）不可以被成员修饰符修饰  
 2）可以直接访问外部类中的成员，因为还持有外部类的引用。但是不可以访问它在局部定义的变量,只能访问被final修饰的局部变量。
 ## 如何给javac设置编译后class文件的存放位置，如何运行别的位置处的class文件？
 ```java
@@ -126,7 +126,7 @@ java packa.DemoA
 使用```notifyAll```原因：因为只用```notify```，容易出现只唤醒本方线程的情况，导致程序中所有的线程被等待。  
 代码示例：<a href="example/ProducerConsumerDemo.java" target="_blank">生产者消费者代码示例</a>  
 jdk1.5中提供了多线程的升级解决方案。  
-讲同步```syncronized```替换成为显式的```Lock```操作。  
+将同步```syncronized```替换成为显式的```Lock```操作。  
 将```Object```中的```wait、notify、notifyAll```替换成了```Condition```对象。该对象可以通过```Lock```锁进行获取。该示例中，实现了本方只唤醒对方操作。  
 代码示例：<a href="example/ProducerConsumerDemo2.java" target="_blank">生产者消费者代码示例5.0升级版</a>
 ## 如何停止一个线程？
@@ -142,6 +142,7 @@ jdk1.5中提供了多线程的升级解决方案。
 ```Thread``` 类提供了该方法```interrupt()```；相当于拍了睡的人一砖头，虽然醒了但是受伤了，产生了异常```InterruptedException```  
 ```interrupt()```方法如果在```sleep()```之前被调用，则线程执行到```sleep()```时就会马上产出```InterruptedException```，此情此景叫做 决断中断。 
 示 例：  
+
 ```java
 public class PendingInterrupt extends Object {  
     public static void main(String[] args){  
@@ -162,6 +163,7 @@ public class PendingInterrupt extends Object {
     }  
 }
 ```
+
 执行结果  
 ![image](image/决断中断.png)
 ## 使用 isInterrupted()方法判断中断状态
@@ -215,7 +217,7 @@ public class InterruptReset extends Object {
 ```join``` 方法可以临时加入线程执行。
 
 ## ```ThreadLocal```中的```get()```的时候可能会引起空指针问题
-由于```ThreadLocal```中的```set()```和```get()```方法都是操作的内部的叫做```threadLocalmap```的属性。这个属性以```ThreadLocal```类型的```this```对象为键以传入的```Object```类型的变量为值。但是这个```ThreadLocal```类型的```this```对象采用的是虚引用```WeakedReference```，所以在```gc```的时候就被回收了导致键没有了，导致```get()```空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用```get()set()remove()```方法的时候会检查有没有内存泄漏的，有的话就清除一下。而jdk采用虚引用作为键官方解释是说为了防止时间长有大的对象被```ThreadLocalmap```长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的```ThreadLocal```对象```=new TheadLocal()```作为强引用。由于是静态变量，直到程序结束，才会被回收，（静态变量随着类的加载而加载，随着类的消失而消失）这样就可以不检查```get()```是否返回空指针。
+由于```ThreadLocal```中的```set()```和```get()```方法都是操作的内部的叫做```threadLocalmap```的属性。这个属性以```ThreadLocal```类型的```this```对象为键以传入的```Object```类型的变量为值。但是这个```ThreadLocal```类型的```this```对象采用的是弱引用```WeakedReference```，所以在```gc```的时候就被回收了导致键没有了，导致```get()```空指针，而且出现了内存泄漏（键被gc了，值还存在，值不可达）。所以jdk采用的办法是在下一次调用```get()set()remove()```方法的时候会检查有没有内存泄漏的，有的话就清除一下。而jdk采用弱引用作为键官方解释是说为了防止时间长有大的对象被```ThreadLocalmap```长期占用，导致内存溢出。而为了防止空指针，可以采取的办法是在工具类里面设置静态的```ThreadLocal```对象```=new TheadLocal()```作为强引用。由于是静态变量，直到程序结束，才会被回收，（静态变量随着类的加载而加载，随着类的消失而消失）这样就可以不检查```get()```是否返回空指针。
 举例
 ```java
 //退款需要操作的库存
@@ -242,7 +244,7 @@ public static ThreadLocal<Map<String,Boolean>> getRedisSupportHolder(){
 另外的问题是当线程创建的时候把当前线程作为key，如果线程被销毁，则这个```ThreadLocal```被销毁，但是在使用线程池的时候，线程永生，可能会导致没有set值的时候调用get方法会返回上一次线程使用的值，所以应该在线程不用之前手动调用```remove()```方法。
 
 ## ```AtomicLong```、```AtomicInteger```在高并发的情况下可以保证线程安全而```long```不可以。
-高并发的情况下```long i```的```i++```这种跟原来的值有关系的赋值操作可能会出错，而使用```AtomicLong```就可以了。他的底层使用的不是乐观锁也不是悲观锁，而是```Cas锁```，就是```copyandswap```算法的锁，是一种无锁算法。采用的是```c```语言写的。用```native```修饰的方法。而```c```语言的代码是直接控制了cpu在执行这个属性简单的赋值操作的时候不允许cpu切换到别的线程干别的事情，是c语言直接控制了cpu。
+高并发的情况下属性```long i```的```i++```这种跟原来的值有关系的赋值操作可能会出错，比如servlet里的属性由于默认是单例的因而属性有线程安全问题。而使用```AtomicLong```就可以了。他的底层使用的不是乐观锁也不是悲观锁，而是```Cas锁```，就是```copyandswap```算法的锁，是一种无锁算法。采用的是```c```语言写的。用```native```修饰的方法。而```c```语言的代码是直接控制了cpu在执行这个属性简单的赋值操作的时候不允许cpu切换到别的线程干别的事情，是c语言直接控制了cpu。
 
 ## ```String s1 = "abc" ```与 ```String s2 = new String("abc") ```有什么区别？
 就一个区别，s1在内存中有一个对象，s2在内存中有两个对象，分别是abc和new的对象。
@@ -329,6 +331,47 @@ E pollLast();
 当两种方式都存在时，以比较器为主。
 
 定义一个类，实现```Comparator``` 接口，实现```compare``` 方法。
+
+## Map需要注意的点
+```HashTable``` ：底层是哈希表数据结构。不允许存入null键或null值，线程同步，jdk1.0。效率低  
+```HashMap``` ：底层是哈希表数据结构。允许存入null键或null值，线程非同步。jdk1.2。效率高  
+```TreeMap``` ：底层是二叉树数据结构。线程不同步。可以给key排序。  
+添加元素（put）时，如果原来的键已存在，会覆盖原来的值，并把原来的值返回。  
+```entrySet()``` 返回的是```Map.Entry<K,V>``` 类型的对象，此类包含```getKey();getValue();setValue();``` 方法  
+## Conllections帮助类中的方法有
+binarySearch(list,key)二分查找、sort(list) 排序， sort(list,Comparator<? super T> c)排序。reverseOrder()或者reverseOrder(Comparator c)将比较器返回为反转比较器。fill()全部替换为指定的元素、syschronizedList(List list) 、syschronizedMap(map)、syschronizedSet(set)将线程不安全的集合转变为线程安全的集合。内部原理是在类内部再维护一个集合，然后增删改方法都被syschronized包住并采用同一个锁。swap(list,int i,int j)交换两个位置的元素、shuffle(list)将list元素打乱。
+## Arrays帮助类中的方法有
+binarySearch()各种二分查找，copyOf(list)各种复制,copyOfRange(array,from,to),deepequals()不但比较数组还比较数组中的元素内容。fill(array,from,to)全部替换asList(a)把数组变为list集合。但是此list集合不可以使用list中的增删方法。否则会发生UnSupportedOperationException。还有，如果数组中的元素都是对象，那么数组中的元素都会变成集合中的元素，但是如果数组中的元素都是基本类型，那么数组就会变成集合中的元素。
+举例：
+```java
+String[] arr = {"aa","bb","cc"};
+List<String> l = Arrays.asList(arr);
+System.out.println(l.length);//3
+int[] arr2 = {1,2,3};
+List<int[]> l2 = Arrays.asList(arr2);
+System.out.println(l2.length);//1
+```
+## 集合转数组
+```java
+ArrayList<String> al = new ArrayList<String>();
+al.add("abc1");
+al.add("abc2");
+al.add("abc3");
+String[] arr = al.toArray(new String[1]);
+System.out.println(Arrays.toString(arr));//[abc1,abc2,abc3]
+String[] arr2 = al.toArray(new String[5]);
+System.out.println(Arrays.toString(arr2));//[abc1,abc2,abc3,null,null]
+```
+1. 指定数组长度到底要定义多长呢？
+当指定的数组的长度小于了集合的size，那么该方法内部就会创建一个新的数组，长度为集合的size。  
+当指定的数组的长度大于了集合的size，就不会创建新的数组,而是采用传递过来的数组。  
+所以传递一个刚刚好的数组最优。  
+所以最好采用
+```java
+String[] arr3 = al.toArray(new String[al.size()]);
+```
+2.为什么要集合变数组？  
+为了限制对元素的操作。不需要进行增删了。
 ## 什么时候使用泛型类
 当类中要操作的引用数据类型不确定的时候。早期定义用```Object```  来扩展，现在定义泛型来扩展。  
 举例：
@@ -517,46 +560,6 @@ class Worker extends Person{}
 这里面两个```TreeSet```的比较器进行了复用，全都是因为```TreeSet```的构造函数定义是```TreeSet(Comparator<? super E> comp);```。所以说使用父类的比较器就OK。   
 注意：如果在集合中使用了上限或者下限。用了上限，则```add```方法不可以用除了```null```，下界```get```方法不可以用除了返回```Object```  
 举例：<a href="example/泛型的上界和下界.md">java泛型中的上界下界(上限下限)</a>
-## Map需要注意的点
-```HashTable``` ：底层是哈希表数据结构。不允许存入null键或null值，线程同步，jdk1.0。效率低  
-```HashMap``` ：底层是哈希表数据结构。允许存入null键或null值，线程非同步。jdk1.2。效率高  
-```TreeMap``` ：底层是二叉树数据结构。线程不同步。可以给key排序。  
-添加元素（put）时，如果原来的键已存在，会覆盖原来的值，并把原来的值返回。  
-```entrySet()``` 返回的是```Map.Entry<K,V>``` 类型的对象，此类包含```getKey();getValue();setValue();``` 方法  
-## Conllections帮助类中的方法有
-binarySearch(list,key)二分查找、sort(list) 排序， sort(list,Comparator<? super T> c)排序。reverseOrder()或者reverseOrder(Comparator c)将比较器返回为反转比较器。fill()全部替换为指定的元素、syschronizedList(List list) 、syschronizedMap(map)、syschronizedSet(set)将线程不安全的集合转变为线程安全的集合。内部原理是在类内部再维护一个集合，然后增删改方法都被syschronized包住并采用同一个锁。swap(list,int i,int j)交换两个位置的元素、shuffle(list)将list元素打乱。
-## Arrays帮助类中的方法有
-binarySearch()各种二分查找，copyOf(list)各种复制,copyOfRange(array,from,to),deepequals()不但比较数组还比较数组中的元素内容。fill(array,from,to)全部替换asList(a)把数组变为list集合。但是此list集合不可以使用list中的增删方法。否则会发生UnSupportedOperationException。还有，如果数组中的元素都是对象，那么数组中的元素都会变成集合中的元素，但是如果数组中的元素都是基本类型，那么数组就会变成集合中的元素。
-举例：
-```java
-String[] arr = {"aa","bb","cc"};
-List<String> l = Arrays.asList(arr);
-System.out.println(l.length);//3
-int[] arr2 = {1,2,3};
-List<int[]> l2 = Arrays.asList(arr2);
-System.out.println(l2.length);//1
-```
-## 集合转数组
-```java
-ArrayList<String> al = new ArrayList<String>();
-al.add("abc1");
-al.add("abc2");
-al.add("abc3");
-String[] arr = al.toArray(new String[1]);
-System.out.println(Arrays.toString(arr));//[abc1,abc2,abc3]
-String[] arr2 = al.toArray(new String[5]);
-System.out.println(Arrays.toString(arr2));//[abc1,abc2,abc3,null,null]
-```
-1. 指定数组长度到底要定义多长呢？
-当指定的数组的长度小于了集合的size，那么该方法内部就会创建一个新的数组，长度为集合的size。  
-当指定的数组的长度大于了集合的size，就不会创建新的数组,而是采用传递过来的数组。  
-所以传递一个刚刚好的数组最优。  
-所以最好采用
-```java
-String[] arr3 = al.toArray(new String[al.size()]);
-```
-2.为什么要集合变数组？  
-为了限制对元素的操作。不需要进行增删了。
 ## javaio流
 字节流的抽象基类：InputStream、OutputStream  
 字符流的抽象基类：Reader、Writer  
@@ -2604,7 +2607,7 @@ public class ReflectDemo{
 拿到字段中的值get(Object obj),obj表示拿哪个对象的字段值。但是如果成员是私有的，会报IlligleAccessException异常。但是Field有一个父类AccessObject，里面有setAccessible(true)可以取消这样的限制，进行暴力访问。  
 设置值，使用field.set(obj,val)来设置值。  
 
-拿方法：拿所有public方法Method[] getMethods(),拿单个public方法Method getMethod(String name,Class... parameterTypes),方法没有参数传null。拿所有包括私有方法Method[] getDeclaredMethods(),拿单个包括私有字段Method getDeclaredMethod(String name,Class... parameterTypes)，方法没有参数传入null。   
+拿方法：拿所有public方法Method[] getMethods(),拿单个public方法Method getMethod(String name,Class... parameterTypes),方法没有参数传null。拿所有包括私有方法Method[] getDeclaredMethods(),拿单个包括私有方法Method getDeclaredMethod(String name,Class... parameterTypes)，方法没有参数传入null。   
 运行方法method.invoke(Object obj, Class... parameterTypes)。
 
 ## Java 反射之私有字段和方法详细介绍
