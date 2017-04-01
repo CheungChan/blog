@@ -36,3 +36,12 @@ return true? false: true
 怎么回事呢？事实上```&&```的优先级要比三目运算符```xx?xx:xx```要高，所以实际运算顺序是```true?false:true```这一步返回的是```false```，然后```false && xx```，这时候```user1.getUserName==null```根本没有进行判断而结果是```false```,然后是```false?false:true```,所以最好返回结果是```true```。   
 于是乎引发了这个血案，就是```user1.getName==null```是正确的所以是```false```，这时候```user1.getPassword()==null```没有进行判断就走到了```user1.getPassword.equals(user2.getPassword())```，而导致了空指针异常```NullPointerException```
 
+## rose启动报错jdk版本低于1.5
+### 报错：
+Caused by: java.lang.IllegalStateException: Context namespace element 'annotation-config' and its parser class [org.springframework.context.annotation.AnnotationConfigBeanDefinitionParser] are only available on JDK 1.5 and higher
+### 原因：
+使用的rose1.0引用的spring版本是2.5.6，该版本的spring的org.springframework.core.jdkVersion中只对jdk的1.6,1.7.版本进行了大于1.5的判断，没有1.8，不识别所以报此错误。
+### 解决办法：
+方法一：更改jdkVersion.java编译成class再替换到jar包中。
+方法二：安装jdk1.7，使用1.7不用1.8
+方法三：使用rose2.0-SNAPCHAT,如果从http://repos.fenqi.d.xiaonei.com/nexus/content/groups/public-snapshots中下载不下来此版本。可以先从svn上下载rose2.0版本的项目，再用mvn的install命令安装到版本库中再使用就ok了。
