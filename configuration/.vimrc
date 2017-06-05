@@ -23,6 +23,8 @@ vmap <C-c> "+y
 set ruler
 ""设置光标当前行浅色高亮"
 set cursorline
+"高亮当前列
+set cursorcolumn
 "设置自动侦测文件类型"
 filetype on
 ""根据不同的类型加载不同的插件
