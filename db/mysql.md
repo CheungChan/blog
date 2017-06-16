@@ -19,3 +19,27 @@ union all
 select 值11,值22 from dual
 ```
 可同样起到插入时间优化的效果。
+
+## 查询数据库表中的重复数据
+```sql
+SELECT
+	*
+FROM
+	car_models_thirdparty
+WHERE
+	model_id IN (
+		SELECT
+			model_id
+		FROM
+			car_models_thirdparty
+		WHERE
+			platform_code = 'ganji'
+		GROUP BY
+			model_id
+		HAVING
+			count(model_id) > 1
+	)
+AND platform_code = 'ganji'
+ORDER BY
+	model_id;
+```
