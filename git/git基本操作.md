@@ -91,7 +91,7 @@ git commit -m "record message"
 git commit --amend
 ```
 可以进行修改   
-若是文件较少可以用
+若是文件已经被追踪,且文件较少可以用
 ```
 git commit -am "recored message"
 ```
