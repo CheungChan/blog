@@ -100,7 +100,7 @@ git commit -am "recored message"
 git diff查看当前工作树与暂存区的差别   
 git diff HEAD专门查看当前工作树与最后一次提交的差别  
 # 查看分支
-git branch查看当前分支  -a显示当前分支的相关信息。
+git branch查看当前分支  -va显示当前分支的相关信息和所有分支。
 # 切换分支
 ```
 git checkout -b feature-A 
@@ -159,3 +159,9 @@ git diff --staged
 ```git reset --hard```硬模式代表index和working directory全部复位，包括未提交的更改  
 ```git reset```混合模式代表reset index但是leving working diretory untouched，也就是变为未加入暂存区的状态，但是工作空间有所有改变的代码  
 ```git reset --soft```软模式代表leaving working directory and index untouched，也就是文件所有的改变加入了暂存区而未提交
+# git想checkout远程分支建立对应的本地分支。
+
+比如有个远程分支是foo，想在本地checkout它，命令如下：
+```
+git checkout -b foo origin/foo
+```
