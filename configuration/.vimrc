@@ -1,7 +1,7 @@
 set encoding=utf-8
 set fileencodings=utf-8,chinese,latin-1
 language messages zh_CN.utf-8
-set guifont=Consolas:h11:cDEFAULT
+set guifont=consolas:h16:b
 set wrap
 "设置自动缩进"
 set autoindent
