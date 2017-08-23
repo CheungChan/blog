@@ -7,7 +7,8 @@ set wrap
 set autoindent
 "设置主题"
 "colorscheme peachpuff
-colorscheme ron
+"colorscheme ron
+colorscheme zellner
 set ts=4  
 set expandtab  
 set shiftwidth=4  

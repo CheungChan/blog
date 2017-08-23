@@ -190,7 +190,8 @@ nmap <silent> <Leader>sw :FSHere<cr>
 "设置主题"
 "colorscheme peachpuff 
 "colorscheme molokai
-colorscheme solarized
+"colorscheme solarized
+colorscheme zellner
 set background=dark
 " 设置状态栏主题风格
 let g:Powerline_colorscheme='solarized256'
