@@ -81,4 +81,74 @@ set ignorecase
 set nocompatible
 ""vim 自身命令行式补全
 set wildmenu
+set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim
 
+ " These lines setup the environment to show graphics and colors correctly.
+set nocompatible
+set t_Co=256
+let g:minBufExplForceSyntaxEnable = 1
+"python from powerline.vim import setup as powerline_setup
+"python powerline_setup()
+"python del powerline_setup
+"if ! has('gui_running')
+"    set ttimeoutlen=10
+"    augroup FastEscape
+"       autocmd!
+"       au InsertEnter * set timeoutlen=0
+"       au InsertLeave * set timeoutlen=1000
+"    augroup END
+"endif
+"                         
+"set laststatus=2 " Always display the
+"statusline in all windows
+"set guifont=Inconsolata\ for\ Powerline:h14
+"set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+set nocompatible              " required
+filetype off                  " required
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+"代码折叠
+"set foldmethod=indent
+"au BufWinLeave * silent mkview  " 保存文件的折叠状态
+"au BufRead * silent loadview    " 恢复文件的折叠状态
+"nnoremap <space> za             " 用空格来切换折叠状态
+"智能折叠
+"Plugin 'tmhedberg/SimpylFold'
+"Plugin 'Valloric/YouCompleteMe'
+Plugin 'scrooloose/nerdtree'
+" 这个插件可以显示文件的Git增删状态
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+" Ctrl+N 打开/关闭
+map <C-n> :NERDTreeToggle<CR>
+" 当不带参数打开Vim时自动加载项目树
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" 当所有文件关闭时关闭项目树窗格
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+" 不显示这些文件
+let NERDTreeIgnore=['\.pyc$', '\~$', 'node_modules'] "ignore files in NERDTree
+" 不显示项目树上额外的信息，例如帮助、提示什么的
+let NERDTreeMinimalUI=1
+Plugin 'kien/ctrlp.vim'
+let g:ctrlp_working_path_mode = 'ra'
+set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     
+let g:ctrlp_custom_ignore = {'dir':  '\v[\/]\.(git|hg|svn)$', 'file': '\v\.(exe|so|dll)$'}
+set clipboard=unnamed
+"set pastetoggle=<F9>
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+set guifont=Inconsolata\ for\ Powerline:h15
+let g:Powerline_symbols = 'fancy'
+set encoding=utf-8
+set t_Co=256
+set fillchars+=stl:\ ,stlnc:\
+set term=xterm-256color
+set termencoding=utf-8
+let mapleader=';'
+"自动补全
+Plugin 'davidhalter/jedi-vim'
+Plugin 'SuperTab'
