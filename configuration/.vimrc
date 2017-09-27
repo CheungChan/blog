@@ -8,7 +8,7 @@ set autoindent
 "设置主题"
 "colorscheme peachpuff
 "colorscheme ron
-colorscheme zellner
+"colorscheme zellner
 set ts=4  
 set expandtab  
 set shiftwidth=4  
@@ -152,3 +152,7 @@ let mapleader=';'
 "自动补全
 Plugin 'davidhalter/jedi-vim'
 Plugin 'SuperTab'
+Plugin 'altercation/vim-colors-solarized'
+colorscheme solarized
+set background=dark
+let g:Powerline_colorscheme='solarized256'

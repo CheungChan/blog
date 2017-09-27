@@ -142,7 +142,7 @@ Plugin 'terryma/vim-multiple-cursors'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'vim-scripts/DrawIt'
 Plugin 'SirVer/ultisnips'
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 Plugin 'derekwyatt/vim-protodef'
 Plugin 'scrooloose/nerdtree'
 Plugin 'fholgado/minibufexpl.vim'
@@ -190,8 +190,8 @@ nmap <silent> <Leader>sw :FSHere<cr>
 "设置主题"
 "colorscheme peachpuff 
 "colorscheme molokai
-"colorscheme solarized
-colorscheme zellner
+colorscheme solarized
+"colorscheme zellner
 set background=dark
 " 设置状态栏主题风格
 let g:Powerline_colorscheme='solarized256'
