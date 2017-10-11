@@ -8,12 +8,12 @@ else
 endif
 language messages zh_CN.utf-8
 " 设置 gvim 显示字体
-set guifont=consolas:h16:b
+"set guifont=consolas:h16:b
 "设置菜单不乱码"
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 "设置字体"
-set guifont=Consolas:h11:cDEFAULT
+"set guifont=Consolas:h11:cDEFAULT
 "设置折行"
 set wrap
 "设置自动缩进"
@@ -109,63 +109,9 @@ set nocompatible
 "vim 自身命令行式补全
 set wildmenu
 " 禁止光标闪烁
-set gcr=a:block-blinkon0
-" 禁止显示滚动条
-set guioptions-=l
-set guioptions-=L
-set guioptions-=r
-set guioptions-=R
-" 禁止显示菜单和工具条
-set guioptions-=m
-set guioptions-=T
-" vundle 环境设置
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-" vundle 管理的插件列表必须位于 vundle#begin() 和 vundle#end() 之间
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'tomasr/molokai'
-Plugin 'vim-scripts/phd'
-Plugin 'Lokaltog/vim-powerline'
-Plugin 'octol/vim-cpp-enhanced-highlight'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'derekwyatt/vim-fswitch'
-Plugin 'kshenoy/vim-signature'
-Plugin 'vim-scripts/BOOKMARKS--Mark-and-Highlight-Full-Lines'
-Plugin 'majutsushi/tagbar'
-Plugin 'vim-scripts/indexer.tar.gz'
-Plugin 'vim-scripts/DfrankUtil'
-Plugin 'vim-scripts/vimprj'
-Plugin 'dyng/ctrlsf.vim'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'vim-scripts/DrawIt'
-Plugin 'SirVer/ultisnips'
-"Plugin 'Valloric/YouCompleteMe'
-Plugin 'derekwyatt/vim-protodef'
-Plugin 'scrooloose/nerdtree'
-Plugin 'fholgado/minibufexpl.vim'
-Plugin 'gcmt/wildfire.vim'
-Plugin 'sjl/gundo.vim'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'suan/vim-instant-markdown'
-Plugin 'lilydjwg/fcitx.vim'
-" 插件列表结束
-call vundle#end()
-filetype plugin indent on
- " NERDTree config
-map <F2> :NERDTreeToggle<CR>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") &&b:NERDTreeType == "primary") | q | endif
-autocmd vimenter * NERDTree
-" 将外部命令 wmctrl 控制窗口最大化的命令行参数封装成一个 vim 的函数
-fun! ToggleFullscreen()
-	call system("wmctrl -ir " . v:windowid . " -b toggle,fullscreen")
-endf
+"set gcr=a:block-blinkon0
 " 全屏开/关快捷键
 map <silent> <F11> :call ToggleFullscreen()<CR>
-" 启动 vim 时自动全屏
-autocmd VimEnter * call ToggleFullscreen()
 "设置自动侦测文件类型"
 filetype on
 "根据不同的类型加载不同的插件
@@ -185,13 +131,89 @@ let g:indent_guides_guide_size=1
 set foldmethod=syntax
 " 启动 vim 时关闭折叠代码
 set nofoldenable
-" *.cpp 和 *.h 间切换
-nmap <silent> <Leader>sw :FSHere<cr>
-"设置主题"
-"colorscheme peachpuff 
-"colorscheme molokai
-colorscheme solarized
+"colorscheme ron
 "colorscheme zellner
-set background=dark
-" 设置状态栏主题风格
+
+set rtp+=D:\python36\Lib\site-packages\powerline\bindings\vim
+
+ " These lines setup the environment to show graphics and colors correctly.
+set t_Co=256
+let g:minBufExplForceSyntaxEnable = 1
+"set laststatus=2 " Always display the
+"statusline in all windows
+"set guifont=Inconsolata\ for\ Powerline:h14
+"set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+set nocompatible              " required
+filetype off                  " required
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+"代码折叠
+"set foldmethod=indent
+"au BufWinLeave * silent mkview  " 保存文件的折叠状态
+"au BufRead * silent loadview    " 恢复文件的折叠状态
+"nnoremap <space> za             " 用空格来切换折叠状态
+"智能折叠
+"Plugin 'tmhedberg/SimpylFold'
+"Plugin 'Valloric/YouCompleteMe'
+Plugin 'scrooloose/nerdtree'
+" 这个插件可以显示文件的Git增删状态
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+" Ctrl+N 打开/关闭
+map <C-n> :NERDTreeToggle<CR>
+" 当不带参数打开Vim时自动加载项目树
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" 当所有文件关闭时关闭项目树窗格
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+" 不显示这些文件
+let NERDTreeIgnore=['\.pyc$', '\~$', 'node_modules'] "ignore files in NERDTree
+" 不显示项目树上额外的信息，例如帮助、提示什么的
+let NERDTreeMinimalUI=1
+Plugin 'kien/ctrlp.vim'
+let g:ctrlp_working_path_mode = 'ra'
+set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     
+let g:ctrlp_custom_ignore = {'dir':  '\v[\/]\.(git|hg|svn)$', 'file': '\v\.(exe|so|dll)$'}
+set clipboard=unnamed
+"set pastetoggle=<F9>
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h12
+let g:Powerline_symbols = 'fancy'
+set encoding=utf-8
+set t_Co=256
+set fillchars+=stl:\ ,stlnc:\
+"set term=xterm-256color
+set termencoding=utf-8
+let mapleader=';'
+"自动补全
+Plugin 'davidhalter/jedi-vim'
+"使用Tab进行自动补全
+Plugin 'SuperTab'
+"加载主题插件solarized
+Plugin 'altercation/vim-colors-solarized'
+"设置solarized主题
+"colorscheme solarized
+"colorscheme zellner
+"set background=dark
 let g:Powerline_colorscheme='solarized256'
+hi Normal ctermbg=Black ctermfg=white  
+"加载主题插件grubbox
+Plugin 'morhetz/gruvbox'
+"设置主题颜色和背景分为dark或者light
+colorscheme gruvbox
+set background=dark    " Setting dark mode
+"set background=light
+"设置背景色不出问题
+if &term =~ '256color'  
+  " disable Background Color Erase (BCE) so that color schemes  
+  " render properly when inside 256-color tmux and GNU screen.  
+  " see also http://snk.tuxfamily.org/log/vim-256color-bce.html  
+    set t_ut=  
+endif 
+Plugin 'iamcco/mathjax-support-for-mkdp'
+Plugin 'iamcco/markdown-preview.vim'
+
