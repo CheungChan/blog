@@ -61,7 +61,7 @@ Hi xxx! You’ve successfully authenticated, but GitHub does not provide shell a
 Connection to github.com closed.
 ```
 ### 如果不是克隆远程版本，本地创建git仓库
-.git操作建立本地git文件夹 输入git init进行初始化操作
+ 输入git init进行初始化操作,此命令会生成.git文件夹,这是一个隐藏文件夹,里面包含了本地git仓库的所有信息.
 # 克隆
 克隆仓库到本地 : 
 ```
