@@ -65,7 +65,7 @@ Connection to github.com closed.
 # 克隆
 克隆仓库到本地 : 
 ```
-$git clone git@github.com:CheungChanDevCoder/pythonTools.git
+git clone git@github.com:CheungChan/blog.git
 ```
 # 加入暂存区
 对代码进行编辑和修改提交使用
