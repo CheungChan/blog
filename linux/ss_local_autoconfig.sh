@@ -50,11 +50,11 @@ proxycmd="/usr/local/bin/proxy"
 # 创建 shadowsocks 配置样例
 cat >"$sscfg"<<EOF
 {
-    "server":"vultr.cheungchan.cc",
-    "server_port":27343,
+    "server":"",
+    "server_port":8888,
     "local_address": "127.0.0.1",
     "local_port":1080,
-    "password":"Alang34925//",
+    "password":"",
     "timeout":300,
     "method":"aes-256-cfb",
     "fast_open": true,
