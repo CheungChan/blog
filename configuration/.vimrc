@@ -119,7 +119,14 @@ filetype plugin indent on    " required
 "nnoremap <space> za             " 用空格来切换折叠状态
 "智能折叠
 "Plugin 'tmhedberg/SimpylFold'
+"史上最强补全工具.史上最难装的插件.
 "Plugin 'Valloric/YouCompleteMe'
+let g:SimpyIFold_docstring_preview=1
+let g:ycm_server_python_interpreter='/usr/bin/python3'
+let g:ycm_global_ycm_extra_conf='~/.vim/.ycm_extra_conf.py'
+" 补全内容不以分割子窗口形式出现，只显示补全列表
+"set completeopt-=preview
+let g:ycm_autoclose_preview_window_after_completion=1
 Plugin 'scrooloose/nerdtree'
 " 这个插件可以显示文件的Git增删状态
 Plugin 'Xuyuanp/nerdtree-git-plugin'
