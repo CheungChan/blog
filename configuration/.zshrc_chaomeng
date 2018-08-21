@@ -1,0 +1,68 @@
+export ZSH=~/.oh-my-zsh
+#ZSH_THEME="agnoster"
+ZSH_THEME="lambda-mod"
+plugins=(git zsh-autosuggestions autojump)
+source $ZSH/oh-my-zsh.sh
+# 设置coreutils工具
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+# 修改Homebrew Bottles源
+export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+# zsh高亮插件
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# 添加coreutils的ls主题solarized
+eval `dircolors ~/.dircolors`
+alias ls="ls --color=auto"
+# 解决screenfetch显示bug，替换readlink为coreutils
+alias readlink=greadlink
+
+PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
+export PATH
+VIRTUALENVWRAPPER_PYTHON=/Library/Frameworks/Python.framework/Versions/3.6/bin/python3
+source /Library/Frameworks/Python.framework/Versions/3.6/bin/virtualenvwrapper.sh
+export WORKON_HOME="/Users/cmdata/envs"
+
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+_COLUMNS=$(tput cols)
+_MESSAGE=" FBI Warining "
+y=$(( ( $_COLUMNS - ${#_MESSAGE} )  / 2 ))
+spaces=$(printf "%-${y}s" " ")
+
+echo " "
+echo -e "${spaces}\033[41;37;5m FBI WARNING \033[0m"
+echo " "
+_COLUMNS=$(tput cols)
+_MESSAGE="Ferderal Law provides severe civil and criminal penalties for"
+y=$(( ( $_COLUMNS - ${#_MESSAGE} )  / 2 ))
+spaces=$(printf "%-${y}s" " ")
+echo -e "${spaces}${_MESSAGE}"
+
+_COLUMNS=$(tput cols)
+_MESSAGE="the unauthorized reproduction, distribution, or exhibition of"
+y=$(( ( $_COLUMNS - ${#_MESSAGE} )  / 2 ))
+spaces=$(printf "%-${y}s" " ")
+echo -e "${spaces}${_MESSAGE}"
+
+_COLUMNS=$(tput cols)
+_MESSAGE="copyrighted motion pictures (Title 17, United States Code,"
+y=$(( ( $_COLUMNS - ${#_MESSAGE} )  / 2 ))
+spaces=$(printf "%-${y}s" " ")
+echo -e "${spaces}${_MESSAGE}"
+
+_COLUMNS=$(tput cols)
+_MESSAGE="Sections 501 and 508). The Federal Bureau of Investigation"
+y=$(( ( $_COLUMNS - ${#_MESSAGE} )  / 2 ))
+spaces=$(printf "%-${y}s" " ")
+echo -e "${spaces}${_MESSAGE}"
+
+_COLUMNS=$(tput cols)
+_MESSAGE="investigates allegations of criminal copyright infringement"
+y=$(( ( $_COLUMNS - ${#_MESSAGE} )  / 2 ))
